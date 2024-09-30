@@ -299,6 +299,42 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 
 ## Similar Products
 
+  - [SignUpGenius - Football SignUps](https://www.signupgenius.com/go/5080d45aaa928a6fd0-soccer2#/)
+    - Volunteer Management System Host (SignUpGenius)
+    - Calendar format can be used as inspiration for scheduling tasks
+ 
+  - [Timecounts - Bleeding Heart](https://timecounts.app/bleedingheart)
+    - Volunteer Management System Host (Timecounts)
+    - This is our client’s previous system
+    - The color palette can be used as inspiration for our system
+
 ## Open-source Projects
 
+  - [OpenVolunteerPlatform](https://github.com/aerogear/OpenVolunteerPlatform)
+    - Automate and optimize work of volunteers for organization or charity
+    - Some of their functionalities include: reports and statistics for admins, management panel, automatic scheduling, producing reports and collecting feedback from the field
+ 
+  - [Engles System](https://github.com/engelsystem/engelsystem)
+    - System to coordinate large amount of helpers and shifts for big events
+    - Some of their functionalities include: shifts that are organized through filters, multi language coverage, exports shifts to ical, reward system, Q and A section, 2 factor authentication
+
 ## Techincal Resources
+
+### Frontend: React (Vite with Typescript)
+
+  - [React Documentation](https://react.dev/learn)
+  - [Bulletproof React](https://github.com/alan2207/bulletproof-react)
+  - [Vite](https://vitejs.dev/guide/)
+
+### Backend: Node (Express with Typescript) + PostgreSQL
+
+  - [Node Documentation](https://nodejs.org/docs/latest/api/)
+  - [Express.js](https://expressjs.com/en/starter/installing.html)
+  - [Kysely](https://kysely.dev/docs/getting-started)
+  - [Setting up Postgres](https://help.scalegrid.io/docs/postgresql-connecting-to-nodejs-driver)
+  - [Firebase Authentication](https://firebase.google.com/docs/auth)
+  - [Sendgrid](https://www.twilio.com/docs/sendgrid/for-developers)
+
+### Deployment: Cybera
+
+  - [Deploy on Cybera - Documentation](https://www.cybera.ca/hosting-a-website-on-the-rapid-access-cloud/)
