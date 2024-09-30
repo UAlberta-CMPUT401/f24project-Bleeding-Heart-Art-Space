@@ -16,8 +16,6 @@ for email functionality.
 This is a short description of logical entities of the domain in a UML diagram.
 ![UML Diagram](images/UML.png)
 
-[INSERT UML DIAGRAM HERE]
-
 ## Sequence Diagrams
 
 Multiple sequence diagrams depicting the most important scenarios.
