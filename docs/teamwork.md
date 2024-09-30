@@ -40,7 +40,7 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 
 ### Thinking Roles
 #### PL (Plant): 
-| Tends to be highly creative and good at solving problems in unconventional ways.
+> Tends to be highly creative and good at solving problems in unconventional ways.
 
 1. Chase Johnson (Preferred)
 2. Anhadpreet Singh (Manageable)
@@ -48,7 +48,7 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 4. Rushabh Shah (Manageable)
 
 #### ME (Monitor Evaluator): 
-| Provides a logical eye, making impartial judgements where required and weighs up the team's options in a dispassionate way.
+> Provides a logical eye, making impartial judgements where required and weighs up the team's options in a dispassionate way.
 
 1. Samuel Chan (Preferred)
 2. Rishit Gajjar (Preferred)
@@ -56,7 +56,7 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 4. Chase Johnson (Manageable)
 
 #### SP (Specialist):
-| Brings in-depth knowledge of a key area to the team.
+> Brings in-depth knowledge of a key area to the team.
 
 1. Rushabh Shah (Preferred)
 2. Samuel Chan (Preferred)
@@ -65,12 +65,12 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 
 ### Action Roles:
 #### SH (Shaper): 
-| Provides the necessary drive to ensure that the team keeps moving and does not lose focus or momentum.
+> Provides the necessary drive to ensure that the team keeps moving and does not lose focus or momentum.
 
 1. Samuel Chan (Manageable)
 
 #### IMP (Implementer): 
-| Needed to plan a workable strategy and carry it out as efficiently as possible.
+> Needed to plan a workable strategy and carry it out as efficiently as possible.
 
 1. Amaan Mohammed (Preferred)
 2. Rishit Gajjar (Preferred)
@@ -79,7 +79,7 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 5. Rushabh Shah (Manageable)
 
 #### CF (Completer Finisher): 
-| Most effectively used at the end of tasks to polish and scrutinize the work for errors, subjecting it to the highest standards of quality control.
+> Most effectively used at the end of tasks to polish and scrutinize the work for errors, subjecting it to the highest standards of quality control.
 
 1. Samuel Chan (Preferred)
 2. Anhadpreet Singh (Preferred)
@@ -89,7 +89,7 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 
 ### People Roles:
 #### RI (Resource Investigator): 
-| Uses their inquisitive nature to find ideas to bring back to the team.
+> Uses their inquisitive nature to find ideas to bring back to the team.
 
 1. Samuel Chan (Manageable)
 2. Amaan Mohammed (Preferred)
@@ -97,7 +97,7 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 4. Chase Johnson (Manageable)
 
 #### TW (Teamworker): 
-| Helps the team to gel, using their versatility to identify the work required and complete it on behalf of the team.
+> Helps the team to gel, using their versatility to identify the work required and complete it on behalf of the team.
 
 1. Rushabh Shah (Preferred)
 2. Amaan Mohammed (Preferred)
@@ -105,7 +105,7 @@ Source: https://www.belbin.com/about/belbin-team-roles.
 4. Rishit Gajjar (Manageable)
 
 #### CO (Co-ordinator): 
-| Needed to focus on the team's objectives, draw out team members and delegate work appropriately.
+> Needed to focus on the team's objectives, draw out team members and delegate work appropriately.
 
 1. Rushabh Shah (Preferred)
 2. Samuel Chan (Manageable)
