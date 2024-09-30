@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Project Requirements - Bleeding Heart Art Space</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Bleeding Heart Art Space</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">Project Requirements</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../software-design/" class="nav-link">Software Design</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../project-management/" class="nav-link">Project Management</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../teamwork/" class="nav-link">Teamwork</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href=".." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../software-design/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#project-requirements" class="nav-link">Project Requirements</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#executive-summary" class="nav-link">Executive Summary</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#project-glossary" class="nav-link">Project Glossary</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#user-stories" class="nav-link">User Stories</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#moscow" class="nav-link">MoSCoW</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#similar-products" class="nav-link">Similar Products</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#open-source-projects" class="nav-link">Open-source Projects</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#techincal-resources" class="nav-link">Techincal Resources</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="project-requirements">Project Requirements</h1>
+<h2 id="executive-summary">Executive Summary</h2>
+<p>The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the challenges the organization faces with its current scheduling tool, which doesn’t quite fit their needs. This custom platform will streamline the process of organizing volunteer events and shifts, enabling administrators to create and manage events, track volunteer attendance, and send timely notifications. Volunteers will benefit from a simple user-friendly way to easily sign up for shifts, view upcoming events, and receive reminders. The primary users of this system will be the administrators and volunteers of Bleeding Heart Art Space. The platform will be used to simplify volunteer coordination, improve communication, and optimize event management, contributing to the smooth operation of the community art space.</p>
+<h2 id="project-glossary">Project Glossary</h2>
+<ul>
+<li>
+<p><strong>Admin</strong>: A user with elevated permissions responsible for managing events, assigning roles, and organizing schedules. Admins can create, edit, and delete events, assign volunteers to shifts, and oversee overall operations. They also have the ability to sign up for volunteer shifts themselves.</p>
+</li>
+<li>
+<p><strong>Volunteer</strong>: A general user who participates in events and activities organized by admins. Volunteers can view available events, sign up for shifts, check in and out of events, and receive notifications and reminders. </p>
+</li>
+<li>
+<p><strong>Artist</strong>: A user responsible for requesting events that have to be approved by the admins. In some cases, the artist might also participate in events or activities organized by the volunteers and admins, especially if the event centers around an art exhibit or installation.</p>
+</li>
+<li>
+<p><strong>Event</strong>: A scheduled activity that requires volunteers. Events are created and managed by admins and can have specific times, dates, locations, and roles. Volunteers sign up for these events.</p>
+</li>
+<li>
+<p><strong>Shift</strong>: A designated time slot within an event during which volunteers are expected to participate. Shifts may have specific start and end times.</p>
+</li>
+<li>
+<p><strong>Calendar</strong>: A calendar meant to organize volunteers for an event. It may include multiple shifts and volunteers may use it to sign up for different time slots.</p>
+</li>
+<li>
+<p><strong>Notifications</strong>: Alerts sent to users via email or app to remind them of upcoming events or other important information. Volunteers and admins can subscribe or unsubscribe from notifications.</p>
+</li>
+<li>
+<p><strong>Permissions</strong>: Access rights assigned by an admin to other users. Permissions determine what actions a user can perform, such as creating events or managing schedules.</p>
+</li>
+<li>
+<p><strong>Roles</strong>: Specific functions or duties that volunteers might be assigned within an event (e.g., setup, registration, crowd control). Admins can assign roles when creating events.</p>
+</li>
+<li>
+<p><strong>Dashboard</strong>: A centralized page where admins can monitor events, volunteer sign-ups, attendance, and manage schedules. Volunteers may also have a dashboard to view upcoming events they are signed up for.</p>
+</li>
+</ul>
+<h2 id="user-stories">User Stories</h2>
+<h3 id="admin-user-stories">Admin User Stories</h3>
+<h4 id="us-101-admin-sign-up">US 1.01 - Admin Sign up</h4>
+<blockquote>
+<p>As an Admin, I want to sign up securely through a code/link so that I can gain admin privileges.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can sign up one time using a link/code</li>
+</ol>
+</blockquote>
+<h4 id="us-102-login-and-logout-securely">US 1.02 - Login and logout Securely</h4>
+<blockquote>
+<p>As an Admin, I want to log in and log out securely so that I can manage the volunteer events and schedules.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can log in using email and password or social login.</li>
+<li>Admin can log out securely</li>
+<li>Secure password recovery and multi-factor authentication.</li>
+</ol>
+</blockquote>
+<h4 id="us-103-create-and-manage-events">US 1.03 - Create and Manage Events</h4>
+<blockquote>
+<p>As an Admin, I want to create and manage events so that I can schedule volunteer opportunities.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can create, edit, or delete events.</li>
+<li>Admin can specify event details like date, time, location, number of volunteers needed, and any specific roles or skills required.</li>
+<li>Admin can set recurring events.</li>
+</ol>
+</blockquote>
+<h4 id="us-104-assign-permissions-to-other-users">US 1.04 - Assign Permissions to Other Users</h4>
+<blockquote>
+<p>As an Admin, I want to assign permissions to other users so that I can delegate event management tasks.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can assign specific permissions (event creation, scheduling, etc.) to other users.</li>
+<li>Admin can revoke permissions at any time.</li>
+</ol>
+</blockquote>
+<h4 id="us-105-create-and-manage-volunteer-schedulescalendar">US 1.05 - Create and Manage Volunteer Schedules/Calendar</h4>
+<blockquote>
+<p>As an Admin, I want to create volunteer schedules/calendars so that shifts are organized and resources are optimized.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can create and edit schedules for each event.</li>
+<li>Admin can assign specific volunteers to shifts or allow volunteers to self-select shifts.</li>
+</ol>
+</blockquote>
+<h4 id="us-106-manage-volunteer-attendance">US 1.06 - Manage Volunteer Attendance</h4>
+<blockquote>
+<p>As an Admin, I want to view and manage volunteer attendance so that I can ensure accurate record-keeping.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can see check-ins and check-outs for each event.</li>
+<li>Admin can override check-in/out statuses if necessary.</li>
+</ol>
+</blockquote>
+<h4 id="us-107-send-communication-emails">US 1.07 - Send Communication emails</h4>
+<blockquote>
+<p>As an Admin, I want to send emails to all volunteers at once so that they are informed of upcoming shifts.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can send emails to the volunteers via the email app but can get the email IDs of the volunteers automatically from the platform.</li>
+</ol>
+</blockquote>
+<h4 id="us-108-sign-up-to-volunteer-for-an-event">US 1.08 - Sign Up to Volunteer for an Event</h4>
+<blockquote>
+<p>As an Admin, I want to sign up to volunteer for an event, so that I can participate in the event just like a regular volunteer.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can see the same calendar of available events as volunteers.</li>
+<li>Admin can sign up for available shifts in events they create or manage.</li>
+<li>Admin receives confirmation of sign-up via email or app notification.</li>
+<li>Admin can check in and check out of events like regular volunteers.</li>
+<li>Admin receives reminders and event notifications based on their preferences.</li>
+<li>Admin’s participation is recorded alongside other volunteers, but they retain their admin privileges during the event.</li>
+</ol>
+</blockquote>
+<h4 id="us-109-assign-one-time-volunteers">US 1.09 - Assign one-time volunteers</h4>
+<blockquote>
+<p>As an Admin, I want to be able to assign one-time volunteers so that I can fill specific roles for events without requiring ongoing commitment from the volunteers.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can assign volunteers for a specific shift or event.</li>
+<li>Assigned volunteers receive a notification of their assigned shift or role.</li>
+<li>Admin can view and modify these assignments at any time before the event begins.</li>
+</ol>
+</blockquote>
+<h4 id="us-110-approve-artist-event-requests">US 1.10 - Approve Artist Event Requests</h4>
+<blockquote>
+<p>As an Admin, I want to be able to approve artist event requests so that I can review and authorize events that align with organizational goals.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Admin can view a list of event requests submitted by artists.</li>
+<li>Admin can approve or reject event requests.</li>
+<li>Approved events become visible in the event calendar for volunteers to sign up.</li>
+<li>Artists receive notifications once their event is approved or rejected.</li>
+</ol>
+</blockquote>
+<h3 id="volunteer-user-stories">Volunteer User Stories:</h3>
+<h4 id="us-201-sign-up-to-be-a-volunteer">US 2.01 - Sign up to be a Volunteer</h4>
+<blockquote>
+<p>As a Volunteer, I want to sign up securely so that I can re-use my account to volunteer in the future.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can sign up using email and password or social login.</li>
+<li>Secure password recovery and multi-factor authentication.</li>
+</ol>
+</blockquote>
+<h4 id="us-202-log-in-securely">US 2.02 - Log in Securely</h4>
+<blockquote>
+<p>As a Volunteer, I want to log in securely so that I can access my volunteer schedule and events.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can log in using email and password or social login.</li>
+<li>Secure password recovery and multi-factor authentication.</li>
+</ol>
+</blockquote>
+<h4 id="us-203-view-available-events-on-a-calendar">US 2.03 - View Available Events on a Calendar</h4>
+<blockquote>
+<p>As a Volunteer, I want to view available events on a calendar so that I can choose which events to sign up for.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can see a calendar view of all upcoming events.</li>
+<li>Volunteers can filter events by date, location, or event type.</li>
+</ol>
+</blockquote>
+<h4 id="us-204-sign-up-for-events">US 2.04 - Sign up for Events</h4>
+<blockquote>
+<p>As a Volunteer, I want to sign up for events so that I can participate in volunteer activities.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can sign up for available shifts in events.</li>
+<li>Volunteers receive confirmation of sign-up via email or app notification.</li>
+</ol>
+</blockquote>
+<h4 id="us-205-manage-notifications-preferences">US 2.05 - Manage Notifications Preferences</h4>
+<blockquote>
+<p>As a Volunteer, I want to manage my notifications so that I can receive or opt out of reminders.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can subscribe or unsubscribe to email or app notifications.</li>
+<li>Volunteers receive event reminders based on their preferences.</li>
+</ol>
+</blockquote>
+<h4 id="us-206-check-into-events">US 2.06 - Check into Events</h4>
+<blockquote>
+<p>As a Volunteer, I want to check into events when my shift starts so that my attendance is recorded.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can check into the event once the shift begins (via the app or web).</li>
+<li>A notification or prompt is sent to the volunteer when the shift start time approaches.</li>
+</ol>
+</blockquote>
+<h4 id="us-207-check-out-of-events">US 2.07 - Check out of Events</h4>
+<blockquote>
+<p>As a Volunteer, I want to check out of events when my shift ends so that I can log my volunteer hours.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can check out of the event manually once their shift is over.</li>
+<li>A notification is sent if the volunteer forgets to check out.</li>
+</ol>
+</blockquote>
+<h4 id="us-208-automatic-check-out-when-event-ends">US 2.08 - Automatic Check-out When Event Ends</h4>
+<blockquote>
+<p>As a Volunteer, I want to be automatically checked out when the event ends so that I don't have to worry if I forget to check out.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers are automatically checked out if they haven't manually checked out when the event ends.</li>
+</ol>
+</blockquote>
+<h4 id="us-209-receive-summary-of-volunteer-hours">US 2.09 - Receive Summary of Volunteer Hours</h4>
+<blockquote>
+<p>As a Volunteer, I want to receive a summary of my volunteer hours after the event so that I can track my contributions.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers receive an email or notification summarizing their total hours after each event.</li>
+<li>Volunteers can view a history of their hours in their profile.</li>
+</ol>
+</blockquote>
+<h4 id="us-210-inter-communication-of-volunteers-on-the-platform">US 2.10 - Inter-Communication of volunteers on the platform</h4>
+<blockquote>
+<p>As a Volunteer, I want to reach out to fellow volunteers attending an exhibit/event.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers have the option to chat with fellow volunteers.</li>
+</ol>
+</blockquote>
+<h4 id="us-211-view-other-volunteer-status">US 2.11 - View other volunteer status</h4>
+<blockquote>
+<p>As a volunteer, I want to be able to see the different volunteers that I are signed up for different events</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Volunteers can check who is signed up on events made in the calendar</li>
+</ol>
+</blockquote>
+<h3 id="artist-user-stories">Artist User Stories:</h3>
+<h4 id="us-301-request-events">US 3.01 - Request Events</h4>
+<blockquote>
+<p>As an Artist, I want to be able to request events so that I can showcase my work or host activities that involve volunteers.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Artists can fill out a form to request a new event, specifying the event details (date, time, location, description).</li>
+<li>Event requests must be approved by an admin before they are confirmed.</li>
+</ol>
+</blockquote>
+<h4 id="us-302-sign-up-to-oversee-an-event">US 3.02 - Sign Up to Oversee an Event</h4>
+<blockquote>
+<p>As an Artist, I want to be able to sign up to oversee an event so that I can manage it personally and ensure everything runs smoothly.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Artists can sign up as the primary overseer of the event.</li>
+<li>Artists receive reminders and notifications for the event.</li>
+<li>Artists can manage volunteers during the event.</li>
+</ol>
+</blockquote>
+<h4 id="us-303-create-shifts-for-the-event">US 3.03 - Create Shifts for the Event</h4>
+<blockquote>
+<p>As an Artist, I want to be able to create any number and duration of shifts for the event so that volunteers can work at different times and the event runs efficiently.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Artists can create multiple shifts, each with a start time, end time, and number of required volunteers.</li>
+<li>Shifts can be edited or deleted by the artist at any time before the event begins.</li>
+</ol>
+</blockquote>
+<h4 id="us-304-assign-one-time-volunteers">US 3.04 - Assign one-time volunteers</h4>
+<blockquote>
+<p>As an Artist, I want to be able to assign one-time volunteers so that I can get help from specific people for a particular event.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Artists can assign volunteers for a specific shift or event.</li>
+<li>Assigned volunteers receive an email or app notification of their assigned role and shift.</li>
+</ol>
+</blockquote>
+<h4 id="us-305-manage-events">US 3.05 - Manage Events</h4>
+<blockquote>
+<p>As an Artist, I want to be able to edit the events I made so that I can update event details or make changes as needed.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Artists can edit event details such as time, location, description, and number of required volunteers.</li>
+<li>Changes to the event trigger notifications to volunteers who have signed up for affected shifts.</li>
+</ol>
+</blockquote>
+<h3 id="general-user-stories">General User Stories:</h3>
+<h4 id="us-401-receive-event-notifications">US 4.01 - Receive Event Notifications</h4>
+<blockquote>
+<p>As a User, I want to receive notifications for upcoming events so that I am reminded of my commitments.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Users can opt in to receive notifications via email or app.</li>
+<li>Reminders are sent at customizable intervals (e.g., a day before, an hour before the event).</li>
+</ol>
+</blockquote>
+<h4 id="us-402-view-calendar">US 4.02 - View Calendar</h4>
+<blockquote>
+<p>As a user, I want to see a calendar view of events for ease of visuality.</p>
+<p>Acceptance Criteria:</p>
+<ol>
+<li>Users can always view a calendar of events on their dashboard.</li>
+</ol>
+</blockquote>
+<h2 id="moscow">MoSCoW</h2>
+<h3 id="must-have">Must have:</h3>
+<ul>
+<li>US 1.01 (Sign up Securely)</li>
+<li>US 1.02 (Login and logout securely)</li>
+<li>US 1.03 (Create and Manage Events)</li>
+<li>US 1.04 (Assign Permissions to Other Users)</li>
+<li>US 1.05 (Create Volunteer Schedules)</li>
+<li>US 2.01 (Sign up Securely)</li>
+<li>US 2.02 (Login and logout securely)</li>
+<li>US 2.03 (View Available Events on a Calendar)</li>
+<li>US 2.04 (Sign up for Events)</li>
+<li>US 4.02 (View Calendar)</li>
+</ul>
+<h3 id="should-have">Should have:</h3>
+<ul>
+<li>US 1.07 (Send Notifications or Reminders)</li>
+<li>US 1.10 (Approve Artist Event Requests)</li>
+<li>US 2.05 (Manage Notifications Preferences)</li>
+<li>US 2.06 (Check into Events)</li>
+<li>US 2.07 (Check out of Events)</li>
+<li>US 2.08 (Automatic Check-out When Event Ends)</li>
+<li>US 3.01 (Request Events)</li>
+<li>US 3.02 (Sign Up to Oversee an Event)</li>
+<li>US 3.03 (Create Shifts for the Event)</li>
+<li>US 3.04 (Assign One-Time Volunteers)</li>
+<li>US 3.05 (Edit Events)</li>
+<li>US 4.01 (Receive Event Notifications)</li>
+</ul>
+<h3 id="could-have">Could have:</h3>
+<ul>
+<li>US 1.06 (Manage Volunteer Attendance)</li>
+<li>US 1.08 (Sign Up to Volunteer for an Event)</li>
+<li>US 1.09 (Assign one-time volunteers)</li>
+<li>US 2.09 (Receive Summary of Volunteer Hours)</li>
+<li>US 2.11 (View other Volunteer status)</li>
+</ul>
+<h3 id="would-like-but-wont-get">Would Like But Won't Get:</h3>
+<ul>
+<li>US 2.10 (Inter-Communication of volunteers on the platform)</li>
+</ul>
+<h2 id="similar-products">Similar Products</h2>
+<ul>
+<li>
+<p><a href="https://www.signupgenius.com/go/5080d45aaa928a6fd0-soccer2#/">SignUpGenius - Football SignUps</a></p>
+<ul>
+<li>Volunteer Management System Host (SignUpGenius).</li>
+<li>Calendar format can be used as inspiration for scheduling tasks.</li>
+</ul>
+</li>
+<li>
+<p><a href="https://timecounts.app/bleedingheart">Timecounts - Bleeding Heart</a></p>
+<ul>
+<li>Volunteer Management System Host (Timecounts).</li>
+<li>This is our client’s previous system.</li>
+<li>The color palette can be used as inspiration for our system.</li>
+</ul>
+</li>
+</ul>
+<h2 id="open-source-projects">Open-source Projects</h2>
+<ul>
+<li>
+<p><a href="https://github.com/aerogear/OpenVolunteerPlatform">OpenVolunteerPlatform</a></p>
+<ul>
+<li>Automate and optimize work of volunteers for organization or charity.</li>
+<li>Some of their functionalities include: reports and statistics for admins, management panel, automatic scheduling, producing reports and collecting feedback from the field.</li>
+<li>The automatic scheduling and management panel can be used as inspiration for our system.</li>
+</ul>
+</li>
+<li>
+<p><a href="https://github.com/engelsystem/engelsystem">Engles System</a></p>
+<ul>
+<li>System to coordinate large amount of helpers and shifts for big events.</li>
+<li>Some of their functionalities include: shifts that are organized through filters, multi language coverage, exports shifts to ical, reward system, Q and A section, 2 factor authentication.</li>
+<li>Perhaps the filtering and exporting functionalities of the shifts can be used as inpiration to our project.</li>
+</ul>
+</li>
+</ul>
+<h2 id="techincal-resources">Techincal Resources</h2>
+<h3 id="frontend-react-vite-with-typescript">Frontend: React (Vite with Typescript)</h3>
+<ul>
+<li><a href="https://react.dev/learn">React Documentation</a></li>
+<li><a href="https://github.com/alan2207/bulletproof-react">Bulletproof React</a> (React project structure guide)</li>
+<li><a href="https://vitejs.dev/guide/">Vite</a></li>
+</ul>
+<h3 id="backend-node-express-with-typescript-postgresql">Backend: Node (Express with Typescript) + PostgreSQL</h3>
+<ul>
+<li><a href="https://nodejs.org/docs/latest/api/">Node Documentation</a></li>
+<li><a href="https://expressjs.com/en/starter/installing.html">Express.js</a></li>
+<li><a href="https://kysely.dev/docs/getting-started">Kysely</a> (SQL query builder in node)</li>
+<li><a href="https://help.scalegrid.io/docs/postgresql-connecting-to-nodejs-driver">Setting up Postgres</a></li>
+<li><a href="https://firebase.google.com/docs/auth">Firebase Authentication</a></li>
+<li><a href="https://www.twilio.com/docs/sendgrid/for-developers">Sendgrid</a></li>
+</ul>
+<h3 id="deployment-cybera">Deployment: Cybera</h3>
+<ul>
+<li><a href="https://www.cybera.ca/hosting-a-website-on-the-rapid-access-cloud/">Deploy on Cybera - Documentation</a></li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
