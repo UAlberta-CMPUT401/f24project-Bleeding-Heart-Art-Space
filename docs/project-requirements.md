@@ -325,14 +325,14 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 ### Frontend: React (Vite with Typescript)
 
   - [React Documentation](https://react.dev/learn)
-  - [Bulletproof React](https://github.com/alan2207/bulletproof-react)
+  - [Bulletproof React](https://github.com/alan2207/bulletproof-react) (React project structure guide)
   - [Vite](https://vitejs.dev/guide/)
 
 ### Backend: Node (Express with Typescript) + PostgreSQL
 
   - [Node Documentation](https://nodejs.org/docs/latest/api/)
   - [Express.js](https://expressjs.com/en/starter/installing.html)
-  - [Kysely](https://kysely.dev/docs/getting-started)
+  - [Kysely](https://kysely.dev/docs/getting-started) (SQL query builder in node)
   - [Setting up Postgres](https://help.scalegrid.io/docs/postgresql-connecting-to-nodejs-driver)
   - [Firebase Authentication](https://firebase.google.com/docs/auth)
   - [Sendgrid](https://www.twilio.com/docs/sendgrid/for-developers)
