@@ -300,23 +300,25 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 ## Similar Products
 
   - [SignUpGenius - Football SignUps](https://www.signupgenius.com/go/5080d45aaa928a6fd0-soccer2#/)
-    - Volunteer Management System Host (SignUpGenius)
-    - Calendar format can be used as inspiration for scheduling tasks
+    - Volunteer Management System Host (SignUpGenius).
+    - Calendar format can be used as inspiration for scheduling tasks.
  
   - [Timecounts - Bleeding Heart](https://timecounts.app/bleedingheart)
-    - Volunteer Management System Host (Timecounts)
-    - This is our client’s previous system
-    - The color palette can be used as inspiration for our system
+    - Volunteer Management System Host (Timecounts).
+    - This is our client’s previous system.
+    - The color palette can be used as inspiration for our system.
 
 ## Open-source Projects
 
   - [OpenVolunteerPlatform](https://github.com/aerogear/OpenVolunteerPlatform)
-    - Automate and optimize work of volunteers for organization or charity
-    - Some of their functionalities include: reports and statistics for admins, management panel, automatic scheduling, producing reports and collecting feedback from the field
+    - Automate and optimize work of volunteers for organization or charity.
+    - Some of their functionalities include: reports and statistics for admins, management panel, automatic scheduling, producing reports and collecting feedback from the field.
+    - The automatic scheduling and management panel can be used as inspiration for our system.
  
   - [Engles System](https://github.com/engelsystem/engelsystem)
-    - System to coordinate large amount of helpers and shifts for big events
-    - Some of their functionalities include: shifts that are organized through filters, multi language coverage, exports shifts to ical, reward system, Q and A section, 2 factor authentication
+    - System to coordinate large amount of helpers and shifts for big events.
+    - Some of their functionalities include: shifts that are organized through filters, multi language coverage, exports shifts to ical, reward system, Q and A section, 2 factor authentication.
+    - Perhaps the filtering and exporting functionalities of the shifts can be used as inpiration to our project.
 
 ## Techincal Resources
 
