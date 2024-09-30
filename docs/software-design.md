@@ -27,8 +27,11 @@ Multiple sequence diagrams depicting the most important scenarios.
 
 This is the overall look and feel of the web app.
 
+### Admin UI
 ![Admin UI](images/admin-ui.png)
 
+### Volunteer UI
 ![Volunteer UI](images/volunteer-ui.png)
 
+### Artist UI
 ![Artist UI](images/artist-ui.png)
