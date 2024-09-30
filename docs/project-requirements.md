@@ -31,9 +31,9 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 ### Admin User Stories
 #### US 1.01 - Admin Sign up
 > As an Admin, I want to sign up securely through a code/link so that I can gain admin privileges.
-
+>
 > Acceptance Criteria:
-
+>
 > 1. Admin can sign up one time using a link/code
 
 #### US 1.02 - Login and logout Securely
