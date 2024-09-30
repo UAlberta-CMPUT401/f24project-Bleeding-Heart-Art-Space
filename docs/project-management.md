@@ -49,7 +49,7 @@ Estimated Sprint Velocity: **39**
 | ---------------------------------------- | ---------------------------------------- | --------------------------------- | -------- |
 | PostgreSQL database Setup                | SETUP                                    | Chase Johnson, Rishit Gajjar      | Oct 4    |
 | User authentication                      | US 1.01, US 1.02, US 2.01, US 2.02       | Chase Johnson, Rishit Gajjar      | Oct 8    |
-| Create viewable calendar and show events | US 2.03, US 3.02, US 4.02                | Samuel Chan, Amaan Mohammed       | Oct 8    |
+| Create viewable calendar and show events | US 2.03, US 4.02                         | Samuel Chan, Amaan Mohammed       | Oct 8    |
 | User is able to create and view events   | US 1.03, US 2.03                         | Rushabh Shah, Anhadpreet Singh    | Oct 8    |
 
 ### **Sprint 3**
