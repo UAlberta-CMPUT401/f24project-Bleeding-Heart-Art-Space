@@ -13,7 +13,7 @@ for email functionality.
 
 ## UML Class Diagram
 
-This is a short description of logical entities of the domain in a UML diagram.
+The system revolves around Events, which contain Shifts. Users are the core entity, with specialized classes like Volunteer, Artist, and Admin inheriting from the base User class. Volunteers can sign up for Shifts, while Artists have additional capabilities, including the ability to request Events. Admins possess all permissions of Artists and can also manage user roles. This hierarchy represents a progressive increase in permissions and capabilities from Volunteers to Artists to Admins, with each level inheriting the abilities of the previous one and gaining additional functionalities.
 
 ![UML Diagram](images/UML.png)
 
