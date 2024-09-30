@@ -6,3 +6,4 @@ API. The Express.js backend utilizes Kysely SQL builder to communicate with Post
 management. The backend also uses Firebase Authentication for user authentication, and SendGrid 
 for email functionality.
 ![Architecture Diagram](images/architecture-diagram.png)
+![Sequence Diagram](images/Sequence-Diagram.png)
