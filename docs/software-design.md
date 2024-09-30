@@ -14,6 +14,7 @@ for email functionality.
 ## UML Class Diagram
 
 This is a short description of logical entities of the domain in a UML diagram.
+
 ![UML Diagram](images/UML.png)
 
 ## Sequence Diagrams
