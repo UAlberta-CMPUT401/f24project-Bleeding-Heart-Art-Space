@@ -64,7 +64,7 @@ export const roleMiddleware = async (req: Request, res: Response, next: NextFunc
 }
 
 /*
- * General purpose auth middleware. Gives the endpoint Request type the fields
+ * General purpose auth middleware. Gives the endpoint 'req: Request' the following fields:
  * - req.auth
  * - req.user
  * - req.role
