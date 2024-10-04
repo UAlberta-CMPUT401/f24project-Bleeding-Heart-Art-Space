@@ -1,11 +1,40 @@
 import { Kysely } from 'kysely'
 
 export async function up(db: Kysely<any>): Promise<void> {
+
   await db.schema
     .createTable('roles')
     .addColumn('id', 'serial', (col) => col.primaryKey())
     .addColumn('title', 'varchar(64)', (col) => col.notNull().unique())
-    .execute(); // TODO: add permission bool fields and predefine roles with set permissions
+    .addColumn('can_take_shift', 'boolean', (col) => col.notNull())
+    .addColumn('can_request_event', 'boolean', (col) => col.notNull())
+    .addColumn('is_admin', 'boolean', (col) => col.notNull())
+    .execute();
+
+  await db
+    .insertInto('roles')
+    .values([
+      {
+        title: 'volunteer',
+        can_take_shift: true,
+        can_request_event: false,
+        is_admin: false,
+      },
+      {
+        title: 'artist',
+        can_take_shift: true,
+        can_request_event: true,
+        is_admin: false,
+      },
+      {
+        title: 'admin',
+        can_take_shift: true,
+        can_request_event: true,
+        is_admin: true,
+      },
+    ])
+    .execute();
+
   await db.schema
     .createTable('users')
     .addColumn('id', 'serial', (col) => col.primaryKey())
@@ -18,9 +47,13 @@ export async function up(db: Kysely<any>): Promise<void> {
       .defaultTo(null)
     )
     .execute();
+
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
+
   await db.schema.dropTable('users').execute();
+
   await db.schema.dropTable('roles').execute();
+
 }
