@@ -14,16 +14,11 @@ export class UsersService {
       .executeTakeFirst();
   }
 
-  public async getUserAndRole(uid: string) {
+  public async getRole(user: User): Promise<Role | undefined> {
     return await db
-      .selectFrom('users')
-      .where('uid', '=', uid)
-      .innerJoin('roles', 'users.role', 'roles.id')
-      .selectAll('users')
-      .selectAll('roles')
-      .select((eb) => [
-        eb.ref('roles.id').as('role_id')
-      ])
+      .selectFrom('roles')
+      .where('id', '=', user.role)
+      .selectAll()
       .executeTakeFirst();
   }
 
