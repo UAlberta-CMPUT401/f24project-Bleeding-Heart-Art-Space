@@ -54,7 +54,7 @@ export const roleMiddleware = async (req: Request, res: Response, next: NextFunc
   }
 
   const usersService = container.resolve(UsersService);
-  const role = await usersService.getRole(user);
+  const role = await usersService.getUserRole(user);
   if (role === undefined) {
     res.status(401).json({ error: 'Missing role' });
     return;

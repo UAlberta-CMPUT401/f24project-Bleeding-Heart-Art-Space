@@ -15,6 +15,7 @@ export class UsersRoute implements Routes {
   private initializeRoutes() {
     this.router.get(`${this.path}/is-signed-in`, firebaseAuthMiddleware, this.usersController.getIsAuth);
     this.router.get(`${this.path}/user`, firebaseAuthMiddleware, userMiddleware, this.usersController.getUser);
+    this.router.post(`${this.path}/user`, firebaseAuthMiddleware, this.usersController.createVolunteer)
     this.router.get(`${this.path}/role`, authMiddleware, this.usersController.getRole);
   }
 }
