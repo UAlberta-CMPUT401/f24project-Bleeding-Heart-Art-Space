@@ -11,6 +11,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('is_admin', 'boolean', (col) => col.notNull())
     .addColumn('is_blocked', 'boolean', (col) => col.notNull())
     .execute();
+  await db.schema
+    .createIndex('roles_title_index')
+    .on('roles')
+    .columns(['title'])
+    .execute();
 
   await db
     .insertInto('roles')
@@ -57,6 +62,11 @@ export async function up(db: Kysely<any>): Promise<void> {
       .references('roles.id').onDelete('set null')
       .defaultTo(null)
     )
+    .execute();
+  await db.schema
+    .createIndex('users_uid_index')
+    .on('users')
+    .columns(['uid'])
     .execute();
 
 }
