@@ -6,8 +6,11 @@ import { DB_NAME, DB_HOST, DB_USER, DB_PORT, DB_PASSWORD } from "@config/env";
 import { promises as fs } from 'fs'
 import * as path from 'path'
 import { logger } from "@utils/logger";
+import { RolesTable, UsersTable } from "@features/users/users.model";
 
 export interface Database {
+  users: UsersTable
+  roles: RolesTable
 }
 
 // make sure that postgres 'numeric' types are numbers, not strings
