@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { UsersController } from './users.controller';
-import { firebaseAuthMiddleware } from '@middlewares/auth.middleware';
+import { authMiddleware, firebaseAuthMiddleware, userMiddleware } from '@middlewares/auth.middleware';
 
 export class UsersRoute implements Routes {
   public path = 'users';
@@ -14,5 +14,7 @@ export class UsersRoute implements Routes {
 
   private initializeRoutes() {
     this.router.get(`${this.path}/is-signed-in`, firebaseAuthMiddleware, this.usersController.getIsAuth);
+    this.router.get(`${this.path}/user`, firebaseAuthMiddleware, userMiddleware, this.usersController.getUser);
+    this.router.get(`${this.path}/role`, authMiddleware, this.usersController.getRole);
   }
 }
