@@ -320,7 +320,7 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
     - Some of their functionalities include: shifts that are organized through filters, multi language coverage, exports shifts to ical, reward system, Q and A section, 2 factor authentication.
     - Perhaps the filtering and exporting functionalities of the shifts can be used as inpiration to our project.
 
-## Techincal Resources
+## Technical Resources
 
 ### Frontend: React (Vite with Typescript)
 
