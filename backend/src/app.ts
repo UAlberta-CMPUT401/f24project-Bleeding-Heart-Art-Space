@@ -4,6 +4,7 @@ import { Routes } from '@interfaces/routes.interface';
 import { NODE_ENV, PORT } from '@config/env';
 import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
+import { initializeApp, applicationDefault } from 'firebase-admin/app';
 
 export class App {
   public app: express.Application;
@@ -15,6 +16,7 @@ export class App {
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
 
+    this.initializeFirbaseSDK();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
   }
@@ -36,7 +38,13 @@ export class App {
 
   private initializeRoutes(routes: Routes[]) {
     routes.forEach(route => {
-      this.app.use('/', route.router);
+      this.app.use('/api/', route.router);
+    });
+  }
+
+  private initializeFirbaseSDK() {
+    initializeApp({
+      credential: applicationDefault(),
     });
   }
 }
