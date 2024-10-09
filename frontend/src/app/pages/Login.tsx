@@ -24,6 +24,7 @@ const Login: React.FC = () => {
             className={styles.textField}
             variant="outlined"
             label="Email"
+            color="secondary"
           >
           </TextField>
           <TextField
@@ -31,6 +32,7 @@ const Login: React.FC = () => {
             className={styles.textField}
             variant="outlined"
             label="Password"
+            color="secondary"
           >
           </TextField>
           <Button
