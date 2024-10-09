@@ -8,6 +8,10 @@ This page provides an overview of the team and its members.
 
 ## Scrum Roles
 
+#### Sprint 1:
+- **Scrum Master** - Amaan Mohammed
+- **Product Owner** - Chase Johnson
+
 #### Sprint 2:
 - **Scrum Master** - Amaan Mohammed
 - **Product Owner** - Rishit Gajjar
