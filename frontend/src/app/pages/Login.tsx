@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Container, TextField } from "@mui/material";
+import { Button, Container, Divider, TextField } from "@mui/material";
 import styles from './Login.module.css';
 import TopBar from "../../components/layout/topBar";
 
@@ -40,6 +40,18 @@ const Login: React.FC = () => {
             Login
           </Button>
         </form>
+        <Divider
+          sx={{
+            marginY: '2rem',
+          }}
+        ></Divider>
+        <div>Don't have an account yet?</div>
+        <Button
+          variant="outlined"
+          href="/signup"
+        >
+          Sign-up
+        </Button>
       </Container>
     </TopBar>
   );
