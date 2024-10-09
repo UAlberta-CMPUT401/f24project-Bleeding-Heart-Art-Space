@@ -22,6 +22,7 @@ const Signup: React.FC = () => {
             type="email"
             variant="outlined"
             label="Email"
+            color="secondary"
           >
           </TextField>
           <TextField
@@ -29,6 +30,7 @@ const Signup: React.FC = () => {
             type="password"
             variant="outlined"
             label="Password"
+            color="secondary"
           >
           </TextField>
           <TextField
@@ -36,6 +38,7 @@ const Signup: React.FC = () => {
             type="password"
             variant="outlined"
             label="Confirm Password"
+            color="secondary"
           >
           </TextField>
           <Button
