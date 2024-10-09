@@ -1,44 +1,97 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Checkbox, Button, IconButton, FormControlLabel, Grid, Typography } from '@mui/material';
+import { Box, TextField, Checkbox, Button, IconButton, FormControlLabel, Grid, Typography, CircularProgress } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
 interface CreateEventProps {
     isSidebarOpen: boolean;
 }
 
-const apiUrl = import.meta.env.VITE_API_URL;
+interface Role {
+    id: number;
+    name: string;
+}
+
+const apiUrl = "http://localhost:3000/api"; // Ensure this matches your backend route
 
 const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
-    const [roles, setRoles] = useState<string[]>(['Role 1', 'Role 2', 'Role 3']);
+    const [roles, setRoles] = useState<Role[]>([]);
     const [newRole, setNewRole] = useState<string>('');
     const [formWidth, setFormWidth] = useState('100%');
+    const [loadingRoles, setLoadingRoles] = useState<boolean>(true);
+    const [loadingAddRole, setLoadingAddRole] = useState<boolean>(false);
 
+    // Adjust form width based on sidebar state
     useEffect(() => {
         setFormWidth(isSidebarOpen ? 'calc(100% - 0px)' : '100%');
     }, [isSidebarOpen]);
 
+    // Fetch roles from backend
     useEffect(() => {
         axios.get(`${apiUrl}/volunteer_roles`)
             .then(response => {
-                setRoles(response.data.map((role: { name: string }) => role.name));
+                setRoles(response.data); // Assume response.data is an array of { id, name }
             })
             .catch(error => {
                 console.error("Error fetching roles:", error);
+            })
+            .finally(() => {
+                setLoadingRoles(false);
             });
     }, []);
 
+    // Handle adding new role
     const handleAddRole = () => {
         if (newRole.trim() !== '') {
+            setLoadingAddRole(true);
             axios.post(`${apiUrl}/volunteer_roles`, { name: newRole })
                 .then(response => {
-                    setRoles([...roles, newRole]);
+                    setRoles([...roles, { id: response.data.id, name: newRole }]); // Assuming response includes the new role ID
                     setNewRole('');
                 })
                 .catch(error => {
                     console.error("Error adding role:", error);
+                    alert('Failed to add role. Please try again.');
+                })
+                .finally(() => {
+                    setLoadingAddRole(false);
                 });
         }
+    };
+
+    // Handle deleting a role
+    const handleDeleteRole = (id: number) => {
+        axios.delete(`${apiUrl}/volunteer_roles/${id}`)
+            .then(() => {
+                setRoles(roles.filter(role => role.id !== id));
+            })
+            .catch(error => {
+                console.error("Error deleting role:", error);
+                alert('Failed to delete role. Please try again.');
+            });
+    };
+
+    // Handle form submission
+    const handleSubmit = () => {
+        const eventData = {
+            date: "", // Replace with actual form state
+            time: "", // Replace with actual form state
+            venue: "", // Replace with actual form state
+            numberOfArtists: 0, // Replace with actual form state
+            numberOfVolunteers: 0, // Replace with actual form state
+            roles: roles.map(role => role.name), // Send only role names
+        };
+
+        axios.post(`${apiUrl}/events`, eventData)
+            .then(response => {
+                console.log("Event created successfully:", response.data);
+                alert('Event created successfully!');
+            })
+            .catch(error => {
+                console.error("Error creating event:", error);
+                alert('Failed to create event. Please try again.');
+            });
     };
 
     return (
@@ -65,14 +118,22 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                             <Typography variant="subtitle1" sx={{ color: '#000000' }}>Add roles for volunteers:</Typography>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {roles.map((role, index) => (
-                                    <FormControlLabel
-                                        key={index}
-                                        control={<Checkbox />}
-                                        label={role}
-                                        sx={{ marginRight: '8px', color: '#000000' }}
-                                    />
-                                ))}
+                                {loadingRoles ? (
+                                    <CircularProgress />
+                                ) : (
+                                    roles.map((role) => (
+                                        <Box key={role.id} sx={{ display: 'flex', alignItems: 'center', marginRight: '8px' }}>
+                                            <FormControlLabel
+                                                control={<Checkbox />}
+                                                label={role.name}
+                                                sx={{ color: '#000000' }}
+                                            />
+                                            <IconButton onClick={() => handleDeleteRole(role.id)} aria-label="delete role">
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Box>
+                                    ))
+                                )}
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
                                 <TextField
@@ -80,15 +141,16 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
                                     value={newRole}
                                     onChange={(e) => setNewRole(e.target.value)}
                                     sx={{ color: '#000000' }}
+                                    disabled={loadingAddRole}
                                 />
-                                <IconButton onClick={handleAddRole} aria-label="add role">
-                                    <AddCircleOutlineIcon />
+                                <IconButton onClick={handleAddRole} aria-label="add role" disabled={loadingAddRole}>
+                                    {loadingAddRole ? <CircularProgress size={24} /> : <AddCircleOutlineIcon />}
                                 </IconButton>
                             </Box>
                         </Box>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" color="primary" fullWidth>
+                        <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>
                             Submit
                         </Button>
                     </Grid>
