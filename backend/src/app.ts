@@ -5,6 +5,7 @@ import { NODE_ENV, PORT } from '@config/env';
 import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import cors from 'cors';
 
 export class App {
   public app: express.Application;
@@ -34,6 +35,9 @@ export class App {
   private initializeMiddlewares() {
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
+    if (NODE_ENV === 'development') {
+      this.app.use(cors())
+    }
   }
 
   private initializeRoutes(routes: Routes[]) {
