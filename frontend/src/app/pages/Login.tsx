@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Container, Divider, TextField } from "@mui/material";
+import { Button, Card, Divider, TextField } from "@mui/material";
 import styles from './Login.module.css';
 import TopBar from "../../components/layout/topBar";
 
@@ -7,14 +7,12 @@ const Login: React.FC = () => {
   return (
     <TopBar>
       <h1>Login</h1>
-      <Container
-        maxWidth="sm"
-        sx={(theme) => ({
-          borderRadius: '1rem',
+      <Card
+        sx={{
+          marginX: 'auto',
+          maxWidth: '30rem',
           padding: '2rem',
-          backgroundColor: theme.palette.background.base1,
-          boxShadow: theme.shadows[1],
-        })}
+        }}
       >
         <form
           className={styles.loginForm}
@@ -52,7 +50,7 @@ const Login: React.FC = () => {
         >
           Sign-up
         </Button>
-      </Container>
+      </Card>
     </TopBar>
   );
 }
