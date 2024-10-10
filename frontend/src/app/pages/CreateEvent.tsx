@@ -17,6 +17,7 @@ const apiUrl = "http://localhost:3000/api"; // Ensure this matches your backend 
 
 const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
     const [roles, setRoles] = useState<Role[]>([]);
+    const [selectedRoles, setSelectedRoles] = useState<Set<number>>(new Set()); // State for selected checkboxes
     const [newRole, setNewRole] = useState<string>('');
     const [formWidth, setFormWidth] = useState('100%');
     const [loadingRoles, setLoadingRoles] = useState<boolean>(true);
@@ -40,6 +41,19 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
                 setLoadingRoles(false);
             });
     }, []);
+
+    // Handle checkbox toggle
+    const handleCheckboxChange = (id: number) => {
+        setSelectedRoles(prevSelected => {
+            const newSelected = new Set(prevSelected);
+            if (newSelected.has(id)) {
+                newSelected.delete(id);
+            } else {
+                newSelected.add(id);
+            }
+            return newSelected;
+        });
+    };
 
     // Handle adding new role
     const handleAddRole = () => {
@@ -65,6 +79,11 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
         axios.delete(`${apiUrl}/volunteer_roles/${id}`)
             .then(() => {
                 setRoles(roles.filter(role => role.id !== id));
+                setSelectedRoles(prevSelected => {
+                    const newSelected = new Set(prevSelected);
+                    newSelected.delete(id);
+                    return newSelected;
+                });
             })
             .catch(error => {
                 console.error("Error deleting role:", error);
@@ -74,22 +93,26 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
 
     // Handle form submission
     const handleSubmit = () => {
-        const eventData = {
-            date: "", // Replace with actual form state
-            time: "", // Replace with actual form state
-            venue: "", // Replace with actual form state
-            numberOfArtists: 0, // Replace with actual form state
-            numberOfVolunteers: 0, // Replace with actual form state
-            roles: roles.map(role => role.name), // Send only role names
-        };
+        // const selectedRoleNames = roles
+        //     .filter(role => selectedRoles.has(role.id)) // Filter only selected roles
+        //     .map(role => role.name);
 
+        const eventData = {
+            start: "2024-10-10T09:00:00.000Z", // Replace with actual form state
+            end: "2024-10-10T17:00:00.000Z", // Replace with actual form state
+            address: "123 Main St, Citytown", // Replace with actual form state
+            title: "Community gathering", // Replace with actual form state
+            venue: "City Park", // Replace with actual form state
+             // Send only selected role names in JSON format
+        };
+        
         axios.post(`${apiUrl}/events`, eventData)
             .then(response => {
                 console.log("Event created successfully:", response.data);
                 alert('Event created successfully!');
             })
             .catch(error => {
-                console.error("Error creating event:", error);
+                console.error("Error creating event:", error.response?.data || error.message);
                 alert('Failed to create event. Please try again.');
             });
     };
@@ -124,7 +147,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
                                     roles.map((role) => (
                                         <Box key={role.id} sx={{ display: 'flex', alignItems: 'center', marginRight: '8px' }}>
                                             <FormControlLabel
-                                                control={<Checkbox />}
+                                                control={<Checkbox checked={selectedRoles.has(role.id)} onChange={() => handleCheckboxChange(role.id)} />}
                                                 label={role.name}
                                                 sx={{ color: '#000000' }}
                                             />
