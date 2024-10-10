@@ -7,10 +7,12 @@ import { promises as fs } from 'fs'
 import * as path from 'path'
 import { logger } from "@utils/logger";
 import { RolesTable, UsersTable } from "@features/users/users.model";
+import { VolunteerRolesTable } from "@/features/volunteerRoles/volunteerRoles.model";
 
 export interface Database {
   users: UsersTable
   roles: RolesTable
+  volunteer_roles: VolunteerRolesTable
 }
 
 // make sure that postgres 'numeric' types are numbers, not strings
