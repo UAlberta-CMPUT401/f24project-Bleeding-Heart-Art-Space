@@ -12,5 +12,9 @@ const events = [
 ];
 
 export default function BasicCalendar() {
-    return <Calendar events={events} />;
+    return (
+        <div style={{ height: '500px' }}> {/* Adjust height as needed */}
+            <Calendar events={events} />
+        </div>
+    );
 }
