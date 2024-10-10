@@ -40,3 +40,29 @@
 .read-the-docs {
   color: #888;
 }
+
+.app-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dashboard {
+  width: 200px;
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+
+.content-area {
+  flex-grow: 1; /* Let the content area take up the remaining space */
+  padding: 20px;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav li {
+  margin: 10px 0;
+}
