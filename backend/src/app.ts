@@ -34,9 +34,11 @@ export class App {
   }
 
   private initializeMiddlewares() {
-    this.app.use(cors({ origin: 'http://localhost:5173' })); // Enable CORS here
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
+    if (NODE_ENV === 'development') {
+      this.app.use(cors())
+    }
   }
 
   private initializeRoutes(routes: Routes[]) {
