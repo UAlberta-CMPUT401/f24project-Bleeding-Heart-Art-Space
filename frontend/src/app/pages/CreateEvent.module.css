@@ -1,0 +1,29 @@
+.container {
+    max-width: 600px;
+    margin: 40px auto; /* Added margin for spacing */
+    padding: 20px;
+}
+
+.card {
+    padding: 20px; /* Padding inside the card */
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    font-size: 1rem; /* Larger button text */
+}
+
+.MuiTextField-root {
+    margin-bottom: 16px; /* Spacing between text fields */
+}
