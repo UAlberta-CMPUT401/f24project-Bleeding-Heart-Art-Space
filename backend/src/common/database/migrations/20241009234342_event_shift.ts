@@ -41,8 +41,8 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   // Optional: Create indexes for optimization
   await db.schema.createIndex('event_start_end_index').on('events').columns(['start', 'end']).execute();
-  await db.schema.createIndex('shift_event_user_index').on('shifts').columns(['event_id', 'user_id']).execute();
-  await db.schema.createIndex('event_artist_event_user_index').on('event_artists').columns(['event_id', 'user_id']).execute();
+  // await db.schema.createIndex('shift_event_user_index').on('shifts').columns(['event_id', 'user_id']).execute();
+  // await db.schema.createIndex('event_artist_event_user_index').on('event_artists').columns(['event_id', 'user_id']).execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
