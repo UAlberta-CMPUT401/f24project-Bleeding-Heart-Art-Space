@@ -1,185 +1,220 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Checkbox, Button, IconButton, FormControlLabel, Grid, Typography, CircularProgress } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { TextField, Button, Grid, Typography, Container, Card } from '@mui/material';
 import axios from 'axios';
+import styles from "./CreateEvent.module.css";
+import { EventNote, LocationOn } from '@mui/icons-material';
+
 
 interface CreateEventProps {
     isSidebarOpen: boolean;
 }
 
-interface Role {
-    id: number;
-    name: string;
-}
-
 const apiUrl = "http://localhost:3000/api"; // Ensure this matches your backend route
 
 const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [selectedRoles, setSelectedRoles] = useState<Set<number>>(new Set()); // State for selected checkboxes
-    const [newRole, setNewRole] = useState<string>('');
     const [formWidth, setFormWidth] = useState('100%');
-    const [loadingRoles, setLoadingRoles] = useState<boolean>(true);
-    const [loadingAddRole, setLoadingAddRole] = useState<boolean>(false);
+    const [title, setTitle] = useState("");
+    const [venue, setVenue] = useState("");
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
+    const [address, setAddress] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+
 
     // Adjust form width based on sidebar state
     useEffect(() => {
         setFormWidth(isSidebarOpen ? 'calc(100% - 0px)' : '100%');
     }, [isSidebarOpen]);
 
-    // Fetch roles from backend
-    useEffect(() => {
-        axios.get(`${apiUrl}/volunteer_roles`)
-            .then(response => {
-                setRoles(response.data); // Assume response.data is an array of { id, name }
-            })
-            .catch(error => {
-                console.error("Error fetching roles:", error);
-            })
-            .finally(() => {
-                setLoadingRoles(false);
-            });
-    }, []);
+    // Handle form submission
+    const handleSubmit = (e: React.FormEvent) => {
 
-    // Handle checkbox toggle
-    const handleCheckboxChange = (id: number) => {
-        setSelectedRoles(prevSelected => {
-            const newSelected = new Set(prevSelected);
-            if (newSelected.has(id)) {
-                newSelected.delete(id);
-            } else {
-                newSelected.add(id);
-            }
-            return newSelected;
-        });
-    };
+        e.preventDefault();
 
-    // Handle adding new role
-    const handleAddRole = () => {
-        if (newRole.trim() !== '') {
-            setLoadingAddRole(true);
-            axios.post(`${apiUrl}/volunteer_roles`, { name: newRole })
+        const startDateTime = new Date(`${startDate}T${startTime}`);
+        const endDateTime = new Date(`${endDate}T${endTime}`);
+
+        if (startDateTime >= endDateTime) {
+            alert("End time must be after start time.");
+            return;
+        }
+        else{
+            const eventData = {
+                title: title, 
+                // date: date,
+                venue: venue,
+                start: `${startDate}T${startTime}`,
+                end: `${endDate}T${endTime}`,
+                // start: startDateTime.toISOString(),
+                // end: endDateTime.toISOString(),
+                address: address
+            };
+            
+            
+            axios.post(`${apiUrl}/events`, eventData)
                 .then(response => {
-                    setRoles([...roles, { id: response.data.id, name: newRole }]); // Assuming response includes the new role ID
-                    setNewRole('');
+                    console.log("Event created successfully:", response.data);
+                    alert('Event created successfully!');
                 })
                 .catch(error => {
-                    console.error("Error adding role:", error);
-                    alert('Failed to add role. Please try again.');
-                })
-                .finally(() => {
-                    setLoadingAddRole(false);
+                    console.error("Error creating event:", error.response?.data || error.message);
+                    alert('Failed to create event. Please try again.');
                 });
+            
+            // CLEAR/RESTART THE FIELDS AND LOG
+            setTitle("");
+            setStartDate("");
+            setEndDate("");
+            setStartTime("");
+            setEndTime("");
+            setVenue("");
+            setAddress("");
+            console.log({ title, startDate, endDate, startTime, endTime, venue });
         }
     };
 
-    // Handle deleting a role
-    const handleDeleteRole = (id: number) => {
-        axios.delete(`${apiUrl}/volunteer_roles/${id}`)
-            .then(() => {
-                setRoles(roles.filter(role => role.id !== id));
-                setSelectedRoles(prevSelected => {
-                    const newSelected = new Set(prevSelected);
-                    newSelected.delete(id);
-                    return newSelected;
-                });
-            })
-            .catch(error => {
-                console.error("Error deleting role:", error);
-                alert('Failed to delete role. Please try again.');
-            });
+    // Handle clear button click
+    const handleClear = () => {
+        setTitle("");
+        setStartDate("");
+        setEndDate("");        
+        setStartTime("");
+        setEndTime("");
+        setVenue("");
+        setAddress("");
     };
 
-    // Handle form submission
-    const handleSubmit = () => {
-        // const selectedRoleNames = roles
-        //     .filter(role => selectedRoles.has(role.id)) // Filter only selected roles
-        //     .map(role => role.name);
-
-        const eventData = {
-            start: "2024-10-10T09:00:00.000Z", // Replace with actual form state
-            end: "2024-10-10T17:00:00.000Z", // Replace with actual form state
-            address: "123 Main St, Citytown", // Replace with actual form state
-            title: "Community gathering", // Replace with actual form state
-            venue: "City Park", // Replace with actual form state
-             // Send only selected role names in JSON format
-        };
-        
-        axios.post(`${apiUrl}/events`, eventData)
-            .then(response => {
-                console.log("Event created successfully:", response.data);
-                alert('Event created successfully!');
-            })
-            .catch(error => {
-                console.error("Error creating event:", error.response?.data || error.message);
-                alert('Failed to create event. Please try again.');
-            });
-    };
-
+    
     return (
-        <Box sx={{ width: formWidth, margin: 'auto', padding: '20px' }}>
-            <Box sx={{ maxWidth: '1800px', width: '100%', margin: 'auto', padding: '20px', boxShadow: 1, backgroundColor: '#ffffff' }}>
-                <Typography variant="h2" sx={{ color: '#000000' }}>Create Event</Typography>
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <TextField fullWidth label="Date" type="date" InputLabelProps={{ shrink: true }} sx={{ color: '#000000' }} />
+        <Container className={styles.container}>
+            <Card elevation={6} className={styles.card}>
+                <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
+                    Create Event
+                </Typography>
+                <form onSubmit={handleSubmit} className={styles.form}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Event Title"
+                                variant="outlined"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                required
+                                fullWidth
+                                aria-label="Event Title"
+                                InputProps={{
+                                    startAdornment: <EventNote style={{ marginRight: '8px' }} />
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Venue"
+                                variant="outlined"
+                                value={venue}
+                                onChange={(e) => setVenue(e.target.value)}
+                                required
+                                fullWidth
+                                aria-label="Venue"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Start Date"
+                                type="date"
+                                variant="outlined"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                required
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                aria-label="Start Date"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Start Time"
+                                type="time"
+                                variant="outlined"
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
+                                required
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                aria-label="Start Time"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="End Date"
+                                type="date"
+                                variant="outlined"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                required
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                aria-label="End Date"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="End Time"
+                                type="time"
+                                variant="outlined"
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
+                                required
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                aria-label="End Time"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Address"
+                                variant="outlined"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                required
+                                fullWidth
+                                aria-label="Address"
+                                InputProps={{
+                                    startAdornment: <LocationOn style={{ marginRight: '8px' }} />
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={handleClear}
+                                        fullWidth
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        Clear
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        type="submit"
+                                        fullWidth
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        Create
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={6}>
-                        <TextField fullWidth label="Time" type="time" InputLabelProps={{ shrink: true }} sx={{ color: '#000000' }} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField fullWidth label="Venue" sx={{ color: '#000000' }} />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField fullWidth label="Number of Artists" type="number" sx={{ color: '#000000' }} />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField fullWidth label="Number of Volunteers" type="number" sx={{ color: '#000000' }} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-                            <Typography variant="subtitle1" sx={{ color: '#000000' }}>Add roles for volunteers:</Typography>
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {loadingRoles ? (
-                                    <CircularProgress />
-                                ) : (
-                                    roles.map((role) => (
-                                        <Box key={role.id} sx={{ display: 'flex', alignItems: 'center', marginRight: '8px' }}>
-                                            <FormControlLabel
-                                                control={<Checkbox checked={selectedRoles.has(role.id)} onChange={() => handleCheckboxChange(role.id)} />}
-                                                label={role.name}
-                                                sx={{ color: '#000000' }}
-                                            />
-                                            <IconButton onClick={() => handleDeleteRole(role.id)} aria-label="delete role">
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        </Box>
-                                    ))
-                                )}
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                                <TextField
-                                    label="New Role"
-                                    value={newRole}
-                                    onChange={(e) => setNewRole(e.target.value)}
-                                    sx={{ color: '#000000' }}
-                                    disabled={loadingAddRole}
-                                />
-                                <IconButton onClick={handleAddRole} aria-label="add role" disabled={loadingAddRole}>
-                                    {loadingAddRole ? <CircularProgress size={24} /> : <AddCircleOutlineIcon />}
-                                </IconButton>
-                            </Box>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>
-                            Submit
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Box>
-        </Box>
+                </form>
+            </Card>
+        </Container>
     );
 };
 
