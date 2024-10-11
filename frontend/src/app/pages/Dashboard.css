@@ -1,42 +1,51 @@
-/* Dashboard.css */
+.dashboard-container {
+  display: flex;
+  padding-left: 100px; /* Adjust this value to control the distance from the left */
+  height: 100vh;
+}
+
 .dashboard {
-    width: 200px;
-    background-color: #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around; /* Distribute the buttons evenly */
-    padding: 0;
-    height: 100vh; /* Full height for the dashboard */
-  }
+  width: 200px;
+  background-color: #966262;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around; /* Distribute the buttons evenly */
+  padding: 0;
+  position: fixed; /* Ensure it stays below the fixed navbar */
+  left: 0;
+  top: 100px; /* Push down the dashboard so it starts under the top navbar */
+  height: calc(100vh - 70px); /* Full height minus the height of the navbar */
+  box-sizing: border-box;
+  z-index: 999; /* Keep it below the top-navbar */
+}
   
-  nav {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%; /* Ensure the buttons fill the height */
-  }
-  
-  .dashboard-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-    background-color: #9c2424; /* Blue button color */
-    padding: 20px;
-    font-size: 18px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    margin: 10px 0;
-    width: 100%;
-    height: 25%; /* Make each button fill a quarter of the dashboard */
-    box-sizing: border-box;
-    text-align: center;
-    transition: background-color 0.3s ease;
-  }
-  
-  .dashboard-button:hover {
-    background-color: #e61414; /* Darken on hover */
-  }
-  
+nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%; /* Ensure the buttons fill the height */
+}
+
+.dashboard-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  background-color: #9c2424; /* Blue button color */
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  margin: 10px 0;
+  width: 100%;
+  height: 25%; /* Make each button fill a quarter of the dashboard */
+  box-sizing: border-box;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-button:hover {
+  background-color: #e61414; /* Darken on hover */
+}
