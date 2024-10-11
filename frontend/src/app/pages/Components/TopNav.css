@@ -1,0 +1,35 @@
+.top-nav {
+    width: 100%;
+    background-color: #bb8f8f; /* Adjust the background color */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 20px; /* Adjust the padding */
+    position: fixed; /* Fix the navbar at the top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    z-index: 1000; /* Ensure the navbar stays on top of other elements */
+    box-sizing: border-box;
+    height: 100px; /* Adjust the height */
+}
+
+.navbar-logo {
+    height: 100%;
+    max-height: 90px;
+    width: auto;
+}
+
+
+.logo-container {
+    display: flex;
+    align-items: left;
+    margin-right: auto;
+}
+
+.nav-items {
+    display: flex;
+    gap: 20px;
+}
+.nav-link:hover {
+    color: #e61414;
+}
