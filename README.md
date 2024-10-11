@@ -1,6 +1,6 @@
 # Bleeding Heart Art Space
 ## Volunteer Management Web App
-This is a volunteer management web application (in development), designed to make tracking volunteers for events more simple and effective.
+This is a volunteer management web application (in development), designed to make managing and coordinating volunteers for events more simple and effective.
 
 View docs for details on project requirements, software design, project managment, and teamwork here: https://ualberta-cmput401.github.io/f24project-Bleeding-Heart-Art-Space/
 
