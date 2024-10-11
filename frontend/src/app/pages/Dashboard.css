@@ -22,7 +22,7 @@
     align-items: center;
     text-decoration: none;
     color: white;
-    background-color: #007BFF; /* Blue button color */
+    background-color: #9c2424; /* Blue button color */
     padding: 20px;
     font-size: 18px;
     font-weight: bold;
@@ -37,6 +37,6 @@
   }
   
   .dashboard-button:hover {
-    background-color: #0056b3; /* Darken on hover */
+    background-color: #e61414; /* Darken on hover */
   }
   
