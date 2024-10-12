@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import { db } from '@database/database';
-import { Event, NewEvent } from './events.model';
+import { Event, NewEvent, EventUpdate } from './events.model';
 
 @singleton()
 export class EventsService {
@@ -69,6 +69,20 @@ export class EventsService {
   public async deleteEvent(eventId: number): Promise<void> {
     await db
       .deleteFrom('events' as any)
+      .where('id', '=', eventId)
+      .execute();
+  }
+
+  /**
+   * Update an existing event in the database
+   * @param eventId - The ID of the event to update
+   * @param eventData - The new data for the event
+   * @returns A confirmation message or updated event
+   */
+  public async updateEvent(eventId: number, eventData: EventUpdate): Promise<void> {
+    await db
+      .updateTable('events')
+      .set(eventData)
       .where('id', '=', eventId)
       .execute();
   }

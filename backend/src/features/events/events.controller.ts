@@ -68,4 +68,19 @@ export class EventsController {
       next(error);
     }
   };
+
+  /**
+   * Update an existing event
+   */
+  public updateEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const eventId = parseInt(req.params.id, 10); // Extract and parse the event ID from the request parameters
+      const eventData = req.body; // The updated event data
+      
+      await this.eventsService.updateEvent(eventId, eventData);
+      res.status(200).json({ message: 'Event updated successfully' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
