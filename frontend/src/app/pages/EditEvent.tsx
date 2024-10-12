@@ -31,7 +31,7 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
     // Fetch event details and populate the form
     useEffect(() => {
         if (id) {
-            axios.get(`${apiUrl}/create-event/${id}`)
+            axios.get(`${apiUrl}/events/${id}`)
                 .then(response => {
                     const event = response.data;
                     setTitle(event.title);
