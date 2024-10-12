@@ -45,7 +45,7 @@ export class App {
     
     routes.forEach(route => {
       this.app.use('/api', route.router);
-      console.log(`Initializing route at path: ${route.path}`);
+      logger.info(`Initializing route at path: ${route.path}`);
     });
   }
 
