@@ -1,8 +1,7 @@
 import React from "react";
 import TopNav from "./components/TopNav";
 import Dashboard from "./Dashboard";
-import "./components/TopNav.css";
-import "./Dashboard.css";
+
 
 const HomePage: React.FC = () => {
   return (

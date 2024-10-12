@@ -18,7 +18,9 @@ const Router: React.FC = () => {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} />} />
+      <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={function (event: { title: string; start: Date; end: Date; venue: string; }): void {
+        throw new Error("Function not implemented.");
+      } } />} />
       <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
       <Route path="/homepage" element={<HomePage />} />
       <Route path="/calendar" element={<BasicCalendar />} />

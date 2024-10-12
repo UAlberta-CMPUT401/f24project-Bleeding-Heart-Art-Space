@@ -2,6 +2,7 @@ import moment from "moment";
 import Calendar from "../Calendar";
 import TopNav from "./TopNav"
 import Dashboard from "../Dashboard"
+import EventCalendar from "../CalendarEvent";
 
 
 const events = [
@@ -25,7 +26,7 @@ export default function BasicCalendar() {
             
                 <div className="main-content">
                     <div style={{ height: '500px' }}> {/* Adjust height as needed */}
-                        <Calendar events={events} />
+                        <EventCalendar />
                     </div>
                 </div>
             </div>
