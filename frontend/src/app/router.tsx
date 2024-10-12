@@ -8,6 +8,7 @@ import BasicCalendar from './pages/components/BasicCalendar';
 import HomePage from './pages/HomePage';
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
+import VolunteerManagement from "./pages/VolunteerManagement";
 
 
 const Router: React.FC = () => {
@@ -21,7 +22,7 @@ const Router: React.FC = () => {
       <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
       <Route path="/homepage" element={<HomePage />} />
       <Route path="/calendar" element={<BasicCalendar />} />
-      {/* <Route path="/volunteer-management" element={<VolunteerManagement />} /> */}
+      <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
     </Routes>
   );
 }
