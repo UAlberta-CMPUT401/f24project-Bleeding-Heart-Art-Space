@@ -1,5 +1,6 @@
 import moment from "moment";
 import Calendar from "../Calendar";
+import TopNav from "./TopNav"
 
 
 
@@ -13,8 +14,10 @@ const events = [
 
 export default function BasicCalendar() {
     return (
-        <div style={{ height: '500px' }}> {/* Adjust height as needed */}
-            <Calendar events={events} />
-        </div>
+        <><div className="app-container">
+            <TopNav />
+        </div><div style={{ height: '500px' }}> {/* Adjust height as needed */}
+                <Calendar events={events} />
+            </div></>
     );
 }

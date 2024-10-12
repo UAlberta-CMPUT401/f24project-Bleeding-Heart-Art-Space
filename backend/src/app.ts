@@ -1,10 +1,11 @@
 import 'reflect-metadata';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { NODE_ENV, PORT } from '@config/env';
 import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import cors from 'cors';
 
 export class App {
   public app: express.Application;
@@ -16,14 +17,15 @@ export class App {
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
 
-    this.initializeFirbaseSDK();
+    this.initializeFirebaseSDK();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
+    this.initializeErrorHandling(); // Add error-handling middleware
   }
 
   public listen() {
     this.app.listen(this.port, () => {
-      logger.debug(`Server is running at http://localhost:${PORT}`)
+      logger.debug(`Server is running at http://localhost:${this.port}`);
     });
   }
 
@@ -34,17 +36,36 @@ export class App {
   private initializeMiddlewares() {
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
+    if (NODE_ENV === 'development') {
+      this.app.use(cors())
+    }
   }
 
   private initializeRoutes(routes: Routes[]) {
+    
     routes.forEach(route => {
-      this.app.use('/api/', route.router);
+      this.app.use('/api', route.router);
+      console.log(`Initializing route at path: ${route.path}`);
     });
   }
 
-  private initializeFirbaseSDK() {
+  private initializeFirebaseSDK() {
     initializeApp({
       credential: applicationDefault(),
+    });
+  }
+
+  // Global error handling middleware
+  private initializeErrorHandling() {
+    this.app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+      const status = error.status || 500;
+      const message = error.message || 'Something went wrong';
+      
+      // Log the error (you can customize this as needed)
+      logger.error(`[${req.method}] ${req.path} >> StatusCode:: ${status}, Message:: ${message}`);
+
+      // Send the error response
+      res.status(status).json({ message });
     });
   }
 }

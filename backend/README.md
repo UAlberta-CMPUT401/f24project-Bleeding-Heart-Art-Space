@@ -44,7 +44,13 @@ exit
 ```
 
 ## Env File
-Create env file `.env.development.local`. Copy `.env.example` and fill in correct env values.
+Create env file `.env.development.local`. Copy `.env.example` (into the same directory and rename) and fill in correct env values.
+
+Instruction for setting up `GOOGLE_APPLICATION_CREDENTIALS` var can be found here: https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments
+- TLDR:
+    - Click `Generate new private key` here: https://console.firebase.google.com/project/bleeding-heart-art-space/settings/serviceaccounts/adminsdk
+    - Set `GOOGLE_APPLICATION_CREDENTIALS` to the absolute path to the generated key
+    - DON'T COMMIT YOUR PRIVATE KEY TO THE REPO
 
 
 ## Run
