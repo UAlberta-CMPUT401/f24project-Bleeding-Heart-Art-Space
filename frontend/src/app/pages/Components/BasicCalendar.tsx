@@ -1,7 +1,7 @@
 import moment from "moment";
 import Calendar from "../Calendar";
 import TopNav from "./TopNav"
-
+import Dashboard from "../Dashboard"
 
 
 const events = [
@@ -14,10 +14,22 @@ const events = [
 
 export default function BasicCalendar() {
     return (
-        <><div className="app-container">
+    <>
+        <div className="nav-container">
+            {/* Top Navigation Bar */}
             <TopNav />
-        </div><div style={{ height: '500px' }}> {/* Adjust height as needed */}
-                <Calendar events={events} />
-            </div></>
+
+            <div className="dashboard-container">
+                {/* Sidebar Dashboard */}
+                <Dashboard />
+            
+                <div className="main-content">
+                    <div style={{ height: '500px' }}> {/* Adjust height as needed */}
+                        <Calendar events={events} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </>
     );
 }

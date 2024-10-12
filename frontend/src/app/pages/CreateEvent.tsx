@@ -3,6 +3,10 @@ import { TextField, Button, Grid, Typography, Container, Card } from '@mui/mater
 import axios from 'axios';
 import styles from "./CreateEvent.module.css";
 import { EventNote, LocationOn } from '@mui/icons-material';
+import TopNav from './components/TopNav'; // Import TopNav component
+import Dashboard from './Dashboard'; // Import Dashboard component
+import './components/TopNav.css';
+import './Dashboard.css';
 
 interface CreateEventProps {
     isSidebarOpen: boolean;
@@ -22,12 +26,11 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
     
     // Adjust form width based on sidebar state
     useEffect(() => {
-        setFormWidth(isSidebarOpen ? 'calc(100% - 0px)' : '100%');
+        setFormWidth(isSidebarOpen ? 'calc(100% - 200px)' : '100%'); // Adjust for the sidebar width
     }, [isSidebarOpen]);
 
     // Handle form submission
     const handleSubmit = (e: React.FormEvent) => {
-
         e.preventDefault();
 
         const startDateTime = new Date(`${startDate}T${startTime}`);
@@ -45,7 +48,6 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
                 end: `${endDate}T${endTime}`,
                 address: address
             };
-            
             
             axios.post(`${apiUrl}/events`, eventData)
                 .then(response => {
@@ -80,136 +82,150 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
         setAddress("");
     };
 
-    
     return (
-        <Container className={styles.container}>
-            <Card elevation={6} className={styles.card}>
-                <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
-                    Create Event
-                </Typography>
-                <form onSubmit={handleSubmit} className={styles.form}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Event Title"
-                                variant="outlined"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                required
-                                fullWidth
-                                aria-label="Event Title"
-                                InputProps={{
-                                    startAdornment: <EventNote style={{ marginRight: '8px' }} />
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Venue"
-                                variant="outlined"
-                                value={venue}
-                                onChange={(e) => setVenue(e.target.value)}
-                                required
-                                fullWidth
-                                aria-label="Venue"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="Start Date"
-                                type="date"
-                                variant="outlined"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                required
-                                fullWidth
-                                InputLabelProps={{ shrink: true }}
-                                aria-label="Start Date"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="Start Time"
-                                type="time"
-                                variant="outlined"
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
-                                required
-                                fullWidth
-                                InputLabelProps={{ shrink: true }}
-                                aria-label="Start Time"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="End Date"
-                                type="date"
-                                variant="outlined"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                required
-                                fullWidth
-                                InputLabelProps={{ shrink: true }}
-                                aria-label="End Date"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="End Time"
-                                type="time"
-                                variant="outlined"
-                                value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)}
-                                required
-                                fullWidth
-                                InputLabelProps={{ shrink: true }}
-                                aria-label="End Time"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Address"
-                                variant="outlined"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                required
-                                fullWidth
-                                aria-label="Address"
-                                InputProps={{
-                                    startAdornment: <LocationOn style={{ marginRight: '8px' }} />
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Grid container spacing={2}>
-                                <Grid item xs={6}>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        onClick={handleClear}
-                                        fullWidth
-                                        style={{ marginTop: '20px' }}
-                                    >
-                                        Clear
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        type="submit"
-                                        fullWidth
-                                        style={{ marginTop: '20px' }}
-                                    >
-                                        Create
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </form>
-            </Card>
-        </Container>
+        <>
+            <div className="nav-container">
+                {/* Top Navigation Bar */}
+                <TopNav />
+
+                <div className="dashboard-container">
+                    {/* Sidebar Dashboard */}
+                    <Dashboard />
+
+                    {/* Main Content */}
+                    <div className="main-content" style={{ width: formWidth }}>
+                        <Container className={styles.container}>
+                            <Card elevation={6} className={styles.card}>
+                                <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
+                                    Create Event
+                                </Typography>
+                                <form onSubmit={handleSubmit} className={styles.form}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                label="Event Title"
+                                                variant="outlined"
+                                                value={title}
+                                                onChange={(e) => setTitle(e.target.value)}
+                                                required
+                                                fullWidth
+                                                aria-label="Event Title"
+                                                InputProps={{
+                                                    startAdornment: <EventNote style={{ marginRight: '8px' }} />
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                label="Venue"
+                                                variant="outlined"
+                                                value={venue}
+                                                onChange={(e) => setVenue(e.target.value)}
+                                                required
+                                                fullWidth
+                                                aria-label="Venue"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="Start Date"
+                                                type="date"
+                                                variant="outlined"
+                                                value={startDate}
+                                                onChange={(e) => setStartDate(e.target.value)}
+                                                required
+                                                fullWidth
+                                                InputLabelProps={{ shrink: true }}
+                                                aria-label="Start Date"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="Start Time"
+                                                type="time"
+                                                variant="outlined"
+                                                value={startTime}
+                                                onChange={(e) => setStartTime(e.target.value)}
+                                                required
+                                                fullWidth
+                                                InputLabelProps={{ shrink: true }}
+                                                aria-label="Start Time"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="End Date"
+                                                type="date"
+                                                variant="outlined"
+                                                value={endDate}
+                                                onChange={(e) => setEndDate(e.target.value)}
+                                                required
+                                                fullWidth
+                                                InputLabelProps={{ shrink: true }}
+                                                aria-label="End Date"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="End Time"
+                                                type="time"
+                                                variant="outlined"
+                                                value={endTime}
+                                                onChange={(e) => setEndTime(e.target.value)}
+                                                required
+                                                fullWidth
+                                                InputLabelProps={{ shrink: true }}
+                                                aria-label="End Time"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                label="Address"
+                                                variant="outlined"
+                                                value={address}
+                                                onChange={(e) => setAddress(e.target.value)}
+                                                required
+                                                fullWidth
+                                                aria-label="Address"
+                                                InputProps={{
+                                                    startAdornment: <LocationOn style={{ marginRight: '8px' }} />
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={6}>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="secondary"
+                                                        onClick={handleClear}
+                                                        fullWidth
+                                                        style={{ marginTop: '20px' }}
+                                                    >
+                                                        Clear
+                                                    </Button>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        type="submit"
+                                                        fullWidth
+                                                        style={{ marginTop: '20px' }}
+                                                    >
+                                                        Create
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </form>
+                            </Card>
+                        </Container>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 };
 

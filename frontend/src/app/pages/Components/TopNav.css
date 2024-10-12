@@ -1,22 +1,17 @@
 .top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    background-color: #bb8f8f; /* Adjust the background color */
+    height: 90px;
+    background-color: #333;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 10px 20px; /* Adjust the padding */
-    position: fixed; /* Fix the navbar at the top */
-    top: 0; /* Stay at the top */
-    left: 0;
-    z-index: 1000; /* Ensure the navbar stays on top of other elements */
+    z-index: 1000; /* Ensure it stays above the dashboard */
+    padding-left: 20px;
     box-sizing: border-box;
-    height: 100px; /* Adjust the height */
-}
-
-.navbar-logo {
-    height: 100%;
-    max-height: 90px;
-    width: auto;
 }
 
 
@@ -26,10 +21,17 @@
     margin-right: auto;
 }
 
-.nav-items {
+.navbar-logo {
+    height: 100%;
+    max-height: 90px;
+    width: auto;
+}
+  
+  /* Ensure other content doesn't overlap with navbar */
+.nav-container {
     display: flex;
-    gap: 20px;
+    padding-top: 90px; /* Push content down to accommodate the navbar */
+    width: 100%;
+    box-sizing: border-box;
 }
-.nav-link:hover {
-    color: #e61414;
-}
+  
