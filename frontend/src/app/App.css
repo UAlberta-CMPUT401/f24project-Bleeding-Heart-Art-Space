@@ -41,35 +41,6 @@
   color: #888;
 }
 
-.app-container {
-  display: flex;
-  flex-direction: row;
-  padding-top: 70px;
-}
-
-.main-content {
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-}
-
-
-.dashboard {
-  width: 200px; /* Fixed width for the dashboard */
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  height: 100vh; /* Full height for the dashboard */
-  position: fixed; /* Make the dashboard fixed on the left side */
-  left: 0;
-  top: 0;
-}
-
-.content-area {
-  flex-grow: 1; /* Take up the remaining space */
-  padding: 20px; /* Add padding to the content */
-  margin-left: 200px; /* Adjust the margin to make space for the dashboard */
-}
 
 nav ul {
   list-style-type: none;

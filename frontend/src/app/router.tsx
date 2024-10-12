@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import BasicCalendar from './pages/Components/BasicCalendar';
+import BasicCalendar from './pages/components/BasicCalendar';
 import HomePage from './pages/HomePage';
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
