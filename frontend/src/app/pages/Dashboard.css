@@ -1,0 +1,60 @@
+.dashboard-container {
+  display: flex;
+  padding-left: 200px; /* Adjust this value to control the distance from the left */
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.dashboard {
+  width: 200px;
+  background-color: #966262;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0;
+  position: fixed; /* Ensure it stays fixed on the left */
+  left: 0;
+  top: 70px; /* Push down the dashboard so it starts under the top navbar */
+  height: calc(100vh - 70px); /* Full height minus the navbar height */
+  box-sizing: border-box;
+  z-index: 999; /* Ensure it stays below the top navbar */
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.main-content {
+  margin-left: 200px; /* To account for the width of the dashboard */
+  padding: 20px;
+  width: calc(100% - 200px); /* Adjust to take up the remaining space */
+  box-sizing: border-box;
+}
+
+/* Dashboard buttons */
+.dashboard-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  background-color: #9c2424;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  margin: 10px 0;
+  width: 100%;
+  height: 25%;
+  box-sizing: border-box;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-button:hover {
+  background-color: #e61414;
+}
