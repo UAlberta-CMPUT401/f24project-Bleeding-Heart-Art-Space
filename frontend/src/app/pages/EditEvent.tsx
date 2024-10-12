@@ -79,6 +79,7 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
                 .then(response => {
                     console.log("Event updated successfully:", response.data);
                     alert('Event updated successfully!');
+                    navigate('/calendar');
                 })
                 .catch(error => {
                     console.error("Error updating event:", error.response?.data || error.message);
@@ -92,7 +93,7 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
         axios.delete(`${apiUrl}/events/${id}`)
             .then(() => {
                 alert('Event deleted successfully!');
-                navigate('/events'); // Redirect to events list or another page
+                navigate('/calendar'); // Redirect to events list or another page
             })
             .catch(error => {
                 console.error("Error deleting event:", error.response?.data || error.message);
