@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { Alert } from "@mui/material";
 import { Button, Card, Divider, TextField } from "@mui/material";
 import styles from './Login.module.css';
 import TopBar from "../../components/layout/topBar";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../firebase.ts";
+import { useNavigate } from "react-router-dom";
 
 const Signup: React.FC = () => {
 
@@ -11,6 +13,10 @@ const Signup: React.FC = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +32,12 @@ const Signup: React.FC = () => {
 
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("User created:", userCredential.user);
+
+      setSuccess(true);
+
+      setTimeout(() => {
+        navigate("/Login");
+      }, 2000);
 
     } catch (error: any) {
       console.error("Error signing up:", error);
@@ -44,8 +56,11 @@ const Signup: React.FC = () => {
         }}
       >
         <form className={styles.loginForm} onSubmit={handleSignUp}>
+
+          {error && <Alert severity="error">{error}</Alert>}
+
+          {success && <Alert severity="success">Signup successful! Redirecting to login...</Alert>}
           
-          {error && <div style={{ color: "red" }}>{error}</div>}
           
           <TextField
             required
@@ -55,6 +70,7 @@ const Signup: React.FC = () => {
             color="secondary"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={success}
           />
           
           <TextField
@@ -65,6 +81,7 @@ const Signup: React.FC = () => {
             color="secondary"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={success}
           />
           
           <TextField
@@ -75,6 +92,7 @@ const Signup: React.FC = () => {
             color="secondary"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={success}
           />
           
           <Button type="submit" variant="contained">
