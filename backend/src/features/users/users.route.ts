@@ -2,9 +2,10 @@ import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { UsersController } from './users.controller';
 import { authMiddleware, firebaseAuthMiddleware, userMiddleware } from '@middlewares/auth.middleware';
+import { Request, Response, NextFunction } from 'express';
 
 export class UsersRoute implements Routes {
-  public path = 'users';
+  public path = '/users';
   public router = Router();
   public usersController = new UsersController();
 

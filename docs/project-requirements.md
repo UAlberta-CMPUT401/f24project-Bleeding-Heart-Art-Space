@@ -26,6 +26,8 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 
 - **Dashboard**: A centralized page where admins can monitor events, volunteer sign-ups, attendance, and manage schedules. Volunteers may also have a dashboard to view upcoming events they are signed up for.
 
+- **One-time User**: A user that does not have an account that is added to an event as a one-time volunteer or artist by an admin of the event.
+
 ## User Stories
 
 ### Admin User Stories
