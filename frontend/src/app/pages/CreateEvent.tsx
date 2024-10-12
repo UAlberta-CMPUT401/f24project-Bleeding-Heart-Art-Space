@@ -7,15 +7,19 @@ import TopNav from './components/TopNav'; // Import TopNav component
 import Dashboard from './Dashboard'; // Import Dashboard component
 import './components/TopNav.css';
 import './Dashboard.css';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 
 interface CreateEventProps {
     isSidebarOpen: boolean;
-    onAddEvent: (event: { title: string; start: Date; end: Date; venue: string }) => void;
+    onAddEvent: (event: { title: string; start: Date; end: Date; venue: string, address: string }) => void;
 }
 
 const apiUrl = "http://localhost:3000/api";
 
 const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [formWidth, setFormWidth] = useState('100%');
     const [title, setTitle] = useState("");
     const [venue, setVenue] = useState("");
@@ -30,9 +34,27 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
         setFormWidth(isSidebarOpen ? 'calc(100% - 200px)' : '100%'); // Adjust for the sidebar width
     }, [isSidebarOpen]);
 
+    // Sets dates and times apart for selected slot location on calendar
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const startParam = params.get('start');
+        const endParam = params.get('end');
+
+        if (startParam) {
+            const startDateTime = new Date(startParam);
+            setStartDate(startDateTime.toISOString().slice(0, 10));
+            setStartTime(startDateTime.toISOString().slice(11, 16));
+        }
+        if (endParam) {
+            const endDateTime = new Date(endParam);
+            setEndDate(endDateTime.toISOString().slice(0, 10));
+            setEndTime(endDateTime.toISOString().slice(11, 16));
+        }
+    }, [location.search]);
+
     // Handle form submission
     const handleSubmit = (e: React.FormEvent) => {
-        //e.preventDefault();
+        e.preventDefault();
 
         const startDateTime = new Date(`${startDate}T${startTime}`);
         const endDateTime = new Date(`${endDate}T${endTime}`);
@@ -54,13 +76,14 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
                 .then(response => {
                     console.log("Event created successfully:", response.data);
                     alert('Event created successfully!');
-                      // Call a prop function to add the event to the calendar
                     onAddEvent({
                         title: eventData.title,
                         start: new Date(eventData.start),
                         end: new Date(eventData.end),
-                        venue: eventData.venue
+                        venue: eventData.venue,
+                        address: eventData.address
                     });
+                    navigate('/calendar');
                 })
                 .catch(error => {
                     console.error("Error creating event:", error.response?.data || error.message);
@@ -75,7 +98,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
             setEndTime("");
             setVenue("");
             setAddress("");
-            console.log({ title, startDate, endDate, startTime, endTime, venue });
+            console.log({ title, startDate, endDate, startTime, endTime, venue, address });
         }
     };
 
