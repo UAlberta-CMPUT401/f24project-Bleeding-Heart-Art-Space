@@ -23,5 +23,8 @@ export class EventsRoute implements Routes {
 
     // Route to delete an event by ID
     this.router.delete(`${this.path}/:id`, this.eventsController.deleteEvent);
+
+    // Route to update an event by ID
+    this.router.put(`${this.path}/:id`, this.eventsController.updateEvent);
   }
 }

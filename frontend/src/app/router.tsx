@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import CreateEvent from "./pages/CreateEvent";
+import EditEvent from "./pages/EditEvent";
 
 
 const Router: React.FC = () => {
@@ -15,6 +16,7 @@ const Router: React.FC = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} />} />
+      <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
     </Routes>
   );
 }
