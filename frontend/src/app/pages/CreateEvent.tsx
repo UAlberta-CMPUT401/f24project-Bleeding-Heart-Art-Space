@@ -10,11 +10,12 @@ import './Dashboard.css';
 
 interface CreateEventProps {
     isSidebarOpen: boolean;
+    onAddEvent: (event: { title: string; start: Date; end: Date; venue: string }) => void;
 }
 
 const apiUrl = "http://localhost:3000/api";
 
-const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
+const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) => {
     const [formWidth, setFormWidth] = useState('100%');
     const [title, setTitle] = useState("");
     const [venue, setVenue] = useState("");
@@ -31,7 +32,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
 
     // Handle form submission
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+        //e.preventDefault();
 
         const startDateTime = new Date(`${startDate}T${startTime}`);
         const endDateTime = new Date(`${endDate}T${endTime}`);
@@ -53,6 +54,13 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
                 .then(response => {
                     console.log("Event created successfully:", response.data);
                     alert('Event created successfully!');
+                      // Call a prop function to add the event to the calendar
+                    onAddEvent({
+                        title: eventData.title,
+                        start: new Date(eventData.start),
+                        end: new Date(eventData.end),
+                        venue: eventData.venue
+                    });
                 })
                 .catch(error => {
                     console.error("Error creating event:", error.response?.data || error.message);
