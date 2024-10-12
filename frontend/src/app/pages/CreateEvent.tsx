@@ -4,12 +4,11 @@ import axios from 'axios';
 import styles from "./CreateEvent.module.css";
 import { EventNote, LocationOn } from '@mui/icons-material';
 
-
 interface CreateEventProps {
     isSidebarOpen: boolean;
 }
 
-const apiUrl = "http://localhost:3000/api"; // Ensure this matches your backend route
+const apiUrl = "http://localhost:3000/api";
 
 const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
     const [formWidth, setFormWidth] = useState('100%');
@@ -20,8 +19,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
     const [address, setAddress] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-
-
+    
     // Adjust form width based on sidebar state
     useEffect(() => {
         setFormWidth(isSidebarOpen ? 'calc(100% - 0px)' : '100%');
@@ -42,12 +40,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen }) => {
         else{
             const eventData = {
                 title: title, 
-                // date: date,
                 venue: venue,
                 start: `${startDate}T${startTime}`,
                 end: `${endDate}T${endTime}`,
-                // start: startDateTime.toISOString(),
-                // end: endDateTime.toISOString(),
                 address: address
             };
             
