@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Typography, Container, Card } from '@mui/material';
 import axios from 'axios';
-import styles from "./CreateEvent.module.css";
+import styles from "./EditEvent.module.css";
 import { EventNote, LocationOn } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -9,11 +9,11 @@ interface EditEventProps {
     isSidebarOpen: boolean;
 }
 
-const apiUrl = "http://localhost:3000/api"; // Ensure this matches your backend route
+const apiUrl = "http://localhost:3000/api";
 
 const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
-    const { id } = useParams<{ id: string }>(); // Assuming you use React Router to get the event ID from the URL
-    const navigate = useNavigate(); // React Router's useNavigate hook for navigation
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const [formWidth, setFormWidth] = useState('100%');
     const [title, setTitle] = useState("");
     const [venue, setVenue] = useState("");
@@ -34,12 +34,20 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
             axios.get(`${apiUrl}/events/${id}`)
                 .then(response => {
                     const event = response.data;
+
+                    const startUTC = new Date(event.start);
+                    const endUTC = new Date(event.end);
+                    const startDateLocal = startUTC.toLocaleDateString('en-CA');
+                    const startTimeLocal = startUTC.toTimeString().slice(0, 5);
+                    const endDateLocal = endUTC.toLocaleDateString('en-CA');
+                    const endTimeLocal = endUTC.toTimeString().slice(0, 5);
+
                     setTitle(event.title);
                     setVenue(event.venue);
-                    setStartDate(event.start.split('T')[0]);
-                    setEndDate(event.end.split('T')[0]);
-                    setStartTime(event.start.split('T')[1].slice(0, 5)); // Get time in HH:mm format
-                    setEndTime(event.end.split('T')[1].slice(0, 5));
+                    setStartDate(startDateLocal);
+                    setEndDate(endDateLocal);
+                    setStartTime(startTimeLocal);
+                    setEndTime(endTimeLocal);
                     setAddress(event.address);
                 })
                 .catch(error => {
