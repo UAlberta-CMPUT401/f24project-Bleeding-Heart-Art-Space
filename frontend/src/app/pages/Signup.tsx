@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Alert } from "@mui/material";
-import { Button, Card, Divider, TextField } from "@mui/material";
+import { Button, Card, Divider, TextField, Alert} from "@mui/material";
 import styles from './Login.module.css';
 import TopBar from "../../components/layout/topBar";
 import { createUserWithEmailAndPassword } from "firebase/auth";
