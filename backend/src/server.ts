@@ -3,6 +3,8 @@ import { migrateToLatest } from '@database/database';
 import { UsersRoute } from '@features/users/users.route';
 import { VolunteerRolesRoute } from '@features/volunteerRoles/volunteerRoles.route';
 import { EventsRoute } from './features/events/events.route';
+import 'reflect-metadata';
+
 
 async function startServer() {
   // Run database migrations
