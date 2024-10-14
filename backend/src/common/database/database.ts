@@ -7,10 +7,14 @@ import { promises as fs } from 'fs'
 import * as path from 'path'
 import { logger } from "@utils/logger";
 import { RolesTable, UsersTable } from "@features/users/users.model";
+import { VolunteerRolesTable } from "@/features/volunteerRoles/volunteerRoles.model";
+import { EventsTable } from "@/features/events/events.model";
 
 export interface Database {
   users: UsersTable
   roles: RolesTable
+  volunteer_roles: VolunteerRolesTable
+  events: EventsTable
 }
 
 // make sure that postgres 'numeric' types are numbers, not strings
@@ -19,6 +23,9 @@ const numericTypeID = 1700;
 pg.types.setTypeParser(numericTypeID, (val) => {
   return parseFloat(val);
 });
+
+
+
 
 const poolConfig: PoolConfig = {
   database: DB_NAME,
