@@ -8,7 +8,7 @@ const Dashboard: React.FC = () => {
       <nav>
         <ul>
           <li>
-            <Link className="dashboard-button" to="/homepage">HomePage</Link>
+            <Link className="dashboard-button" to="/overview">Overview</Link>
           </li>
           <li>
             <Link className="dashboard-button" to="/create-event">Create Event</Link>
