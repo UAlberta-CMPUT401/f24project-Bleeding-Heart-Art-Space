@@ -13,9 +13,6 @@ export class VolunteerRolesRoute implements Routes {
   }
 
   private initializeRoutes() {
-    // Log route initialization for debugging
-    console.log(`Initializing volunteer roles route at: ${this.path}`);
-
     // Define routes with middleware
     // Uncomment the middleware when ready for production or after debugging
     this.router.get(
