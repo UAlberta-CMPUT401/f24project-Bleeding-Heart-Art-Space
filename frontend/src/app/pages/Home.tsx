@@ -4,6 +4,7 @@ import TopBar from "../../components/layout/topBar";
 
 const Home: React.FC = () => {
   return (
+
     <TopBar>
       <h1>Bleeding Heart Art Space</h1>
       <h2>Volunteer Management App</h2>
@@ -14,6 +15,7 @@ const Home: React.FC = () => {
         Login
       </Button>
     </TopBar>
+
   );
 }
 

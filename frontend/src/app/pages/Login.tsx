@@ -24,7 +24,7 @@ const Login: React.FC = () => {
       console.log("User signed in:", userCredential.user);
 
       
-      navigate("/Dashboard"); 
+      navigate("/dashboard"); 
     } catch (error: any) {
       console.error("Error logging in:", error);
       setError(error.message);
