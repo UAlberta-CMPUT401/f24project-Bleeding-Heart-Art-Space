@@ -15,3 +15,8 @@ The core features include:
 ## Run for Development
 - [Frontend](frontend/README.md)
 - [Backend](backend/README.md)
+
+## Run for Tests
+1) Tester should be running the development servers for frontend and backend simultaneously in different terminals.
+2) Next, the tester should be in the root>tests directory.
+3) Then run the command: `npx mocha acceptance` from that directory.
