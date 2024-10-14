@@ -1,0 +1,29 @@
+.rbc-toolbar button {
+    background-color: #af2020; /* Change the button background */
+    color: rgb(14, 12, 12); /* Change the button text color */
+    border-radius: 5px; /* Add rounded corners */
+    padding: 10px 20px; /* Adjust padding */
+}
+
+.rbc-toolbar button:hover{
+    background-color: #e61414; /* Change the button background */
+    color: rgb(39, 14, 14); /* Change the button text color */
+    border-radius: 5px; /* Add rounded corners */
+    padding: 10px 20px; /* Adjust padding */
+}
+
+
+.rbc-btn-group {
+    background-color: #9c2424; /* Change the button background */
+    color: rgb(255, 255, 255); /* Change the button text color */
+    border-radius: 5px; /* Add rounded corners */
+    padding: 10px 20px; /* Adjust padding */
+}
+
+
+.rbc-toolbar{
+    background-color: #9c2424; /* Change the button background */
+    color: rgb(255, 255, 255); /* Change the button text color */
+    border-radius: 5px; /* Add rounded corners */
+    padding: 10px 20px; /* Adjust padding */
+}

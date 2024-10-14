@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@features/*": ["features/*"],
+      "@config/*": ["common/config/*"],
+      "@database/*": ["common/database/*"],
+      "@interfaces/*": ["common/interfaces/*"],
+      "@middlewares/*": ["common/middlewares/*"],
+      "@utils/*": ["common/utils/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
