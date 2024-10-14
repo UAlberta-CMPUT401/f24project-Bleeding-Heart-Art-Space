@@ -19,4 +19,5 @@ The core features include:
 ## Run for Tests
 1) Tester should be running the development servers for frontend and backend simultaneously in different terminals.
 2) Next, the tester should be in the root>tests directory.
-3) Then run the command: `npx mocha acceptance` from that directory.
+3) Run the command: `npm install`.
+4) Then run the command: `npx mocha acceptance` from that directory.
