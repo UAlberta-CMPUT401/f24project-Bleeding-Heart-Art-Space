@@ -4,9 +4,9 @@ import axios from 'axios';
 import styles from "./CreateEvent.module.css";
 import { EventNote, LocationOn } from '@mui/icons-material';
 import TopNav from './components/TopNav'; // Import TopNav component
-import Dashboard from './Dashboard'; // Import Dashboard component
+import Dashboard from './components/Dashboard'; // Import Dashboard component
 import './components/TopNav.css';
-import './Dashboard.css';
+import './components/Dashboard.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 
