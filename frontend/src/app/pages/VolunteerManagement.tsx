@@ -1,8 +1,8 @@
 import React from 'react';
 import TopNav from './components/TopNav'; // Import the TopNav component
-import Dashboard from './Dashboard'; // Import the Dashboard component
+import Dashboard from './components/Dashboard'; // Import the Dashboard component
 import './components/TopNav.css';
-import './Dashboard.css';
+import './components/Dashboard.css';
 
 const VolunteerManagement: React.FC = () => {
     return (
