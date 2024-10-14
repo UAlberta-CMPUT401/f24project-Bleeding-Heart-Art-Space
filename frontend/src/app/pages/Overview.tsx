@@ -1,9 +1,8 @@
 import React from "react";
 import TopNav from "./components/TopNav";
-import Dashboard from "./Dashboard";
+import Dashboard from "./components/Dashboard";
 
-
-const HomePage: React.FC = () => {
+const Overview: React.FC = () => {
   return (
     <>
       <div className="nav-container">
@@ -42,4 +41,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default Overview;
