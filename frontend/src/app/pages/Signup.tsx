@@ -3,7 +3,7 @@ import { Button, Card, Divider, TextField, Alert} from "@mui/material";
 import styles from './Login.module.css';
 import TopBar from "../../components/layout/topBar";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../firebase.ts";
+import { auth } from "../../utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
 
 const Signup: React.FC = () => {

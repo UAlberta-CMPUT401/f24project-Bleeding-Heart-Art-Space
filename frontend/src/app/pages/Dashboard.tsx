@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { getFirebaseToken } from "../../../authHelper"; 
+import { getFirebaseToken } from "../../utils/authHelper"; 
 
 const Dashboard: React.FC = () => {
   const [data, setData] = useState(null);
