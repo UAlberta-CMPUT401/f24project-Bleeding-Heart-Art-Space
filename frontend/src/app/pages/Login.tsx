@@ -3,7 +3,7 @@ import { Button, Card, Divider, TextField, Alert } from "@mui/material";
 import styles from './Login.module.css';
 import TopBar from "../../components/layout/topBar";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../firebase.ts";
+import { auth } from "../../utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
@@ -42,7 +42,7 @@ const Login: React.FC = () => {
         }}
       >
         <form className={styles.loginForm} onSubmit={handleLogin}>
-          
+
           {error && (
             <Alert severity="error" style={{ marginBottom: "1rem" }}>
               {error}
