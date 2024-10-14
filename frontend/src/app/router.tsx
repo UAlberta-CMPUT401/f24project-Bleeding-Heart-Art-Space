@@ -8,6 +8,7 @@ import Overview from './pages/Overview';
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
+import Dashboard from "./pages/Dashboard";
 
 interface Event {
   title: string;
