@@ -3,17 +3,22 @@ import Calendar from "../Calendar";
 import TopNav from "./TopNav"
 import Dashboard from "../Dashboard"
 import EventCalendar from "../CalendarEvent";
-
-
-const events = [
-    {
-        start: moment("2024-10-09T10:00:00").toDate(),
-        end: moment("2024-10-09T12:00:00").toDate(),
-        title: "Meeting"
-    },
-];
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export default function BasicCalendar() {
+
+    const navigate = useNavigate(); // Initialize useNavigate
+
+    // Function to handle event clicks
+    const handleEventClick = (eventId: string) => {
+        navigate(`/edit-event/${eventId}`); // Navigates to EditEvent page
+    };
+
+    // Function to handle slot selection
+    const handleSlotSelect = (slotInfo: { start: Date; end: Date }) => {
+        navigate(`/create-event?start=${slotInfo.start.toISOString()}&end=${slotInfo.end.toISOString()}`); // Navigates to CreateEvent page with start, end dates and times
+    };
+
     return (
     <>
         <div className="nav-container">
@@ -26,7 +31,7 @@ export default function BasicCalendar() {
             
                 <div className="main-content">
                     <div style={{ height: '500px' }}> {/* Adjust height as needed */}
-                        <EventCalendar />
+                        <EventCalendar onEventClick={handleEventClick} onSlotSelect={handleSlotSelect}/>
                     </div>
                 </div>
             </div>
