@@ -77,7 +77,22 @@ Estimated Sprint Velocity: **37**
 
 #### **Tasks**
 
-Sprint 3 tasks will be added during Sprint 2.
+| Task | Related US | Assigned To                                       | Due Date  |
+|--------------------------------------------|---------------------------------|-------------------------------------|--------|
+| Multi-factor Authentication                | US 1.01, US 2.01                    | Chase Johnson, Rishit Gajjar        | Oct 22 |
+| Password Recovery                          | US 1.01, US 2.01                    | Chase Johnson, Rishit Gajjar        | Oct 22 |
+| Google sign up and log in                  | US 1.01, US 1.02, US 2.01, US 2.02  | Chase Johnson, Rishit Gajjar        | Oct 22 |
+| Create different dashboard views for Admin, volunteers, and artists | US 1.05, US 1.08 | Chase Johnson,Rishit Gajjar   | Oct 22 |
+| Create roles/permissions for volunteers    | US 1.04                             | Chase Johnson, Rishit Gajjar        | Oct 22 |
+| Schedule view for volunteers               | US 1.05                             | Samuel Chan, Amaan Mohammed         | Oct 25 |
+| Create shifts for volunteers               | US 1.05, US 1.08                    | Samuel Chan, Amaan Mohammed         | Oct 25 |
+| Volunteers can sign up for shifts in events| US 2.04                             | Rushabh Shah, Anhadpreet Singh      | Oct 25 |
+| Volunteers can check in and out of event   | US 2.06, US 2.07, US 2.08           | Rushabh Shah, Anhadpreet Singh      | Oct 25 |
+| Artists can request their own event        | US 3.01                             | Amaan Mohammed                      | Oct 25 |
+| Artists have permissions for shifts/one-time volunteers| US 3.03, US 3.04        | Samuel Chan                         | Oct 25 |
+| Artists can sign up for and manage events  | US 3.02, US 3.05                    | Rushabh Shah, Anhadpreet Singh      | Oct 25 |
+| UI/UX Design                               | Design                              | Amaan Mohammed                      | Oct 25 |
+
 
 ### **Sprint 4**
 

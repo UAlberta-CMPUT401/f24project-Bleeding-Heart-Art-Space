@@ -9,7 +9,7 @@ export class UsersController {
   public getIsAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (req.auth !== undefined) {
-        res.status(200).send('true');
+        res.status(200).type('text/plain').send('true');
       } else {
         res.status(401).json({ error: 'Unauthorized' });
       }
