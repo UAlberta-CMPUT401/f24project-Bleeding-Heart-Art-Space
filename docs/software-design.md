@@ -19,7 +19,13 @@ The system revolves around Events, which contain Shifts. Users are the core enti
 
 ## Sequence Diagrams
 
-Multiple sequence diagrams depicting the most important scenarios.
+This sequence diagram details the most important scenarios of how **Admins** and **Volunteers** interact with the system via the **Application** and **Database**:
+
+- **Admin**: Signs up, logs in, creates and manages events, assigns user permissions, and manages volunteer schedules. These actions involve creating, editing, and retrieving objects like events, user permissions, and schedules, with data being passed between the application and database.
+  
+- **Volunteer**: Signs up, logs in, registers for events, checks in/out of events, and views their schedule. Volunteering time is tracked, and all interactions are handled by the application, which updates the database accordingly.
+
+Both roles interact through the **Application**, which communicates with the **Database** to validate, store, and retrieve necessary data for user sessions, event management, and scheduling.
 
 ![Sequence Diagram](images/Sequence-Diagram.png)
 
