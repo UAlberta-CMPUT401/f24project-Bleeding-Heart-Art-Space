@@ -26,15 +26,18 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 
 - **Dashboard**: A centralized page where admins can monitor events, volunteer sign-ups, attendance, and manage schedules. Volunteers may also have a dashboard to view upcoming events they are signed up for.
 
+- **One-time User**: A user that does not have an account that is added to an event as a one-time volunteer or artist by an admin of the event.
+
 ## User Stories
 
 ### Admin User Stories
 #### US 1.01 - Admin Sign up
-> As an Admin, I want to sign up securely through a code/link so that I can gain admin privileges.
+> As an Admin, I want to sign up securely so that I can re-use my account to manage events and volunteers in the future.
 >
 > Acceptance Criteria:
 >
-> 1. Admin can sign up one time using a link/code
+> 1. Admin can sign up using email and password or social login.
+> 2. Secure password recovery and multi-factor authentication.
 
 #### US 1.02 - Login and logout Securely
 > As an Admin, I want to log in and log out securely so that I can manage the volunteer events and schedules.
@@ -320,7 +323,7 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
     - Some of their functionalities include: shifts that are organized through filters, multi language coverage, exports shifts to ical, reward system, Q and A section, 2 factor authentication.
     - Perhaps the filtering and exporting functionalities of the shifts can be used as inpiration to our project.
 
-## Techincal Resources
+## Technical Resources
 
 ### Frontend: React (Vite with Typescript)
 
