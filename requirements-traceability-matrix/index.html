@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Software Design - Bleeding Heart Art Space</title>
+        <title>Requirements Traceability Matrix - Bleeding Heart Art Space</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/fontawesome.min.css" rel="stylesheet">
         <link href="../css/brands.min.css" rel="stylesheet">
@@ -41,7 +41,7 @@
                                 <a href="../project-requirements/" class="nav-link">Project Requirements</a>
                             </li>
                             <li class="nav-item">
-                                <a href="./" class="nav-link active" aria-current="page">Software Design</a>
+                                <a href="../software-design/" class="nav-link">Software Design</a>
                             </li>
                             <li class="nav-item">
                                 <a href="../project-management/" class="nav-link">Project Management</a>
@@ -57,16 +57,6 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li class="nav-item">
-                                <a rel="prev" href="../project-requirements/" class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" href="../project-management/" class="nav-link">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
                     </ul>
                 </div>
             </div>
@@ -85,21 +75,9 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="1"><a href="#software-design" class="nav-link">Software Design</a>
+            <li class="nav-item" data-bs-level="1"><a href="#requirements-traceability-matrix" class="nav-link">Requirements Traceability Matrix</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#architecture-diagram" class="nav-link">Architecture Diagram</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#uml-class-diagram" class="nav-link">UML Class Diagram</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#sequence-diagrams" class="nav-link">Sequence Diagrams</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#low-fidelity-user-interface" class="nav-link">Low-Fidelity User Interface</a>
+            <li class="nav-item" data-bs-level="2"><a href="#sprint-2-tests" class="nav-link">Sprint 2 Tests</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -110,37 +88,51 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="software-design">Software Design</h1>
-<p>This page includes a short description of the overall architecture style of the system, its high-level system components, and their logical (what data they exchange) and control (how they invoke each other) dependencies.</p>
-<h2 id="architecture-diagram">Architecture Diagram</h2>
-<p>The application uses a React frontend that communicates with an Express.js backend via a JSON REST 
-API. The Express.js backend utilizes Kysely SQL builder to communicate with PostgreSQL for data 
-management. The backend also uses Firebase Authentication for user authentication, and SendGrid 
-for email functionality.</p>
-<p><img alt="Architecture Diagram" src="../images/architecture-diagram.png" /></p>
-<h2 id="uml-class-diagram">UML Class Diagram</h2>
-<p>The system revolves around Events, which contain Shifts. Users are the core entity, with specialized classes like Volunteer, Artist, and Admin inheriting from the base User class. Volunteers can sign up for Shifts, while Artists have additional capabilities, including the ability to request Events. Admins possess all permissions of Artists and can also manage user roles. This hierarchy represents a progressive increase in permissions and capabilities from Volunteers to Artists to Admins, with each level inheriting the abilities of the previous one and gaining additional functionalities.</p>
-<p><img alt="UML Diagram" src="../images/UML.png" /></p>
-<h2 id="sequence-diagrams">Sequence Diagrams</h2>
-<p>This sequence diagram details the most important scenarios of how <strong>Admins</strong> and <strong>Volunteers</strong> interact with the system via the <strong>Application</strong> and <strong>Database</strong>:</p>
-<ul>
-<li>
-<p><strong>Admin</strong>: Signs up, logs in, creates and manages events, assigns user permissions, and manages volunteer schedules. These actions involve creating, editing, and retrieving objects like events, user permissions, and schedules, with data being passed between the application and database.</p>
-</li>
-<li>
-<p><strong>Volunteer</strong>: Signs up, logs in, registers for events, checks in/out of events, and views their schedule. Volunteering time is tracked, and all interactions are handled by the application, which updates the database accordingly.</p>
-</li>
-</ul>
-<p>Both roles interact through the <strong>Application</strong>, which communicates with the <strong>Database</strong> to validate, store, and retrieve necessary data for user sessions, event management, and scheduling.</p>
-<p><img alt="Sequence Diagram" src="../images/Sequence-Diagram.png" /></p>
-<h2 id="low-fidelity-user-interface">Low-Fidelity User Interface</h2>
-<p>This is the overall look and feel of the web app.</p>
-<h3 id="admin-ui">Admin UI</h3>
-<p><img alt="Admin UI" src="../images/admin-ui.png" /></p>
-<h3 id="volunteer-ui">Volunteer UI</h3>
-<p><img alt="Volunteer UI" src="../images/volunteer-ui.png" /></p>
-<h3 id="artist-ui">Artist UI</h3>
-<p><img alt="Artist UI" src="../images/artist-ui.png" /></p></div>
+<h1 id="requirements-traceability-matrix">Requirements Traceability Matrix</h1>
+<p>This page outlines the tests that are being carried to verify that all requirements are met.</p>
+<h2 id="sprint-2-tests">Sprint 2 Tests</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement Description</th>
+<th>Justification</th>
+<th>User Story</th>
+<th>Test Name</th>
+<th>Test Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Manage events</td>
+<td>Admins can create, delete and edit events</td>
+<td>1.03</td>
+<td>createEventTest, deleteEventTest, editEventTest</td>
+<td>Pass</td>
+<td>UI Test</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Calendar events</td>
+<td>Events can be seen on the calendar and admins can create the events from the calendar</td>
+<td>2.03</td>
+<td>clickCalendar</td>
+<td>Pass</td>
+<td>UI Test</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Calendar view</td>
+<td>Admins, volunteers, and artists can view an interactive calendar</td>
+<td>4.02</td>
+<td>viewCalendar</td>
+<td>Pass</td>
+<td>UI Test</td>
+</tr>
+</tbody>
+</table></div>
             </div>
         </div>
 
