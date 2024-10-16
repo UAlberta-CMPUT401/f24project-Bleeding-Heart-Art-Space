@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
-import TopBar from "../../components/layout/topBar";
+import TopBar from "@components/layout/topBar";
 
 const Home: React.FC = () => {
   return (
