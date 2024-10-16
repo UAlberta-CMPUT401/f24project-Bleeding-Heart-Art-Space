@@ -1,6 +1,6 @@
-import TopNav from "./components/TopNav"
-import Dashboard from "./components/Dashboard"
-import EventCalendar from "./CalendarEvent";
+import TopNav from "@components/layout/TopNav"
+import Dashboard from "@components/layout/Dashboard"
+import EventCalendar from "./Components/CalendarEvent";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import './BasicCalendar.css';
 
