@@ -4,9 +4,7 @@ import axios from 'axios';
 import styles from "./CreateEvent.module.css";
 import { EventNote, LocationOn } from '@mui/icons-material';
 import TopNav from '@components/layout/TopNav'; // Import TopNav component
-import Dashboard from '@components/layout/Dashboard'; // Import Dashboard component
-import '@components/layout/TopNav.css';
-import '@components/layout/Dashboard.css';
+import Sidebar from '@components/layout/Sidebar'; // Import Dashboard component
 import { useNavigate, useLocation } from 'react-router-dom';
 
 
@@ -121,7 +119,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
 
                 <div className="dashboard-container">
                     {/* Sidebar Dashboard */}
-                    <Dashboard />
+                    <Sidebar />
 
                     {/* Main Content */}
                     <div className="main-content" style={{ width: formWidth }}>

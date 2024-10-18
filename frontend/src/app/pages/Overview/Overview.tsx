@@ -1,6 +1,6 @@
 import React from "react";
 import TopNav from "@components/layout/TopNav";
-import Dashboard from "@components/layout/Dashboard";
+import Sidebar from "@components/layout/Sidebar";
 
 const Overview: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ const Overview: React.FC = () => {
 
         <div className="dashboard-container">
           {/* Sidebar Dashboard */}
-          <Dashboard />
+          <Sidebar />
 
           {/* Main Content */}
           <div className="main-content">
