@@ -1,9 +1,8 @@
 import React from "react";
-import Dashboard from "@components/layout/Dashboard";
 
 const Overview: React.FC = () => {
   return (
-    <Dashboard>
+    <>
       <h1>Welcome back, Admin!</h1>
 
       <div>
@@ -23,7 +22,7 @@ const Overview: React.FC = () => {
           <li>Reminder 3</li>
         </ul>
       </div>
-    </Dashboard>
+    </>
   );
 };
 

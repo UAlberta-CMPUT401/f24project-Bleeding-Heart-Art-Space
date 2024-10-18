@@ -1,4 +1,3 @@
-import Dashboard from "@components/layout/Dashboard"
 import EventCalendar from "./Components/CalendarEvent";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import './BasicCalendar.css';
@@ -18,10 +17,8 @@ export default function BasicCalendar() {
     };
 
     return (
-        <Dashboard>
-            <div style={{ maxWidth: 900 }}>
-                <EventCalendar onEventClick={handleEventClick} onSlotSelect={handleSlotSelect} />
-            </div>
-        </Dashboard>
+        <div style={{ maxWidth: 900 }}>
+            <EventCalendar onEventClick={handleEventClick} onSlotSelect={handleSlotSelect} />
+        </div>
     );
 }
