@@ -1,5 +1,5 @@
 import './TopNav.css';
-import BHASLogoWords from './BHAS-LogoWords.png';
+import BHASLogoWords from '@assets/BHAS-LogoWords.png';
 
 const TopNav = () => {
   return (
