@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import BasicCalendar from './pages/BasicCalendar';
-import Overview from './pages/Overview';
-import CreateEvent from "./pages/CreateEvent";
-import EditEvent from "./pages/EditEvent";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
+import Signup from "./pages/Signup/Signup";
+import BasicCalendar from './pages/BasicCalendar/BasicCalendar';
+import Overview from './pages/Overview/Overview';
+import CreateEvent from "./pages/CreateEvent/CreateEvent";
+import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
-import Dashboard from "./pages/Dashboard";
 
 interface Event {
   title: string;

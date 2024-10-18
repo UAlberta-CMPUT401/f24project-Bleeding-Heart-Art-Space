@@ -1,6 +1,6 @@
 import React from "react";
-import TopNav from "./components/TopNav";
-import Dashboard from "./components/Dashboard";
+import TopNav from "@components/layout/TopNav";
+import Dashboard from "@components/layout/Dashboard";
 
 const Overview: React.FC = () => {
   return (
