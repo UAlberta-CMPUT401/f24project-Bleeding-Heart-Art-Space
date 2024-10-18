@@ -8,6 +8,7 @@ import Overview from './pages/Overview/Overview';
 import CreateEvent from "./pages/CreateEvent/CreateEvent";
 import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
+import Dashboard from "@components/layout/Dashboard"
 
 interface Event {
   title: string;
@@ -35,13 +36,15 @@ const Router: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/overview" element={<Overview />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
-      <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
-      <Route path="/calendar" element={<BasicCalendar />} />
-      <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
+      <Route element={<Dashboard />}>
+        <Route path="/overview" element={<Overview />} />
+        <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
+        <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
+        <Route path="/calendar" element={<BasicCalendar />} />
+        <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
+      </Route>
     </Routes>
   );
 }
