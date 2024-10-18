@@ -14,6 +14,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import BHASLogo from '@assets/BHAS-Logo.png';
+import { Link, Outlet } from 'react-router-dom';
 
 type SideBarItem = {
   name: string;
@@ -41,11 +42,7 @@ const sideBarItems: SideBarItem[] = [
 
 const drawerWidth = 240;
 
-type DashboardProps = {
-  children?: React.ReactNode;
-}
-
-const Dashboard: React.FC<DashboardProps> = ({ children }) => {
+const Dashboard: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
 
@@ -72,6 +69,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children }) => {
         {sideBarItems.map((item, index) => (
           <ListItem key={index} disablePadding>
             <Button
+              component={Link}
               variant='contained'
               sx={{
                 margin: '0.5rem',
@@ -79,7 +77,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children }) => {
                 height: '4rem',
                 fontWeight: 'bold',
               }}
-              href={item.route}
+              to={item.route}
             >
               <div
                 style={{
@@ -173,7 +171,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children }) => {
         sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
-        {children}
+        <Outlet />
       </Box>
     </Box>
   );
