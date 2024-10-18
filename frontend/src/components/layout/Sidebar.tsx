@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Dashboard.css";
+import "./Sidebar.css";
 
 const Dashboard: React.FC = () => {
     return (
@@ -9,9 +9,6 @@ const Dashboard: React.FC = () => {
         <ul>
           <li>
             <Link className="dashboard-button" to="/overview">Overview</Link>
-          </li>
-          <li>
-            <Link className="dashboard-button" to="/create-event">Create Event</Link>
           </li>
           <li>
             <Link className="dashboard-button" to="/calendar">Calendar</Link>

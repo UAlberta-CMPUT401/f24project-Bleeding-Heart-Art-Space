@@ -1,0 +1,98 @@
+/* General dashboard container */
+.dashboard-container {
+  display: flex;
+  padding-left: 200px;
+  height: 100vh;
+  box-sizing: border-box;
+  background-color: #f8f9fa; /* Light background for contrast */
+}
+
+/* Dashboard (Sidebar) Styling */
+.dashboard {
+  width: 220px;
+  background-color: #c34e4e; /* Lightened red for better readability */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 10px 0;
+  position: fixed;
+  left: 0;
+  top: 70px;
+  height: calc(100vh - 70px);
+  box-sizing: border-box;
+  z-index: 999;
+  border-right: 2px solid #e0e0e0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation in Sidebar */
+nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* Main content area */
+.main-content {
+  margin-left: 220px; /* Adjusted to account for the wider sidebar */
+  padding: 20px;
+  width: calc(100% - 220px); /* Adjust width accordingly */
+  box-sizing: border-box;
+}
+
+/* Dashboard buttons */
+.dashboard-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: #ffffff; /* White text for better contrast */
+  background-color: #9c2424; /* Slightly darker red */
+  padding: 15px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  margin: 10px 15px;
+  width: calc(100% - 30px);
+  height: auto;
+  box-sizing: border-box;
+  text-align: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect on dashboard buttons */
+.dashboard-button:hover {
+  background-color: #d33c3c; /* Brightened red for hover effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Active button styling */
+.dashboard-button.active {
+  background-color: #e86b6b; /* Lighter, highlighted shade */
+  color: #ffffff;
+  font-weight: bolder;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .dashboard {
+    width: 70px; /* Collapsed version for mobile */
+    top: 0;
+    height: 100vh;
+  }
+
+  .dashboard-button {
+    font-size: 14px; /* Smaller text on mobile */
+    padding: 10px;
+    margin: 5px;
+  }
+
+  .main-content {
+    margin-left: 70px; /* Adjust main content margin on mobile */
+    width: calc(100% - 70px);
+  }
+}
