@@ -8,7 +8,7 @@ import Overview from './pages/Overview/Overview';
 import CreateEvent from "./pages/CreateEvent/CreateEvent";
 import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
-import Dashboard from "@components/layout/Dashboard"
+import Sidebar from "@components/layout/Sidebar"
 
 interface Event {
   title: string;
@@ -38,7 +38,7 @@ const Router: React.FC = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route element={<Dashboard />}>
+      <Route element={<Sidebar/>}>
         <Route path="/overview" element={<Overview />} />
         <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
         <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
