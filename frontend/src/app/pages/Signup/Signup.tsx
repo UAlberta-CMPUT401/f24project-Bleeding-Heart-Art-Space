@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Card, Divider, TextField, Alert} from "@mui/material";
 import styles from '@pages/Login/Login.module.css';
-import TopBar from "@components/layout/topBar";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
@@ -46,7 +45,7 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <TopBar>
+    <>
       <h1>Sign-up</h1>
       <Card
         sx={{
@@ -113,7 +112,7 @@ const Signup: React.FC = () => {
           Login
         </Button>
       </Card>
-    </TopBar>
+    </>
   );
 };
 
