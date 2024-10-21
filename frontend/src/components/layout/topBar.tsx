@@ -3,6 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import React from "react";
+import { Link } from 'react-router-dom';
 
 type TopBarProps = {
   children?: React.ReactNode;
@@ -58,10 +59,11 @@ const TopBar: React.FC<TopBarProps> = ({ children }) => {
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'end' }}>
               {pages.map((page) => (
                 <Button
+                  component={Link}
                   key={page.name}
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: 'white', display: 'block' }}
-                  href={page.route}
+                  to={page.route}
                 >
                   {page.name}
                 </Button>

@@ -5,6 +5,7 @@ import TopBar from "@components/layout/topBar";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const Login: React.FC = () => {
 
@@ -84,8 +85,9 @@ const Login: React.FC = () => {
         <div>Don't have an account yet?</div>
 
         <Button
+          component={Link}
           variant="outlined"
-          href="/signup"
+          to="/signup"
         >
           Sign-up
         </Button>
