@@ -10,6 +10,7 @@ import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
 import Dashboard from "@components/layout/Dashboard"
 import TopBar from "@components/layout/TopBar";
+import ResetPassword from "@pages/ResetPassword/ResetPassword";
 
 interface Event {
   title: string;
@@ -40,6 +41,7 @@ const Router: React.FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
       <Route element={<Dashboard />}>
         <Route path="/overview" element={<Overview />} />

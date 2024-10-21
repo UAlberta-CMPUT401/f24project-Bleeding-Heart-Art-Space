@@ -1,30 +1,26 @@
 import React, { useState } from "react";
+import styles from '../Login/Login.module.css';
 import { Button, Card, Divider, TextField, Alert } from "@mui/material";
-import styles from './Login.module.css';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@utils/firebase.ts";
-import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
-const Login: React.FC = () => {
-
+const ResetPassword: React.FC = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  
-  const navigate = useNavigate();
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (email.trim().length === 0) {
+      setError("Enter email");
+      return;
+    }
 
     try {
-      
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("User signed in:", userCredential.user);
-
-      
-      navigate("/overview"); 
+      const auth = getAuth();
+      await sendPasswordResetEmail(auth, email);
+      setSuccess("Password reset email sent");
     } catch (error: any) {
       console.error("Error logging in:", error);
       setError(error.message);
@@ -41,7 +37,7 @@ const Login: React.FC = () => {
           padding: '2rem',
         }}
       >
-        <form className={styles.loginForm} onSubmit={handleLogin}>
+        <form className={styles.loginForm} onSubmit={handlePasswordReset}>
 
           {error && (
             <Alert severity="error" style={{ marginBottom: "1rem" }}>
@@ -58,33 +54,20 @@ const Login: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <TextField
-            type="password"
-            className={styles.textField}
-            variant="outlined"
-            label="Password"
-            color="secondary"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
           <Button
             type="submit"
             variant="contained"
           >
-            Login
+            Send Email
           </Button>
-        </form>
 
-        <Button
-          component={Link}
-          variant="outlined"
-          to="/reset-password"
-          sx={{
-            marginTop: '1rem',
-          }}
-        >
-          Reset Password
-        </Button>
+          {success && (
+            <Alert severity="success">
+              {success}
+            </Alert>
+          )}
+
+        </form>
 
         <Divider
           sx={{
@@ -92,14 +75,12 @@ const Login: React.FC = () => {
           }}
         />
 
-        <div>Don't have an account yet?</div>
-
         <Button
           component={Link}
           variant="outlined"
-          to="/signup"
+          to="/login"
         >
-          Sign-up
+          Login
         </Button>
 
       </Card>
@@ -107,4 +88,4 @@ const Login: React.FC = () => {
   );
 }
 
-export default Login;
+export default ResetPassword;
