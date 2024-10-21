@@ -9,7 +9,7 @@ import CreateEvent from "./pages/CreateEvent/CreateEvent";
 import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
 import Dashboard from "@components/layout/Dashboard"
-import TopBar from "@components/layout/topBar";
+import TopBar from "@components/layout/TopBar";
 
 interface Event {
   title: string;
