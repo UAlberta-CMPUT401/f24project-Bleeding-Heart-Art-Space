@@ -3,11 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import React from "react";
-import { Link } from 'react-router-dom';
-
-type TopBarProps = {
-  children?: React.ReactNode;
-}
+import { Link, Outlet } from 'react-router-dom';
 
 type Page = {
   name: string;
@@ -24,7 +20,7 @@ const pages: Page[] = [
   },
 ];
 
-const TopBar: React.FC<TopBarProps> = ({ children }) => {
+const TopBar: React.FC = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -128,7 +124,7 @@ const TopBar: React.FC<TopBarProps> = ({ children }) => {
           </Toolbar>
         </Container>
       </AppBar>
-      {children}
+      <Outlet />
     </>
   );
 }
