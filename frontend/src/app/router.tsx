@@ -12,6 +12,7 @@ import Dashboard from "@components/layout/Dashboard"
 import TopBar from "@components/layout/TopBar";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import CompleteSignup from "@pages/CompleteSignup/CompleteSignup";
+import Account from "@pages/Account/Account";
 
 interface Event {
   title: string;
@@ -51,6 +52,7 @@ const Router: React.FC = () => {
         <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
         <Route path="/calendar" element={<BasicCalendar />} />
         <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
+        <Route path="/account" element={<Account />} />
       </Route>
     </Routes>
   );
