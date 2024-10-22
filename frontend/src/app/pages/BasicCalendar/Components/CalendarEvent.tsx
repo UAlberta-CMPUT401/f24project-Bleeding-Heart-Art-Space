@@ -18,6 +18,7 @@ interface Event {
 }
 
 interface EventCalendarProps {
+  events: { id: string; title: string; start: Date; end: Date }[];
   onEventClick: (eventId: string) => void;
   onSlotSelect: (slotInfo: SlotInfo) => void;
 }

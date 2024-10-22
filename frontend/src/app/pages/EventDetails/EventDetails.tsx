@@ -5,7 +5,7 @@ import { Button, Container, Typography, Card, Grid } from '@mui/material';
 import { EventNote, LocationOn } from '@mui/icons-material';
 import styles from './EventDetails.module.css'; // Add relevant CSS styles here
 
-const apiUrl = "http://localhost:3000/api";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const EventDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -30,7 +30,7 @@ const EventDetails: React.FC = () => {
     }
 
     const handleEdit = () => {
-        navigate(`/events/edit/${id}`);
+        navigate(`/edit-event/${id}`);
     };
 
     return (
