@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import BHASLogo from '@assets/BHAS-Logo.png';
 import { Link, Outlet } from 'react-router-dom';
 
@@ -133,6 +134,13 @@ const Dashboard: React.FC = () => {
           >
             Bleeding Heart Art Space
           </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton
+            component={Link}
+            to={'/account'}
+          >
+            <AccountCircleIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box
