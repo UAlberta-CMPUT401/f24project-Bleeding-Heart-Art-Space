@@ -9,6 +9,7 @@ import CreateEvent from "./pages/CreateEvent/CreateEvent";
 import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
 import Sidebar from "@components/layout/Sidebar"
+import EventDetails from './pages/EventDetails/EventDetails';
 
 interface Event {
   title: string;
@@ -42,6 +43,7 @@ const Router: React.FC = () => {
         <Route path="/overview" element={<Overview />} />
         <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
         <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
+        <Route path="/events/details/:id" element={<EventDetails />} />
         <Route path="/calendar" element={<BasicCalendar />} />
         <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
       </Route>
