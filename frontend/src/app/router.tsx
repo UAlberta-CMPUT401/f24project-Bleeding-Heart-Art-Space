@@ -11,6 +11,7 @@ import VolunteerManagement from "./pages/VolunteerManagement";
 import Dashboard from "@components/layout/Dashboard"
 import TopBar from "@components/layout/TopBar";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
+import CompleteSignup from "@pages/CompleteSignup/CompleteSignup";
 
 interface Event {
   title: string;
@@ -43,6 +44,7 @@ const Router: React.FC = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
+      <Route path="/complete-signup" element={<CompleteSignup />} />
       <Route element={<Dashboard />}>
         <Route path="/overview" element={<Overview />} />
         <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
