@@ -100,6 +100,7 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
                 alert('Failed to delete event. Please try again.');
             });
     };
+    
 
     return (
         <Container className={styles.container}>
