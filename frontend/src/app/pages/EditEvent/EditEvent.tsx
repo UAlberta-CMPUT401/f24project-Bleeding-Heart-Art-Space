@@ -9,7 +9,7 @@ interface EditEventProps {
     isSidebarOpen: boolean;
 }
 
-const apiUrl = "http://localhost:3000/api";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
     const { id } = useParams<{ id: string }>();

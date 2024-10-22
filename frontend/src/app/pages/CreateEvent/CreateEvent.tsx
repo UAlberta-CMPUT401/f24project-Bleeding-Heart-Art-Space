@@ -11,7 +11,7 @@ interface CreateEventProps {
     onAddEvent: (event: { title: string; start: Date; end: Date; venue: string, address: string }) => void;
 }
 
-const apiUrl = "http://localhost:3000/api";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) => {
     const navigate = useNavigate();
