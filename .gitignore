@@ -1,3 +1,5 @@
 # Python (mkdocs)
 venv
 .venv
+
+**/.DS_Store
