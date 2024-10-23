@@ -11,6 +11,7 @@ export class VolunteerShiftsController {
   public getShiftsByEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { eventId } = req.params;
+
       if (!eventId) {
         res.status(400).json({ error: 'Event ID is required' });
         return;
@@ -21,7 +22,7 @@ export class VolunteerShiftsController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Create new shifts for a specific event.
@@ -36,12 +37,19 @@ export class VolunteerShiftsController {
         return;
       }
 
-      await this.volunteerShiftsService.createShifts(shifts.map(shift => ({ ...shift, event_id: Number(eventId) })));
+      // Ensure the volunteer_role is a string and passes correct data
+      const shiftsWithEventId = shifts.map((shift) => ({
+        ...shift,
+        event_id: Number(eventId), // Convert eventId to number
+        volunteer_role: String(shift.volunteer_role), // Ensure volunteer_role is a string
+      }));
+
+      await this.volunteerShiftsService.createShifts(shiftsWithEventId);
       res.status(201).json({ message: 'Shifts created successfully' });
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Update a specific shift.
@@ -56,12 +64,17 @@ export class VolunteerShiftsController {
         return;
       }
 
+      // Ensure volunteer_role is a string if updated
+      if (shiftData.volunteer_role) {
+        shiftData.volunteer_role = String(shiftData.volunteer_role);
+      }
+
       await this.volunteerShiftsService.updateShift(Number(id), shiftData);
       res.status(200).json({ message: 'Shift updated successfully' });
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Delete a specific shift by ID.
@@ -79,5 +92,5 @@ export class VolunteerShiftsController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

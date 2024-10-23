@@ -1,15 +1,15 @@
 import { singleton } from 'tsyringe';
 import { db } from '@database/database';
-import { VolunteerRole, NewVolunteerRole, VolunteerRoleUpdate } from './volunteerShifts.model';
+import { VolunteerShift, NewVolunteerShift, VolunteerShiftUpdate } from './volunteerShifts.model';
 
 @singleton()
 export class VolunteerShiftsService {
   /**
    * Create new volunteer shifts for an event
    * @param shiftsData - The data for the new volunteer shifts
-   * @returns The ID of the created shift
+   * @returns The IDs of the created shifts
    */
-  public async createShifts(shiftsData: NewVolunteerRole[]): Promise<number[]> {
+  public async createShifts(shiftsData: NewVolunteerShift[]): Promise<number[]> {
     const insertedShifts = await db
       .insertInto('volunteer_shifts')
       .values(shiftsData)
@@ -19,13 +19,12 @@ export class VolunteerShiftsService {
     return insertedShifts.map(shift => shift.id);
   }
 
-  
   /**
    * Retrieve all shifts for a specific event by its ID
    * @param eventId - The ID of the event to retrieve shifts for
    * @returns A list of volunteer shifts
    */
-  public async getShiftsByEvent(eventId: number): Promise<VolunteerRole[]> {
+  public async getShiftsByEvent(eventId: number): Promise<VolunteerShift[]> {
     return await db
       .selectFrom('volunteer_shifts')
       .selectAll()
@@ -38,7 +37,7 @@ export class VolunteerShiftsService {
    * @param shiftId - The ID of the shift to retrieve
    * @returns The volunteer shift if found, otherwise undefined
    */
-  public async getShiftById(shiftId: number): Promise<VolunteerRole | undefined> {
+  public async getShiftById(shiftId: number): Promise<VolunteerShift | undefined> {
     return await db
       .selectFrom('volunteer_shifts')
       .selectAll()
@@ -62,7 +61,7 @@ export class VolunteerShiftsService {
    * @param shiftId - The ID of the shift to update
    * @param shiftData - The new data for the shift
    */
-  public async updateShift(shiftId: number, shiftData: VolunteerRoleUpdate): Promise<void> {
+  public async updateShift(shiftId: number, shiftData: VolunteerShiftUpdate): Promise<void> {
     await db
       .updateTable('volunteer_shifts')
       .set(shiftData)
