@@ -8,11 +8,12 @@ import Overview from './pages/Overview/Overview';
 import CreateEvent from "./pages/CreateEvent/CreateEvent";
 import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
-import Dashboard from "@components/layout/Dashboard"
+import Sidebar from "@components/layout/Sidebar"
 import TopBar from "@components/layout/TopBar";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import CompleteSignup from "@pages/CompleteSignup/CompleteSignup";
 import Account from "@pages/Account/Account";
+import EventDetails from "@pages/EventDetails/EventDetails";
 
 interface Event {
   title: string;
@@ -46,10 +47,11 @@ const Router: React.FC = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
       <Route path="/complete-signup" element={<CompleteSignup />} />
-      <Route element={<Dashboard />}>
+      <Route element={<Sidebar />}>
         <Route path="/overview" element={<Overview />} />
         <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
         <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
+        <Route path="/events/details/:id" element={<EventDetails />} />
         <Route path="/calendar" element={<BasicCalendar />} />
         <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
         <Route path="/account" element={<Account />} />

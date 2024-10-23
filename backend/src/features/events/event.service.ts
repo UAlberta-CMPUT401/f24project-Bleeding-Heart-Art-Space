@@ -73,6 +73,13 @@ export class EventsService {
       .execute();
   }
 
+  public async deleteShiftsByEventId(eventId: number): Promise<void> {
+    await db
+      .deleteFrom('volunteer_shifts' as any)
+      .where('event_id', '=', eventId)
+      .execute();
+  }
+
   /**
    * Update an existing event in the database
    * @param eventId - The ID of the event to update
