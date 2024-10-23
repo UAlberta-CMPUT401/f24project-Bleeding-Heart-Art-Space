@@ -26,4 +26,12 @@ export class VolunteerRolesService {
       .where('id', '=', id)
       .executeTakeFirst();
   }
+
+  public async deleteShiftsByRoleId(id: number): Promise<DeleteResult> {
+    return await db
+      .deleteFrom('volunteer_shifts' as any)
+      .where('volunteer_role', '=', id)
+      .executeTakeFirst();
+  }
+
 }

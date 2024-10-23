@@ -11,11 +11,11 @@ const EventDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [event, setEvent] = useState<any>(null);
-
     const [roles, setRoles] = useState<any[]>([]);
     const [shifts, setShifts] = useState<any[]>([]); // Track created shifts
+    const [savedShifts, setSavedShifts] = useState<any[]>([]); // Track fetched saved shifts
     const [newShift, setNewShift] = useState({
-        role: '',
+        volunteer_role: '',
         start: '',
         end: ''
     });
@@ -33,25 +33,32 @@ const EventDetails: React.FC = () => {
                         end: response.data.end
                     }));
                 })
-                
                 .catch(error => {
                     console.error("Error fetching event details:", error);
                     alert('Failed to load event details. Please try again.');
                 });
 
-                // Fetch admin's roles for the event
-                axios.get(`${apiUrl}/volunteer_roles`)
-                    .then(response => setRoles(response.data))
-                    .catch(error => {
-                        console.error("Error fetching roles:", error);
-                    });
+            // Fetch admin's roles for the event
+            axios.get(`${apiUrl}/volunteer_roles`)
+                .then(response => setRoles(response.data))
+                .catch(error => {
+                    console.error("Error fetching roles:", error);
+                });
 
+            // Fetch saved shifts for the event
+            axios.get(`${apiUrl}/events/${id}/volunteer_shifts`)
+                .then(response => {
+                    setSavedShifts(response.data); // Store fetched shifts
+                })
+                .catch(error => {
+                    console.error("Error fetching saved shifts:", error);
+                });
         }
     }, [id]);
 
     const handleAddShift = () => {
         // Validate the new shift data
-        if (!newShift.role || !newShift.start || !newShift.end) {
+        if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
             alert('Please fill in all shift details.');
             return;
         }
@@ -61,7 +68,7 @@ const EventDetails: React.FC = () => {
 
         // Reset the newShift form (keep event times as default)
         setNewShift(prev => ({
-            role: '',
+            volunteer_role: '',
             start: event.start,
             end: event.end
         }));
@@ -69,13 +76,25 @@ const EventDetails: React.FC = () => {
 
     const handleSaveShifts = () => {
         // Save shifts to the backend
-        axios.post(`${apiUrl}/events/${id}/shifts`, { shifts })
+        axios.post(`${apiUrl}/events/${id}/volunteer_shifts`, { shifts })
             .then(response => {
                 alert('Shifts successfully saved!');
+                // Fetch saved shifts again after saving
+                fetchSavedShifts();
             })
             .catch(error => {
                 console.error('Error saving shifts:', error);
                 alert('Failed to save shifts. Please try again.');
+            });
+    };
+
+    const fetchSavedShifts = () => {
+        axios.get(`${apiUrl}/events/${id}/volunteer_shifts`)
+            .then(response => {
+                setSavedShifts(response.data); // Store fetched shifts
+            })
+            .catch(error => {
+                console.error("Error fetching saved shifts:", error);
             });
     };
 
@@ -134,8 +153,8 @@ const EventDetails: React.FC = () => {
                         <FormControl fullWidth>
                             <InputLabel>Role</InputLabel>
                             <Select
-                                value={newShift.role}
-                                onChange={(e) => setNewShift({ ...newShift, role: e.target.value })}
+                                value={newShift.volunteer_role}
+                                onChange={(e) => setNewShift({ ...newShift, volunteer_role: e.target.value })}
                             >
                                 {roles.map(role => (
                                     <MenuItem key={role.id} value={role.name}>
@@ -165,7 +184,6 @@ const EventDetails: React.FC = () => {
                     </Grid>
                 </Grid>
                 
-                
                 <Button
                     variant="contained"
                     color="secondary"
@@ -181,7 +199,7 @@ const EventDetails: React.FC = () => {
                 </Typography>
                 {shifts.map((shift, index) => (
                     <Typography key={index} variant="body1">
-                        Role: {shift.role}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}
+                        Role: {shift.volunteer_role}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}
                     </Typography>
                 ))}
 
@@ -195,6 +213,15 @@ const EventDetails: React.FC = () => {
                     Save Shifts
                 </Button>
 
+                {/* Display saved shifts */}
+                <Typography variant="h6" gutterBottom style={{ marginTop: '40px' }}>
+                    Saved Shifts:
+                </Typography>
+                {savedShifts.map((shift, index) => (
+                    <Typography key={index} variant="body1">
+                        Role: {shift.volunteer_role}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}
+                    </Typography>
+                ))}
 
                 <Button
                     variant="contained"
