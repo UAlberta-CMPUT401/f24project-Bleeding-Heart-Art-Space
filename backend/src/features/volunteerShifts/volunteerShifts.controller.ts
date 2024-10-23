@@ -1,39 +1,83 @@
-// src/features/volunteerShifts/volunteerShifts.controller.ts
-
-import { Request, Response } from 'express';
-import { VolunteerShiftsService } from './volunteerShifts.service';
+import { Request, Response, NextFunction } from 'express';
 import { container } from 'tsyringe';
-import { NewVolunteerRole } from './volunteerShifts.model';
+import { VolunteerShiftsService } from './volunteerShifts.service';
 
 export class VolunteerShiftsController {
-  private service: VolunteerShiftsService;
+  public volunteerShiftsService = container.resolve(VolunteerShiftsService);
 
-  constructor() {
-    this.service = container.resolve(VolunteerShiftsService);
-  }
-
-  // Get shifts for a specific event
-  async getShiftsByEvent(req: Request, res: Response): Promise<void> {
-    const { eventId } = req.params;
-
+  /**
+   * Retrieve all shifts for a specific event.
+   */
+  public getShiftsByEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const shifts = await this.service.getShiftsByEvent(Number(eventId));
-      res.json(shifts);
+      const { eventId } = req.params;
+      if (!eventId) {
+        res.status(400).json({ error: 'Event ID is required' });
+        return;
+      }
+
+      const shifts = await this.volunteerShiftsService.getShiftsByEvent(Number(eventId));
+      res.status(200).json(shifts);
     } catch (error) {
-      res.status(500).json({ message: 'Error retrieving shifts', error });
+      next(error);
     }
   }
 
-  // Create new shifts for an event
-  async createShifts(req: Request, res: Response): Promise<void> {
-    const { eventId } = req.params;
-    const { shifts } = req.body as { shifts: NewVolunteerRole[] }; // Updated type
-
+  /**
+   * Create new shifts for a specific event.
+   */
+  public createShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const createdShifts = await this.service.createShifts(shifts);
-      res.status(201).json(createdShifts);
+      const { eventId } = req.params;
+      const shifts = req.body.shifts;
+
+      if (!eventId || !shifts || !Array.isArray(shifts)) {
+        res.status(400).json({ error: 'Event ID and valid shifts data are required' });
+        return;
+      }
+
+      await this.volunteerShiftsService.createShifts(shifts.map(shift => ({ ...shift, event_id: Number(eventId) })));
+      res.status(201).json({ message: 'Shifts created successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error creating shifts', error });
+      next(error);
+    }
+  }
+
+  /**
+   * Update a specific shift.
+   */
+  public updateShift = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const shiftData = req.body;
+
+      if (!id || !shiftData) {
+        res.status(400).json({ error: 'Shift ID and data are required' });
+        return;
+      }
+
+      await this.volunteerShiftsService.updateShift(Number(id), shiftData);
+      res.status(200).json({ message: 'Shift updated successfully' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Delete a specific shift by ID.
+   */
+  public deleteShift = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        res.status(400).json({ error: 'Shift ID is required' });
+        return;
+      }
+
+      await this.volunteerShiftsService.deleteShift(Number(id));
+      res.status(200).json({ message: 'Shift deleted successfully' });
+    } catch (error) {
+      next(error);
     }
   }
 }

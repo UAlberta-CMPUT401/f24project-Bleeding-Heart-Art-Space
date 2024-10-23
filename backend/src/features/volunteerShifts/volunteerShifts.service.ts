@@ -19,6 +19,7 @@ export class VolunteerShiftsService {
     return insertedShifts.map(shift => shift.id);
   }
 
+  
   /**
    * Retrieve all shifts for a specific event by its ID
    * @param eventId - The ID of the event to retrieve shifts for
