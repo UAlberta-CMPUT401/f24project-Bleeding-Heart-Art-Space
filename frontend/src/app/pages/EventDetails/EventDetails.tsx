@@ -40,7 +40,7 @@ const EventDetails: React.FC = () => {
                 });
 
                 // Fetch admin's roles for the event
-                axios.get(`${apiUrl}/roles`)
+                axios.get(`${apiUrl}/volunteer_roles`)
                     .then(response => setRoles(response.data))
                     .catch(error => {
                         console.error("Error fetching roles:", error);
