@@ -4,7 +4,7 @@ import axios from 'axios';
 import styles from "./CreateEvent.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import '@components/layout/TopNav.css';
-import '@components/layout/Dashboard.css';
+//import '@components/layout/Dashboard.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 

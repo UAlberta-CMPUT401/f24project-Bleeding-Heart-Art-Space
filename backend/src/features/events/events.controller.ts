@@ -61,7 +61,11 @@ export class EventsController {
    */
   public deleteEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const { id } = req.params;
       const eventId = parseInt(req.params.id, 10); // Convert ID parameter to an integer
+
+      // Delete associated shifts first
+      await this.eventsService.deleteShiftsByEventId(Number(id));
       await this.eventsService.deleteEvent(eventId);
       res.status(200).json({ message: 'Event deleted successfully' });
     } catch (error) {
