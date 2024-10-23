@@ -2,16 +2,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+    height: calc(100vh - 90px);
     background-color: #0000;
 }
 
 .card {
-    padding: 40px;
+    position: relative;
+    padding: 15px;
     max-width: 800px;
     width: 100%;
-    margin: 20px 0;
+    height: auto;
+    overflow: auto;
     border-radius: 15px;
     background-color: #0000;
 }
