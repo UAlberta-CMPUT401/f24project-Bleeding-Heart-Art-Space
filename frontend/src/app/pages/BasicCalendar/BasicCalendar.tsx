@@ -3,6 +3,8 @@ import EventCalendar from "./Components/CalendarEvent";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import './BasicCalendar.css';
+import { Fab } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -37,6 +39,11 @@ export default function BasicCalendar() {
         navigate(`/create-event?start=${slotInfo.start.toISOString()}&end=${slotInfo.end.toISOString()}`);
     };
 
+    // Function to handle FAB click
+    const handleFabClick = () => {
+        navigate('/create-event'); // Navigates to CreateEvent page without start and end dates
+    };
+
     return (
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
             {/* Pass events, event click handler, and slot select handler to EventCalendar */}
@@ -45,6 +52,20 @@ export default function BasicCalendar() {
                 onEventClick={handleEventClick} 
                 onSlotSelect={handleSlotSelect} 
             />
+            <Fab 
+                color="primary" 
+                aria-label="add" 
+                className="floating-button"
+                onClick={handleFabClick}
+                style={{
+                    position: 'fixed', 
+                    bottom: 16, 
+                    right: 16, 
+                    zIndex: 1000 
+                }}
+            >
+                <AddIcon />
+            </Fab>
         </div>
     );
 }
