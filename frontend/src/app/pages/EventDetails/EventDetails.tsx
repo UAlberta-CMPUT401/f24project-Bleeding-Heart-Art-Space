@@ -17,7 +17,9 @@ const EventDetails: React.FC = () => {
     const [newShift, setNewShift] = useState({
         volunteer_role: '',
         start: '',
-        end: ''
+        end: '',
+        description: '',
+        max_volunteers: 0
     });
 
     useEffect(() => {
@@ -70,7 +72,9 @@ const EventDetails: React.FC = () => {
         setNewShift(prev => ({
             volunteer_role: '',
             start: event.start,
-            end: event.end
+            end: event.end,
+            description: '',
+            max_volunteers: 0
         }));
     };
 
@@ -153,15 +157,16 @@ const EventDetails: React.FC = () => {
                         <FormControl fullWidth>
                             <InputLabel>Role</InputLabel>
                             <Select
-                                value={newShift.volunteer_role}
+                                value={newShift.volunteer_role}  // Bind to the role ID
                                 onChange={(e) => setNewShift({ ...newShift, volunteer_role: e.target.value })}
-                            >
+                                >
                                 {roles.map(role => (
-                                    <MenuItem key={role.id} value={role.name}>
-                                        {role.name}
+                                    <MenuItem key={role.id} value={role.id}>  {/* Pass role.id as the value */}
+                                    {role.name}
                                     </MenuItem>
                                 ))}
                             </Select>
+
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={4}>
@@ -182,6 +187,22 @@ const EventDetails: React.FC = () => {
                             onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
                         />
                     </Grid>
+                    <Grid item xs={12} md={4}> 
+                        <TextField
+                            label="Description"
+                            fullWidth
+                            value={newShift.description}
+                            onChange={(e) => setNewShift({ ...newShift, description: e.target.value })}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <TextField
+                        label="Max Volunteers"
+                        fullWidth
+                        value={newShift.max_volunteers}
+                        onChange={(e) => setNewShift({ ...newShift, max_volunteers: Number(e.target.value) })}
+                        />
+                        </Grid>
                 </Grid>
                 
                 <Button
@@ -199,7 +220,8 @@ const EventDetails: React.FC = () => {
                 </Typography>
                 {shifts.map((shift, index) => (
                     <Typography key={index} variant="body1">
-                        Role: {shift.volunteer_role}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}
+                        Role: {roles.find(role => role.id === shift.volunteer_role)?.name || 'Unknown Role'}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}, Description: {shift.description}
+                        , Max Volunteers: {shift.max_volunteers}
                     </Typography>
                 ))}
 
@@ -219,7 +241,8 @@ const EventDetails: React.FC = () => {
                 </Typography>
                 {savedShifts.map((shift, index) => (
                     <Typography key={index} variant="body1">
-                        Role: {shift.volunteer_role}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}
+                        Role: {roles.find(role => role.id === shift.volunteer_role)?.name || 'Unknown Role'}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}, Description: {shift.description},
+                        Max Volunteers: {shift.max_volunteers}
                     </Typography>
                 ))}
 

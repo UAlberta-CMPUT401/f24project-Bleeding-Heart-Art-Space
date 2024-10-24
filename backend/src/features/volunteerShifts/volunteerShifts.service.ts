@@ -68,4 +68,29 @@ export class VolunteerShiftsService {
       .where('id', '=', shiftId)
       .execute();
   }
+
+  /**
+   * Check if the maximum number of volunteers for a shift has been reached
+   * @param shiftId - The ID of the shift to check
+   * @returns A boolean indicating if the max volunteers have been reached
+   */
+  public async hasReachedMaxVolunteers(shiftId: number): Promise<boolean> {
+    const shiftDetails = await db
+      .selectFrom('volunteer_shifts')
+      .select(['max_volunteers'])
+      .where('id', '=', shiftId)
+      .executeTakeFirst();
+
+    if (!shiftDetails) {
+      throw new Error('Shift not found');
+    }
+
+    const existingSignups = await db
+      .selectFrom('shift_signup')
+      .select('id')
+      .where('shift_id', '=', shiftId)
+      .execute();
+
+    return existingSignups.length >= shiftDetails.max_volunteers;
+  }
 }
