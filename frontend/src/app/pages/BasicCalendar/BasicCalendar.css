@@ -1,7 +1,7 @@
 /* Calendar toolbar buttons */
 .rbc-toolbar button {
-    background-color: #9c2424; /* Darker background for better contrast */
-    color: white;
+    background-color: #af2020; /* Darker background for better contrast */
+    color: rgb(14, 12, 12);;
     border-radius: 8px;
     padding: 10px 15px;
     font-weight: bold;
@@ -10,9 +10,10 @@
 
 .rbc-toolbar button:hover {
     background-color: #e61414; /* Keep theme color for hover effect */
-    color: #f8f8f8; /* Lighten the text color on hover */
+    color: rgb(39, 14, 14); /* Lighten the text color on hover */
+    border-radius: 5px; /* Add rounded corners */
+    padding: 10px 20px; /* Adjust padding */
 }
-
 
 .rbc-btn-group {
     background-color: #9c2424; /* Change the button background */
@@ -21,7 +22,6 @@
     padding: 10px 20px; /* Adjust padding */
 }
 
-
 .rbc-toolbar{
     background-color: #9c2424; /* Change the button background */
     color: rgb(255, 255, 255); /* Change the button text color */
@@ -29,6 +29,23 @@
     padding: 10px 30px; /* Adjust padding */
 }
 
+
+.rbc-off-range-bg {
+    background-color: rgba(200, 200, 200, 0.5); /* Light gray */
+}
+.rbc-today {
+    color: black;
+    background-color: rgb(187, 226, 250);
+}
+.rbc-current {
+    color: black;
+}
+.floating-button {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 1000;
+}
 
 /* Ensure the container stretches across the available space and aligns the button to the right */
 .button-container {
@@ -88,12 +105,6 @@
     margin-bottom: 20px;
 }
 
-.rbc-calendar {
-    background-color: white; /* Ensure calendar has enough contrast */
-    border-radius: 10px; /* Rounded corners for a modern feel */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow to make it pop */
-}
-
 /*mobile view*/
 @media (max-width: 1200px) {
     .calendar-wrapper {
@@ -109,5 +120,12 @@
 
     .create-event-button {
         font-size: 14px; /* Adjust button size for smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .floating-button {
+        bottom: 10px;
+        right: 10px;
     }
 }

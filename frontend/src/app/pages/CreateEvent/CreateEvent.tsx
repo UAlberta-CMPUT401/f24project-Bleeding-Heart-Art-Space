@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Grid, Typography, Container, Card } from '@mui/material';
+import { TextField, Button, Grid, Typography, Container, Card, IconButton  } from '@mui/material';
 import axios from 'axios';
 import styles from "./CreateEvent.module.css";
-import { EventNote, LocationOn } from '@mui/icons-material';
+import { EventNote, LocationOn, Close } from '@mui/icons-material';
+import '@components/layout/TopNav.css';
+//import '@components/layout/Dashboard.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 
@@ -113,6 +115,12 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
         <div style={{ width: formWidth }}>
             <Container className={styles.container}>
                 <Card elevation={6} className={styles.card}>
+                    <IconButton
+                        onClick={() => navigate('/calendar')} // Navigate back to the calendar
+                        style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}
+                    >
+                        <Close style={{ fontSize: '40px', color: 'white' }} />
+                    </IconButton>
                     <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
                         Create Event
                     </Typography>
