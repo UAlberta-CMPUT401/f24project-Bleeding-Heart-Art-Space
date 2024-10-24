@@ -10,6 +10,7 @@ import { RolesTable, UsersTable } from "@features/users/users.model";
 import { VolunteerRolesTable } from "@/features/volunteerRoles/volunteerRoles.model";
 import { EventsTable } from "@/features/events/events.model";
 import { VolunteerShiftsTable } from "@/features/volunteerShifts/volunteerShifts.model";
+import { ShiftSignup } from "@/features/shiftSignup/shiftSignup.model";
 
 export interface Database {
   users: UsersTable
@@ -17,6 +18,7 @@ export interface Database {
   volunteer_roles: VolunteerRolesTable
   events: EventsTable
   volunteer_shifts: VolunteerShiftsTable
+  shift_signup: ShiftSignup
 }
 
 // make sure that postgres 'numeric' types are numbers, not strings
