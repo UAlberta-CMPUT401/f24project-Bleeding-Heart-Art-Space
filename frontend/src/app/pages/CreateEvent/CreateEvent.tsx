@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Typography, Container, Card, IconButton  } from '@mui/material';
 import axios from 'axios';
+import { useTheme } from '@mui/material/styles';
 import styles from "./CreateEvent.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import '@components/layout/TopNav.css';
@@ -26,6 +27,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
     const [address, setAddress] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const theme = useTheme();
     
     // Adjust form width based on sidebar state
     useEffect(() => {
@@ -119,7 +121,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
                         onClick={() => navigate('/calendar')} // Navigate back to the calendar
                         style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}
                     >
-                        <Close style={{ fontSize: '40px', color: 'white' }} />
+                        <Close style={{ fontSize: '40px', color: theme.palette.text.primary }} />
                     </IconButton>
                     <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
                         Create Event

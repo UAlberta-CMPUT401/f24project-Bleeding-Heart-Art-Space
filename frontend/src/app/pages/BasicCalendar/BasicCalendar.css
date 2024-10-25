@@ -29,6 +29,10 @@
     padding: 10px 30px; /* Adjust padding */
 }
 
+.rbc-active{
+    color: black !important;
+}
+
 
 .rbc-off-range-bg {
     background-color: rgba(200, 200, 200, 0.5); /* Light gray */
