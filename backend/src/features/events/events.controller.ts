@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { EventsService, EventRequestsService } from './event.service';
-import { NewEvent } from './events.model';
+import { NewEvent, NewEventRequest } from './events.model';
 
 export class EventsController {
   private eventsService = new EventsService();
@@ -90,7 +90,7 @@ export class EventsController {
 
   public createEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const eventData: NewEvent = req.body;
+      const eventData: NewEventRequest = req.body;
       const eventId = await this.eventRequestsService.createEventRequest(eventData);
       res.status(201).json({ message: 'Event request created', eventId });
     } catch (error) {
@@ -164,4 +164,13 @@ export class EventsController {
     }
   }
 
+  public getRequesterName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const requesterId = parseInt(req.params.id, 10);
+      const requesterName = await this.eventRequestsService.getRequesterName(requesterId);
+      res.json(requesterName);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
