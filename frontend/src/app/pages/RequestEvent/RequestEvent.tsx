@@ -70,7 +70,7 @@ const RequestEvent: React.FC<RequestEventProps> = ({ isSidebarOpen, onAddEvent }
                 address: address
             };
             
-            axios.post(`${apiUrl}/events`, eventData)
+            axios.post(`${apiUrl}/event_requests`, eventData)
                 .then(response => {
                     console.log("Event requested successfully:", response.data);
                     alert('Event requested successfully!');
