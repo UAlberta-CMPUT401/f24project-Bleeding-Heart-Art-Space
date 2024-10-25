@@ -93,4 +93,60 @@ export class EventsService {
       .where('id', '=', eventId)
       .execute();
   }
+
+}
+
+
+export class EventRequestsService {
+  public async createEventRequest(eventData: NewEvent): Promise<number> {
+    const [insertedEvent] = await db
+      .insertInto('event_requests')
+      .values({
+        start: eventData.start,
+        end: eventData.end,
+        venue: eventData.venue,
+        title: eventData.title,
+        address: eventData.address,
+      })
+      .returning('id')
+      .execute();
+
+    return insertedEvent.id;
+  }
+
+  public async getAllEventRequests(): Promise<Event[]> {
+    return await db
+      .selectFrom('event_requests')
+      .selectAll()
+      .execute()
+      .then(events => events.map(event => ({
+        ...event,
+      })));
+  }
+
+  public async getEventRequestById(eventId: number): Promise<Event | undefined> {
+    const event = await db
+      .selectFrom('event_requests')
+      .selectAll()
+      .where('id', '=', eventId)
+      .executeTakeFirst();
+
+    return event;
+  }
+
+  public async deleteEventRequest(eventId: number): Promise<void> {
+    await db
+      .deleteFrom('event_requests' as any)
+      .where('id', '=', eventId)
+      .execute();
+  }
+
+  public async updateEventRequest(eventId: number, eventData: EventUpdate): Promise<void> {
+    await db
+      .updateTable('event_requests')
+      .set(eventData)
+      .where('id', '=', eventId)
+      .execute();
+  }
+
 }
