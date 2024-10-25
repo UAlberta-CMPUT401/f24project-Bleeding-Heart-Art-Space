@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import { db } from '@database/database';
-import { Event, NewEvent, EventUpdate } from './events.model';
+import { Event, NewEvent, EventUpdate, NewEventRequest } from './events.model';
 
 @singleton()
 export class EventsService {
@@ -98,7 +98,7 @@ export class EventsService {
 
 
 export class EventRequestsService {
-  public async createEventRequest(eventData: NewEvent): Promise<number> {
+  public async createEventRequest(eventData: NewEventRequest): Promise<number> {
     const [insertedEvent] = await db
       .insertInto('event_requests')
       .values({
@@ -107,6 +107,7 @@ export class EventRequestsService {
         venue: eventData.venue,
         title: eventData.title,
         address: eventData.address,
+        requester: eventData.requester,
       })
       .returning('id')
       .execute();
@@ -147,6 +148,18 @@ export class EventRequestsService {
       .set(eventData)
       .where('id', '=', eventId)
       .execute();
+  }
+  
+
+  public async getRequesterName(userId: number): Promise<string | undefined> {
+    const user = await db
+      .selectFrom('users')
+      .select('first_name')
+      .select('last_name')
+      .where('id', '=', userId)
+      .executeTakeFirst();
+
+    return user ? user.first_name : undefined;
   }
 
 }

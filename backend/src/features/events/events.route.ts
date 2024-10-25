@@ -38,6 +38,8 @@ export class EventsRoute implements Routes {
 
     this.router.put(`${this.path}/requests/:id`, this.eventsController.updateEventRequest);
 
+    this.router.put(`${this.path}/requests/:id/`, this.eventsController.getRequesterName);
+
 
   }
 }

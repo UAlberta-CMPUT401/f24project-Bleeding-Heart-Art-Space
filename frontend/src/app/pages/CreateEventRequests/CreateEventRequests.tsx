@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Typography, Container, Card, IconButton  } from '@mui/material';
 import axios from 'axios';
-import styles from "./RequestEvent.module.css";
+import styles from "./CreateEventRequests.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import '@components/layout/TopNav.css';
 //import '@components/layout/Dashboard.css';
@@ -15,7 +15,7 @@ interface RequestEventProps {
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-const RequestEvent: React.FC<RequestEventProps> = ({ isSidebarOpen, onAddEvent }) => {
+const CreateEventRequest: React.FC<RequestEventProps> = ({ isSidebarOpen, onAddEvent }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [formWidth, setFormWidth] = useState('100%');
@@ -251,4 +251,4 @@ const RequestEvent: React.FC<RequestEventProps> = ({ isSidebarOpen, onAddEvent }
     );
 };
 
-export default RequestEvent;
+export default CreateEventRequest;
