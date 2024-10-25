@@ -6,6 +6,10 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+  --clr-red-hover: #e61414;
+  --clr-secondary: #9c2424;
+  --clr-primary: #8e0606;
+  
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

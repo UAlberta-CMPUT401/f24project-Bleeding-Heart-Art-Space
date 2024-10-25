@@ -1,7 +1,7 @@
 /* Calendar toolbar buttons */
 .rbc-toolbar button {
-    background-color: #af2020; /* Darker background for better contrast */
-    color: rgb(14, 12, 12);;
+    background-color: var(--mui-palette-primary-main); /* Darker background for better contrast */
+    color: #fff;
     border-radius: 8px;
     padding: 10px 15px;
     font-weight: bold;
@@ -9,21 +9,21 @@
 }
 
 .rbc-toolbar button:hover {
-    background-color: #e61414; /* Keep theme color for hover effect */
-    color: rgb(39, 14, 14); /* Lighten the text color on hover */
+    background-color: var(--mui-palette-primary-dark); /* Keep theme color for hover effect */
+    color: #fff; /* Lighten the text color on hover */
     border-radius: 5px; /* Add rounded corners */
     padding: 10px 20px; /* Adjust padding */
 }
 
 .rbc-btn-group {
-    background-color: #9c2424; /* Change the button background */
+    background-color: var(--mui-palette-primary-main); /* Change the button background */
     color: rgb(255, 255, 255); /* Change the button text color */
     border-radius: 5px; /* Add rounded corners */
     padding: 10px 20px; /* Adjust padding */
 }
 
 .rbc-toolbar{
-    background-color: #9c2424; /* Change the button background */
+    background-color: var(--mui-palette-primary-main); /* Change the button background */
     color: rgb(255, 255, 255); /* Change the button text color */
     border-radius: 5px; /* Add rounded corners */
     padding: 10px 30px; /* Adjust padding */
@@ -34,8 +34,8 @@
     background-color: rgba(200, 200, 200, 0.5); /* Light gray */
 }
 .rbc-today {
-    color: black;
-    background-color: rgb(187, 226, 250);
+    color: var(--mui-palette-primary-main);
+    background-color: #F2C0BD;
 }
 .rbc-current {
     color: black;
@@ -59,7 +59,7 @@
 /* Create Event button */
 .create-event-button {
     padding: 12px 24px; /* Slightly larger padding for a bigger, easier-to-click button */
-    background-color: #af2020;
+    background-color: var(--mui-palette-primary-main);
     color: white;
     border: none;
     border-radius: 8px; /* Increased radius for a more modern look */

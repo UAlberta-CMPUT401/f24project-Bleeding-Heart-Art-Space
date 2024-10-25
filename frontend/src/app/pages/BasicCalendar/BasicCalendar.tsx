@@ -44,6 +44,10 @@ export default function BasicCalendar() {
         navigate('/create-event'); // Navigates to CreateEvent page without start and end dates
     };
 
+    const handleReqClick = () => {
+        navigate('/request-event'); // Navigates to RequestEvent page
+    };
+
     return (
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
             {/* Pass events, event click handler, and slot select handler to EventCalendar */}
@@ -65,6 +69,28 @@ export default function BasicCalendar() {
                 }}
             >
                 <AddIcon />
+            </Fab>
+            <Fab 
+                color="primary" 
+                aria-label="add" 
+                className="floating-button"
+                onClick={handleReqClick}
+                style={{
+                    position: 'fixed', 
+                    bottom: 16, 
+                    right: 96, 
+                    zIndex: 1000,
+                    borderRadius: '8px',
+                    padding: '10px 60px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                    // alignItems: 'center',
+                    // justifyContent: 'center',
+                }}
+            >
+                Request Event
             </Fab>
         </div>
     );
