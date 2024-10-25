@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../../utils/firebase'; // Import your Firebase config
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 // Define the AuthContext type
 interface AuthContextType {
@@ -15,6 +15,7 @@ interface AuthContextType {
   export const AuthProvider: React.FC = () => {
     const [user, setUser] = useState<User | null>(null); // Set the type to User | null
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
   
     useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -24,6 +25,12 @@ interface AuthContextType {
   
       return () => unsubscribe(); // Cleanup the subscription on unmount
     }, []);
+
+    useEffect(() => {
+      if (!loading && !user) {
+        navigate('/'); // Redirect to home page
+      }
+    }, [user, loading, navigate]);
   
     return (
       <AuthContext.Provider value={{ user, loading }}>
