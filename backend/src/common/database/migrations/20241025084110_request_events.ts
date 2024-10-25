@@ -11,8 +11,6 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('venue', 'varchar(255)', col => col.notNull())       // Venue column
     .addColumn('address', 'varchar(255)', col => col.notNull())     // Address column
     .execute();
-  // Optional: Create indexes for optimization
-  await db.schema.createIndex('event_start_end_index').on('events').columns(['start', 'end']).execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
