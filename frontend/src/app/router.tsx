@@ -14,6 +14,7 @@ import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import CompleteSignup from "@pages/CompleteSignup/CompleteSignup";
 import Account from "@pages/Account/Account";
 import EventDetails from "@pages/EventDetails/EventDetails";
+import VolunteerShifts from "@pages/VolunteerShifts/VolunteerShifts";
 
 interface Event {
   title: string;
@@ -51,6 +52,7 @@ const Router: React.FC = () => {
         <Route path="/overview" element={<Overview />} />
         <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
         <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
+        <Route path="/volunteer-shifts/:id" element={<VolunteerShifts />} />
         <Route path="/events/details/:id" element={<EventDetails />} />
         <Route path="/calendar" element={<BasicCalendar />} />
         <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
