@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Divider, TextField, Alert } from "@mui/material";
 import styles from './Login.module.css';
-import TopBar from "../../components/layout/topBar";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../utils/firebase.ts";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { auth } from "@utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import GoogleIcon from '@mui/icons-material/Google';
+import { blue } from "@mui/material/colors";
 
 const Login: React.FC = () => {
 
@@ -13,6 +15,30 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   
   const navigate = useNavigate();
+
+  const handleGoogleLogin = () => {
+    setError(null);
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        if (result) {
+          navigate("/overview");
+        }
+      }).catch((error) => {
+        setError(error);
+      });
+  }
+
+  useEffect(() => {
+    // go to dashboard if already logged in
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/overview");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +58,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <TopBar>
+    <>
       <h1>Login</h1>
       <Card
         sx={{
@@ -41,6 +67,23 @@ const Login: React.FC = () => {
           padding: '2rem',
         }}
       >
+        <Button 
+          variant="contained" 
+          onClick={handleGoogleLogin}
+          sx={{
+            width: '100%',
+            backgroundColor: blue[500],
+            '&:hover': {
+              backgroundColor: blue[700],
+            },
+          }}
+        >
+          <GoogleIcon sx={{ mr: 1 }} />
+          Sign in with Google
+        </Button>
+
+        <Divider sx={{ marginY: '2rem' }}>Or</Divider>
+
         <form className={styles.loginForm} onSubmit={handleLogin}>
 
           {error && (
@@ -75,6 +118,17 @@ const Login: React.FC = () => {
           </Button>
         </form>
 
+        <Button
+          component={Link}
+          variant="outlined"
+          to="/reset-password"
+          sx={{
+            marginTop: '1rem',
+          }}
+        >
+          Reset Password
+        </Button>
+
         <Divider
           sx={{
             marginY: '2rem',
@@ -84,14 +138,15 @@ const Login: React.FC = () => {
         <div>Don't have an account yet?</div>
 
         <Button
+          component={Link}
           variant="outlined"
-          href="/signup"
+          to="/signup"
         >
           Sign-up
         </Button>
 
       </Card>
-    </TopBar>
+    </>
   );
 }
 

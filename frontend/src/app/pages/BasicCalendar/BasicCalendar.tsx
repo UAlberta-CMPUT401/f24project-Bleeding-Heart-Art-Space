@@ -1,6 +1,4 @@
-import TopNav from "./components/TopNav"
-import Dashboard from "./components/Dashboard"
-import EventCalendar from "./CalendarEvent";
+import EventCalendar from "./Components/CalendarEvent";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import './BasicCalendar.css';
 
@@ -19,22 +17,8 @@ export default function BasicCalendar() {
     };
 
     return (
-    <>
-        <div className="nav-container">
-            {/* Top Navigation Bar */}
-            <TopNav />
-
-            <div className="dashboard-container">
-                {/* Sidebar Dashboard */}
-                <Dashboard />
-            
-                <div className="main-content">
-                    <div style={{ height: '500px' }}> {/* Adjust height as needed */}
-                        <EventCalendar onEventClick={handleEventClick} onSlotSelect={handleSlotSelect}/>
-                    </div>
-                </div>
-            </div>
+        <div style={{ maxWidth: 900 }}>
+            <EventCalendar onEventClick={handleEventClick} onSlotSelect={handleSlotSelect} />
         </div>
-    </>
     );
 }

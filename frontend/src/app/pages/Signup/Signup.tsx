@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Card, Divider, TextField, Alert} from "@mui/material";
-import styles from './Login.module.css';
-import TopBar from "../../components/layout/topBar";
+import styles from '@pages/Login/Login.module.css';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../utils/firebase.ts";
+import { auth } from "@utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const Signup: React.FC = () => {
 
@@ -45,7 +45,7 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <TopBar>
+    <>
       <h1>Sign-up</h1>
       <Card
         sx={{
@@ -103,11 +103,16 @@ const Signup: React.FC = () => {
         
         <div>Already have an account?</div>
         
-        <Button variant="outlined" href="/login">
+        <Button 
+          component={Link}
+          variant="outlined" 
+          to="/login"
+          color="primary"
+        >
           Login
         </Button>
       </Card>
-    </TopBar>
+    </>
   );
 };
 

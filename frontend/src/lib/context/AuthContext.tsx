@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../../utils/firebase'; // Import your Firebase config
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { Outlet } from "react-router-dom";
 
 // Define the AuthContext type
 interface AuthContextType {
@@ -11,12 +12,7 @@ interface AuthContextType {
   // Initialize the context with a default value (can be null initially)
   const AuthContext = createContext<AuthContextType | undefined>(undefined);
   
-  // Define the props for AuthProvider
-  interface AuthProviderProps {
-    children: ReactNode; // ReactNode type ensures the children can be React elements
-  }
-  
-  export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  export const AuthProvider: React.FC = () => {
     const [user, setUser] = useState<User | null>(null); // Set the type to User | null
     const [loading, setLoading] = useState(true);
   
@@ -31,7 +27,7 @@ interface AuthContextType {
   
     return (
       <AuthContext.Provider value={{ user, loading }}>
-        {children}
+        <Outlet/>
       </AuthContext.Provider>
     );
   };

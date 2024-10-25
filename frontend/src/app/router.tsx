@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import BasicCalendar from './pages/BasicCalendar';
-import Overview from './pages/Overview';
-import CreateEvent from "./pages/CreateEvent";
-import EditEvent from "./pages/EditEvent";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
+import Signup from "./pages/Signup/Signup";
+import BasicCalendar from './pages/BasicCalendar/BasicCalendar';
+import Overview from './pages/Overview/Overview';
+import CreateEvent from "./pages/CreateEvent/CreateEvent";
+import EditEvent from "./pages/EditEvent/EditEvent";
 import VolunteerManagement from "./pages/VolunteerManagement";
 import { AuthProvider } from '../lib/context/AuthContext';
+import Dashboard from "@components/layout/Dashboard"
+import TopBar from "@components/layout/TopBar";
+import ResetPassword from "@pages/ResetPassword/ResetPassword";
+import CompleteSignup from "@pages/CompleteSignup/CompleteSignup";
+import Account from "@pages/Account/Account";
 
 interface Event {
   title: string;
@@ -35,16 +40,23 @@ const Router: React.FC = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      {/* <AuthProvider> */}
-      <Route path="/overview" element={<Overview />} />
-      <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
-      <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
-      <Route path="/calendar" element={<BasicCalendar />} />
-      <Route path="/volunteer-management" element={<VolunteerManagement />} /> 
-      {/* </AuthProvider> */}
+      <Route element={<TopBar />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+      </Route>
+      < Route element={<AuthProvider />}>
+        <Route path="/complete-signup" element={<CompleteSignup />} />
+        <Route element={<Dashboard />}>
+          <Route path="/overview" element={<Overview />} />
+          <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
+          <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
+          <Route path="/calendar" element={<BasicCalendar />} />
+          <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
+          <Route path="/account" element={<Account />} />
+        </Route>
+      </Route>
     </Routes>
   );
 }
