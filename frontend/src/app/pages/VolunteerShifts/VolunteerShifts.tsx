@@ -54,12 +54,20 @@ const VolunteerShifts: React.FC = () => {
     };
 
     const handleSaveShifts = () => {
-        axios.post(`${apiUrl}/events/${id}/volunteer_shifts`, { shifts })
+        const formattedShifts = shifts.map((shift) => ({
+            event_id: id,  // Associate each shift with the current event
+            volunteer_role: shift.volunteer_role,
+            start: `${new Date().toISOString().slice(0, 10)}T${shift.start}`,  // Full ISO date-time format
+            end: `${new Date().toISOString().slice(0, 10)}T${shift.end}`,
+        }));
+    
+        axios
+            .post(`${apiUrl}/events/${id}/volunteer_shifts`, { shifts: formattedShifts })
             .then(() => {
                 alert('Shifts successfully saved!');
-                fetchSavedShifts();
+                fetchSavedShifts();  // Refresh the displayed shifts
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error saving shifts:', error);
                 alert('Failed to save shifts. Please try again.');
             });

@@ -1,6 +1,7 @@
 import { singleton } from 'tsyringe';
-import { db } from '@database/database';
-import { Event, NewEvent, EventUpdate } from './events.model';
+import { Database, db } from '@database/database';
+import { Event, NewEvent, EventUpdate, NewEventRequest } from './events.model';
+import { Kysely } from 'kysely';
 
 @singleton()
 export class EventsService {
@@ -98,7 +99,7 @@ export class EventsService {
 
 
 export class EventRequestsService {
-  public async createEventRequest(eventData: NewEvent): Promise<number> {
+  public async createEventRequest(eventData: NewEventRequest): Promise<number> {
     const [insertedEvent] = await db
       .insertInto('event_requests')
       .values({
@@ -107,6 +108,7 @@ export class EventRequestsService {
         venue: eventData.venue,
         title: eventData.title,
         address: eventData.address,
+        requester: eventData.requester,
       })
       .returning('id')
       .execute();
@@ -148,5 +150,13 @@ export class EventRequestsService {
       .where('id', '=', eventId)
       .execute();
   }
-
+  
+  public async getRequesterFullName(requesterId: number): Promise<{ firstName: string, lastName: string } | null> {
+    const requester = await db
+        .selectFrom('users') // Assuming 'users' table holds the requester info
+        .select(['first_name', 'last_name']) // Assuming these columns exist
+        .where('id', '=', requesterId)
+        .executeTakeFirst();
+    return requester ? { firstName: requester.first_name, lastName: requester.last_name } : null;
+  }
 }
