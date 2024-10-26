@@ -14,6 +14,9 @@ export class EventsController {
     try {
       const eventData: NewEvent = req.body; // Type ensures request body conforms to NewEvent schema
       const insertedEvent = await this.eventsService.createEvent(eventData);
+      if (insertedEvent === undefined) {
+        res.status(400).json({ message: 'Failed to create event' });
+      }
       res.status(201).json(insertedEvent);
     } catch (error) {
       next(error); // Pass error to global error handler middleware
