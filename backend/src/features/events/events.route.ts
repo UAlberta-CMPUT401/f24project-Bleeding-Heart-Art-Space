@@ -28,15 +28,15 @@ export class EventsRoute implements Routes {
     // Route to update an event by ID
     this.router.put(`${this.path}/:id`, this.eventsController.updateEvent);
 
-    this.router.post(`${this.path}/requests`, this.eventsController.createEventRequest);
-
-    this.router.get(`${this.path}/requests`, this.eventsController.getAllEventRequests);
-
-    this.router.get(`${this.path}/requests/:id`, this.eventsController.getEventRequestById);
-
-    this.router.delete(`${this.path}/requests/:id`, this.eventsController.deleteEventRequest);
-
-    this.router.put(`${this.path}/requests/:id`, this.eventsController.updateEventRequest);
+    // Event request routes
+    this.router.post('/event_requests', this.eventsController.createEventRequest);
+    this.router.get('/event_requests', this.eventsController.getAllEventRequests);
+    this.router.get(`/event_requests/:id`, this.eventsController.getEventRequestById);
+    this.router.delete('/event_requests/:id', this.eventsController.deleteEventRequest);
+    this.router.put('/event_requests/:id', this.eventsController.updateEventRequest);
+    
+    // Retrieve requester's full name
+    this.router.get('/event_requests/:id/requester', this.eventsController.getRequesterFullName);
 
 
   }
