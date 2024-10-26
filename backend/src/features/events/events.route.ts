@@ -6,6 +6,7 @@ export class EventsRoute implements Routes {
   public path = '/events';
   public router = Router();
   public eventsController = new EventsController();
+  
 
   constructor() {
     this.initializeRoutes();
@@ -26,5 +27,17 @@ export class EventsRoute implements Routes {
 
     // Route to update an event by ID
     this.router.put(`${this.path}/:id`, this.eventsController.updateEvent);
+
+    this.router.post(`${this.path}/requests`, this.eventsController.createEventRequest);
+
+    this.router.get(`${this.path}/requests`, this.eventsController.getAllEventRequests);
+
+    this.router.get(`${this.path}/requests/:id`, this.eventsController.getEventRequestById);
+
+    this.router.delete(`${this.path}/requests/:id`, this.eventsController.deleteEventRequest);
+
+    this.router.put(`${this.path}/requests/:id`, this.eventsController.updateEventRequest);
+
+
   }
 }

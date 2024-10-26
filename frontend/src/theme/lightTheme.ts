@@ -15,4 +15,15 @@ export const lightTheme = createTheme({
       base1: '#e8e8e8',
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        contained: {
+          '&:hover': {
+            color: '#fff',
+          }
+        }
+      }
+    }
+  }
 });
