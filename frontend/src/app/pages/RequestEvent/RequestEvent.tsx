@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Typography, Container, Card, IconButton  } from '@mui/material';
 import axios from 'axios';
-import { useTheme } from '@mui/material/styles';
-import styles from "./CreateEvent.module.css";
+import styles from "./RequestEvent.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 import '@components/layout/TopNav.css';
+//import '@components/layout/Dashboard.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 
-interface CreateEventProps {
+interface RequestEventProps {
     isSidebarOpen: boolean;
     onAddEvent: (event: { title: string; start: Date; end: Date; venue: string, address: string }) => void;
 }
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) => {
+const RequestEvent: React.FC<RequestEventProps> = ({ isSidebarOpen, onAddEvent }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [formWidth, setFormWidth] = useState('100%');
@@ -71,10 +72,10 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
                 address: address
             };
             
-            axios.post(`${apiUrl}/events`, eventData)
+            axios.post(`${apiUrl}/event_requests`, eventData)
                 .then(response => {
-                    console.log("Event created successfully:", response.data);
-                    alert('Event created successfully!');
+                    console.log("Event requested successfully:", response.data);
+                    alert('Event requested successfully!');
                     onAddEvent({
                         title: eventData.title,
                         start: new Date(eventData.start),
@@ -85,8 +86,8 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
                     navigate('/calendar');
                 })
                 .catch(error => {
-                    console.error("Error creating event:", error.response?.data || error.message);
-                    alert('Failed to create event. Please try again.');
+                    console.error("Error requesting event:", error.response?.data || error.message);
+                    alert('Failed to request event. Please try again.');
                 });
             
             // CLEAR/RESTART THE FIELDS AND LOG
@@ -123,7 +124,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
                         <Close style={{ fontSize: '40px', color: theme.palette.text.primary }} />
                     </IconButton>
                     <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
-                        Create Event
+                        Request Event
                     </Typography>
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <Grid container spacing={2}>
@@ -239,7 +240,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
                                             fullWidth
                                             style={{ marginTop: '20px' }}
                                         >
-                                            Create
+                                            Request
                                         </Button>
                                     </Grid>
                                 </Grid>
@@ -252,4 +253,4 @@ const CreateEvent: React.FC<CreateEventProps> = ({ isSidebarOpen, onAddEvent }) 
     );
 };
 
-export default CreateEvent;
+export default RequestEvent;

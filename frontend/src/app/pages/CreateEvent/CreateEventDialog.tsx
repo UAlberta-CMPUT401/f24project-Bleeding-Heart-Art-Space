@@ -3,6 +3,7 @@ import { IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogAction
 import styles from "./CreateEventDialog.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useEventStore } from '@pages/EventStore/useEventStore';
+import { useTheme } from '@mui/material/styles';
 
 interface CreateEventDialogProps {
     open: boolean;
@@ -23,6 +24,8 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
     const [endTimeLocal, setEndTimeLocal] = useState(endTime);
     const [loading, setLoading] = useState(false);
     const { addEvent } = useEventStore(); //---> Add event function from EventStore!
+    const theme = useTheme();
+
 
     const handleClear = () => {
         setTitle("");
@@ -77,7 +80,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                         onClick={dialogClose}
                         style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}
                     >
-                        <Close style={{ fontSize: '40px', color: 'white' }} />
+                        <Close style={{ fontSize: '40px', color: theme.palette.text.primary }} />
                 </IconButton>
                 <div>
                     <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>

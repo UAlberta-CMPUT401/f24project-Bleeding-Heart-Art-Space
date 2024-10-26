@@ -40,6 +40,10 @@ const BasicCalendar: React.FC = () => {
         navigate(`/events/details/${eventId}`);
     };
 
+    const handleReqClick = () => {
+        navigate('/request-event'); // Navigates to RequestEvent page
+    };
+
     return (
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
             <EventCalendar 
@@ -68,6 +72,28 @@ const BasicCalendar: React.FC = () => {
                 startTime={startTime}
                 endTime={endTime}
             />
+            <Fab 
+                color="primary" 
+                aria-label="add" 
+                className="floating-button"
+                onClick={handleReqClick}
+                style={{
+                    position: 'fixed', 
+                    bottom: 16, 
+                    right: 96, 
+                    zIndex: 1000,
+                    borderRadius: '8px',
+                    padding: '10px 60px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                    // alignItems: 'center',
+                    // justifyContent: 'center',
+                }}
+            >
+                Request Event
+            </Fab>
         </div>
     );
 };

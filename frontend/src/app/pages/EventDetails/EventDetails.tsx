@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Container, Typography, Card, Grid, TextField, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
-import { EventNote, LocationOn } from '@mui/icons-material';
-import styles from './EventDetails.module.css'; // Add relevant CSS styles here
+import { Grid, Typography, Button, Card, Container } from '@mui/material';
+import EventIcon from '@mui/icons-material/Event';
+import PlaceIcon from '@mui/icons-material/Place';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import styles from './EventDetails.module.css';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -11,250 +14,117 @@ const EventDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [event, setEvent] = useState<any>(null);
-    const [roles, setRoles] = useState<any[]>([]);
-    const [shifts, setShifts] = useState<any[]>([]); // Track created shifts
-    const [savedShifts, setSavedShifts] = useState<any[]>([]); // Track fetched saved shifts
-    const [newShift, setNewShift] = useState({
-        volunteer_role: '',
-        start: '',
-        end: '',
-        description: '',
-        max_volunteers: 0
-    });
+    const [shifts, setShifts] = useState<any[]>([]);
 
     useEffect(() => {
         if (id) {
             axios.get(`${apiUrl}/events/${id}`)
                 .then(response => {
                     setEvent(response.data);
-                    
-                    // Default new shift times to match event start and end times
-                    setNewShift(prev => ({
-                        ...prev,
-                        start: response.data.start,
-                        end: response.data.end
-                    }));
                 })
                 .catch(error => {
                     console.error("Error fetching event details:", error);
                     alert('Failed to load event details. Please try again.');
                 });
 
-            // Fetch admin's roles for the event
-            axios.get(`${apiUrl}/volunteer_roles`)
-                .then(response => setRoles(response.data))
-                .catch(error => {
-                    console.error("Error fetching roles:", error);
-                });
-
-            // Fetch saved shifts for the event
             axios.get(`${apiUrl}/events/${id}/volunteer_shifts`)
-                .then(response => {
-                    setSavedShifts(response.data); // Store fetched shifts
-                })
+                .then(response => setShifts(response.data))
                 .catch(error => {
-                    console.error("Error fetching saved shifts:", error);
+                    console.error("Error fetching shifts:", error);
                 });
         }
     }, [id]);
-
-    const handleAddShift = () => {
-        // Validate the new shift data
-        if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
-            alert('Please fill in all shift details.');
-            return;
-        }
-
-        // Add shift to the local state
-        setShifts([...shifts, newShift]);
-
-        // Reset the newShift form (keep event times as default)
-        setNewShift(prev => ({
-            volunteer_role: '',
-            start: event.start,
-            end: event.end,
-            description: '',
-            max_volunteers: 0
-        }));
-    };
-
-    const handleSaveShifts = () => {
-        // Save shifts to the backend
-        axios.post(`${apiUrl}/events/${id}/volunteer_shifts`, { shifts })
-            .then(response => {
-                alert('Shifts successfully saved!');
-                // Fetch saved shifts again after saving
-                fetchSavedShifts();
-            })
-            .catch(error => {
-                console.error('Error saving shifts:', error);
-                alert('Failed to save shifts. Please try again.');
-            });
-    };
-
-    const fetchSavedShifts = () => {
-        axios.get(`${apiUrl}/events/${id}/volunteer_shifts`)
-            .then(response => {
-                setSavedShifts(response.data); // Store fetched shifts
-            })
-            .catch(error => {
-                console.error("Error fetching saved shifts:", error);
-            });
-    };
-
-    if (!event) {
-        return <Typography>Loading event details...</Typography>;
-    }
 
     const handleEdit = () => {
         navigate(`/edit-event/${id}`);
     };
 
+    const handleGoToShifts = () => {
+        navigate(`/volunteer-shifts/${id}`);
+    };
+
     return (
         <Container className={styles.container}>
             <Card elevation={6} className={styles.card}>
-                <Typography variant="h3" align="center" gutterBottom>
-                    {event.title}
+                {/* Event Header Section */}
+                <Typography variant="h4" align="center" gutterBottom>
+                    {event?.name}
                 </Typography>
-                <Grid container spacing={2}>
 
-                    <Grid item xs={6}>
-                        <Typography variant="h6">
-                            Start Date/Time: {new Date(event.start).toLocaleString()}
+                <Grid container spacing={2} justifyContent="center">
+                    {/* Event Details */}
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h6" align="center">
+                            <AccessTimeIcon /> Start Date/Time: {new Date(event?.start).toLocaleString()}
                         </Typography>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="h6">
-                            End Date/Time: {new Date(event.end).toLocaleString()}
-                        </Typography>
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <Typography variant="h6">
-                            <EventNote style={{ marginRight: '8px' }} />
-                            Event: {event.title}
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h6" align="center">
+                            <AccessTimeIcon /> End Date/Time: {new Date(event?.end).toLocaleString()}
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="h6">
-                            <LocationOn style={{ marginRight: '8px' }} />
-                            Venue: {event.venue}
+                        <Typography variant="h6" align="center">
+                            <EventIcon /> Event: {event?.name}
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="h6">
-                            Address: {event.address}
+                        <Typography variant="h6" align="center">
+                            <PlaceIcon /> Venue: {event?.venue}
                         </Typography>
-                    </Grid> 
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="h6" align="center">
+                            Address: {event?.address}
+                        </Typography>
+                    </Grid>
                 </Grid>
-                {/* Shifts Creation Section */}
-                <Typography variant="h5" gutterBottom style={{ marginTop: '20px' }}>
-                    Create Shifts
+
+                {/* Created Shifts Section */}
+                <Typography variant="h5" gutterBottom style={{ marginTop: '30px' }}>
+                    Created Shifts
                 </Typography>
-
                 <Grid container spacing={2}>
-                    <Grid item xs={12} md={4}>
-                        <FormControl fullWidth>
-                            <InputLabel>Role</InputLabel>
-                            <Select
-                                value={newShift.volunteer_role}  // Bind to the role ID
-                                onChange={(e) => setNewShift({ ...newShift, volunteer_role: e.target.value })}
-                                >
-                                {roles.map(role => (
-                                    <MenuItem key={role.id} value={role.id}>  {/* Pass role.id as the value */}
-                                    {role.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <TextField
-                            label="Start Time"
-                            type="datetime-local"
-                            fullWidth
-                            value={newShift.start}
-                            onChange={(e) => setNewShift({ ...newShift, start: e.target.value })}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <TextField
-                            label="End Time"
-                            type="datetime-local"
-                            fullWidth
-                            value={newShift.end}
-                            onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={4}> 
-                        <TextField
-                            label="Description"
-                            fullWidth
-                            value={newShift.description}
-                            onChange={(e) => setNewShift({ ...newShift, description: e.target.value })}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <TextField
-                        label="Max Volunteers"
-                        fullWidth
-                        value={newShift.max_volunteers}
-                        onChange={(e) => setNewShift({ ...newShift, max_volunteers: Number(e.target.value) })}
-                        />
+                    {shifts.map((shift, index) => (
+                        <Grid item xs={12} sm={6} key={index}>
+                            <Card className={styles.shiftCard}>
+                                <Typography variant="h6">
+                                    <AssignmentIndIcon /> Role: {shift.volunteer_role}
+                                </Typography>
+                                <Typography variant="body1">
+                                    <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleTimeString()}
+                                </Typography>
+                                <Typography variant="body1">
+                                    <AccessTimeIcon /> End: {new Date(shift.end).toLocaleTimeString()}
+                                </Typography>
+                            </Card>
                         </Grid>
+                    ))}
                 </Grid>
-                
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleAddShift}
-                    style={{ marginTop: '20px' }}
-                >
-                    Add Shift
-                </Button>
 
-                {/* Display created shifts */}
-                <Typography variant="h6" gutterBottom style={{ marginTop: '20px' }}>
-                    Created Shifts:
-                </Typography>
-                {shifts.map((shift, index) => (
-                    <Typography key={index} variant="body1">
-                        Role: {roles.find(role => role.id === shift.volunteer_role)?.name || 'Unknown Role'}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}, Description: {shift.description}
-                        , Max Volunteers: {shift.max_volunteers}
-                    </Typography>
-                ))}
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSaveShifts}
-                    style={{ marginTop: '20px' }}
-                    fullWidth
-                >
-                    Save Shifts
-                </Button>
-
-                {/* Display saved shifts */}
-                <Typography variant="h6" gutterBottom style={{ marginTop: '40px' }}>
-                    Saved Shifts:
-                </Typography>
-                {savedShifts.map((shift, index) => (
-                    <Typography key={index} variant="body1">
-                        Role: {roles.find(role => role.id === shift.volunteer_role)?.name || 'Unknown Role'}, Start: {new Date(shift.start).toLocaleString()}, End: {new Date(shift.end).toLocaleString()}, Description: {shift.description},
-                        Max Volunteers: {shift.max_volunteers}
-                    </Typography>
-                ))}
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleEdit}
-                    fullWidth
-                    style={{ marginTop: '20px' }}
-                >
-                    Edit Event
-                </Button>
+                {/* Manage Shifts and Edit Event Buttons */}
+                <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
+                    <Grid item xs={12} md={6}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleGoToShifts}
+                            fullWidth
+                        >
+                            Manage Volunteer Shifts
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleEdit}
+                            fullWidth
+                        >
+                            Edit Event
+                        </Button>
+                    </Grid>
+                </Grid>
             </Card>
         </Container>
     );
