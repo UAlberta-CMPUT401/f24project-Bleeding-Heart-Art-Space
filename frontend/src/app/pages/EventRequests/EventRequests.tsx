@@ -38,6 +38,29 @@ const EventRequests: React.FC = () => {
             });
     };
 
+    const confirmEventRequest = (request: any) => {
+        const eventData = {
+            title: request.title,
+            venue: request.venue,
+            start: request.start,  // Assuming start and end are in correct ISO format
+            end: request.end,
+            address: request.address,
+        };
+
+        axios.post(`${apiUrl}/events`, eventData)
+            .then(response => {
+                console.log("Event created successfully:", response.data);
+                alert('Event created successfully!');
+
+                // Optionally delete the request after confirmation
+                deleteEventRequest(request.id);
+            })
+            .catch(error => {
+                console.error('Error creating event:', error);
+                alert('Failed to create event. Please try again.');
+            });
+    };
+
     if (loading) return <Typography>Loading...</Typography>;
 
     return (
@@ -83,6 +106,15 @@ const EventRequests: React.FC = () => {
                                 )}
                                 {request.status}
                             </Typography>
+
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                style={{ marginTop: '10px' }}
+                                onClick={() => confirmEventRequest(request)}
+                            >
+                                Confirm Request
+                            </Button>
 
                             <Button
                                 variant="contained"
