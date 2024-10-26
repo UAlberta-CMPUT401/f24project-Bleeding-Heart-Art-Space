@@ -30,7 +30,7 @@ export class VolunteerShiftsController {
   public createShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { eventId } = req.params;
-      const shifts = req.body.shifts;
+      const shifts = req.body;
 
       if (!eventId || !shifts || !Array.isArray(shifts)) {
         res.status(400).json({ error: 'Event ID and valid shifts data are required' });
@@ -44,8 +44,8 @@ export class VolunteerShiftsController {
         volunteer_role: String(shift.volunteer_role), // Ensure volunteer_role is a string
       }));
 
-      await this.volunteerShiftsService.createShifts(shiftsWithEventId);
-      res.status(201).json({ message: 'Shifts created successfully' });
+      const insertedShifts = await this.volunteerShiftsService.createShifts(shiftsWithEventId);
+      res.status(201).json(insertedShifts);
     } catch (error) {
       next(error);
     }
