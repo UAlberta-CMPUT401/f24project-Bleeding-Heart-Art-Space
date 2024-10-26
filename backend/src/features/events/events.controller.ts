@@ -16,8 +16,9 @@ export class EventsController {
       const insertedEvent = await this.eventsService.createEvent(eventData);
       if (insertedEvent === undefined) {
         res.status(400).json({ message: 'Failed to create event' });
+      } else {
+        res.status(201).json(insertedEvent);
       }
-      res.status(201).json(insertedEvent);
     } catch (error) {
       next(error); // Pass error to global error handler middleware
     }
