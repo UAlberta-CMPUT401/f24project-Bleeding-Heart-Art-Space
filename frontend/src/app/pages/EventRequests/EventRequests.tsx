@@ -6,20 +6,39 @@ import PersonIcon from '@mui/icons-material/Person';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PendingIcon from '@mui/icons-material/HourglassEmpty';
 import DoneIcon from '@mui/icons-material/CheckCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './EventRequests.module.css';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const EventRequests: React.FC = () => {
     const [eventRequests, setEventRequests] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${apiUrl}/event_requests`)
-            .then(response => setEventRequests(response.data))
+            .then(response => {
+                console.log(response.data); // Log the structure of the data
+                setEventRequests(response.data);
+            })
             .catch(error => {
                 console.error('Error fetching event requests:', error);
-            });
+            })
+            .finally(() => setLoading(false));
     }, []);
+
+    const deleteEventRequest = (id: number) => {
+        axios.delete(`${apiUrl}/event_requests/${id}`)
+            .then(() => {
+                // Filter out the deleted event from the state
+                setEventRequests(prevRequests => prevRequests.filter(request => request.id !== id));
+            })
+            .catch(error => {
+                console.error('Error deleting event request:', error);
+            });
+    };
+
+    if (loading) return <Typography>Loading...</Typography>;
 
     return (
         <Container className={styles.container}>
@@ -32,13 +51,29 @@ const EventRequests: React.FC = () => {
                     <Grid item xs={12} md={6} lg={4} key={request.id}>
                         <Card className={styles.requestCard}>
                             <Typography variant="h6">
-                                <EventNoteIcon /> Event Name: {request.event_name}
+                                <EventNoteIcon /> Event Name: {request.title} {/* Updated to use title */}
                             </Typography>
                             <Typography variant="body1">
-                                <PersonIcon /> Requester: {request.requester}
+                                <PersonIcon /> Requester: 
+                                {request.requester ? `${request.requester.firstName} ${request.requester.lastName}` : 'N/A'}
                             </Typography>
                             <Typography variant="body1">
-                                <CalendarTodayIcon /> Date Requested: {new Date(request.date_requested).toLocaleDateString()}
+                                <CalendarTodayIcon /> Date Requested: 
+                                {request.start ? new Date(request.start).toLocaleDateString() : 'N/A'}
+                            </Typography>
+                            <Typography variant="body1">
+                                <CalendarTodayIcon /> Event Start: 
+                                {request.start ? new Date(request.start).toLocaleString() : 'N/A'}
+                            </Typography>
+                            <Typography variant="body1">
+                                <CalendarTodayIcon /> Event End: 
+                                {request.end ? new Date(request.end).toLocaleString() : 'N/A'}
+                            </Typography>
+                            <Typography variant="body1">
+                                <strong>Venue:</strong> {request.venue || 'N/A'} {/* Venue field */}
+                            </Typography>
+                            <Typography variant="body1">
+                                <strong>Address:</strong> {request.address || 'N/A'} {/* Address field */}
                             </Typography>
                             <Typography variant="body1">
                                 Status: {request.status === 'pending' ? (
@@ -49,8 +84,14 @@ const EventRequests: React.FC = () => {
                                 {request.status}
                             </Typography>
 
-                            <Button variant="contained" color="primary" style={{ marginTop: '10px' }}>
-                                View Details
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                startIcon={<DeleteIcon />}
+                                style={{ marginTop: '10px' }}
+                                onClick={() => deleteEventRequest(request.id)}
+                            >
+                                Delete Request
                             </Button>
                         </Card>
                     </Grid>
