@@ -1,54 +1,48 @@
-import { useState, useEffect } from 'react';
-import EventCalendar from "./Components/CalendarEvent";
-import axios from 'axios';
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import './BasicCalendar.css';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import EventCalendar from './Components/CalendarEvent';
+import CreateEventDialog from '../CreateEvent/CreateEventDialog';
+import './BasicCalendar.css';
+import { useEventStore } from '@pages/EventStore/useEventStore';
 
-const apiUrl = import.meta.env.VITE_API_URL;
-
-export default function BasicCalendar() {
-    const [events, setEvents] = useState([]);
-    const navigate = useNavigate(); // Initialize useNavigate
-
-    // Fetch events from API
+const BasicCalendar: React.FC = () => {
+    const { fetchEvents } = useEventStore(); //---> Fetch events function from EventStore!
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
+    const navigate = useNavigate();
+    
     useEffect(() => {
-        axios.get(`${apiUrl}/events`)
-            .then(response => {
-                const fetchedEvents = response.data.map((event: any) => ({
-                    id: event.id, // Ensure each event has an id
-                    title: event.title,
-                    start: new Date(event.start),
-                    end: new Date(event.end)
-                }));
-                setEvents(fetchedEvents);
-            })
-            .catch(error => {
-                console.error('Error fetching events:', error);
-            });
+        fetchEvents();
     }, []);
 
-    // Handle event click to navigate to EventDetails page
+    // Function to handle slot selection
+    const handleSlotSelect = (slotInfo: { start: Date; end: Date }) => {
+        // Set initial start and end dates
+        setStartDate(slotInfo.start.toISOString().split('T')[0]);
+        setEndDate(slotInfo.end.toISOString().split('T')[0]);
+        setStartTime(slotInfo.start.toTimeString().split(' ')[0].slice(0, 5));
+        setEndTime(slotInfo.end.toTimeString().split(' ')[0].slice(0, 5));
+        setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);      
+        navigate('/calendar');
+    };
+
+    // Clicking on an event navigates to EventDetails page!
     const handleEventClick = (eventId: string) => {
         navigate(`/events/details/${eventId}`);
     };
 
-    // Function to handle slot selection
-    const handleSlotSelect = (slotInfo: { start: Date; end: Date }) => {
-        navigate(`/create-event?start=${slotInfo.start.toISOString()}&end=${slotInfo.end.toISOString()}`);
-    };
-
-    // Function to handle FAB click
-    const handleFabClick = () => {
-        navigate('/create-event'); // Navigates to CreateEvent page without start and end dates
-    };
-
     return (
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
-            {/* Pass events, event click handler, and slot select handler to EventCalendar */}
             <EventCalendar 
-                events={events} 
                 onEventClick={handleEventClick} 
                 onSlotSelect={handleSlotSelect} 
             />
@@ -56,7 +50,7 @@ export default function BasicCalendar() {
                 color="primary" 
                 aria-label="add" 
                 className="floating-button"
-                onClick={handleFabClick}
+                onClick={() => setDialogOpen(true)}
                 style={{
                     position: 'fixed', 
                     bottom: 16, 
@@ -66,6 +60,16 @@ export default function BasicCalendar() {
             >
                 <AddIcon />
             </Fab>
+            <CreateEventDialog 
+                open={dialogOpen} 
+                onClose={handleDialogClose} 
+                startDate={startDate}
+                endDate={endDate}
+                startTime={startTime}
+                endTime={endTime}
+            />
         </div>
     );
-}
+};
+
+export default BasicCalendar;
