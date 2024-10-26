@@ -13,8 +13,8 @@ export class EventsController {
   public createEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const eventData: NewEvent = req.body; // Type ensures request body conforms to NewEvent schema
-      const eventId = await this.eventsService.createEvent(eventData);
-      res.status(201).json(eventData);
+      const insertedEvent = await this.eventsService.createEvent(eventData);
+      res.status(201).json(insertedEvent);
     } catch (error) {
       next(error); // Pass error to global error handler middleware
     }
