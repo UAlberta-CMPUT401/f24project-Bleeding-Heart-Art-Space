@@ -48,7 +48,7 @@ const EventDetails: React.FC = () => {
             <Card elevation={6} className={styles.card}>
                 {/* Event Header Section */}
                 <Typography variant="h4" align="center" gutterBottom>
-                    {event?.name}
+                    {event?.title}
                 </Typography>
 
                 <Grid container spacing={2} justifyContent="center">
@@ -65,7 +65,7 @@ const EventDetails: React.FC = () => {
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="h6" align="center">
-                            <EventIcon /> Event: {event?.name}
+                            <EventIcon /> Event: {event?.title}
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
