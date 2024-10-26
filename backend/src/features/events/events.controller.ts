@@ -164,13 +164,14 @@ export class EventsController {
     }
   }
 
-  public getRequesterName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getRequesterFullName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const requesterId = parseInt(req.params.id, 10);
-      const requesterName = await this.eventRequestsService.getRequesterName(requesterId);
+      const requesterName = await this.eventRequestsService.getRequesterFullName(requesterId);
       res.json(requesterName);
     } catch (error) {
       next(error);
     }
   }
+
 }
