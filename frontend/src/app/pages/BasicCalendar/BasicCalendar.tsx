@@ -41,7 +41,7 @@ const BasicCalendar: React.FC = () => {
     };
 
     const handleReqClick = () => {
-        navigate('/request-event'); // Navigates to RequestEvent page
+        navigate('/create-event-request'); // Navigates to RequestEvent page
     };
 
     return (

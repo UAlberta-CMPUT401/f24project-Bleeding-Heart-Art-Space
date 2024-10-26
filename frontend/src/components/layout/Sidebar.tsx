@@ -14,6 +14,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import BHASLogo from '@assets/BHAS-Logo.png';
 import { Link, Outlet } from 'react-router-dom';
 
@@ -39,6 +40,12 @@ const sideBarItems: SideBarItem[] = [
     route: '/volunteer-management',
     icon: <ManageAccountsIcon />,
   },
+
+  {
+    name: 'Event\nRequests',
+    route: '/event-requests',
+    icon: <QuestionAnswerIcon/>,
+  }
 ]
 
 const drawerWidth = 240;
