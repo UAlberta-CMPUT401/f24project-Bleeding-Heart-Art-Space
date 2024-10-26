@@ -1,0 +1,46 @@
+.dialogContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0000;
+}
+
+.dialogCard {
+    position: relative;
+    padding: 15px;
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    overflow: auto;
+    border-radius: 15px;
+    background-color: #0000;
+}
+
+.dialogForm {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dialogButton {
+    margin-top: 20px;
+}
+
+.dialogButton:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 600px) {
+    .dialogCard {
+        padding: 20px;
+    }
+
+    .dialogButton {
+        margin-top: 15px;
+    }
+}
