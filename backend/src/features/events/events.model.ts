@@ -27,6 +27,7 @@ export interface EventRequestsTable {
   venue: string;                         // Venue for the event
   address: string;                       // Address of the event
   title: string;                         // Title of the event
+  requester: number;                    // ID of the requester
 }
 
 // Define the types for various operations on the EventsTable
@@ -34,6 +35,6 @@ export type Event = Selectable<EventsTable>;       // Type for selecting (readin
 export type NewEvent = Insertable<EventsTable>;    // Type for inserting a new event record
 export type EventUpdate = Updateable<EventsTable>; // Type for updating an existing event record
 
-export type RequestEvent = Selectable<EventRequestsTable>;       // Type for selecting (reading) event records
-export type NewRequestEvent = Insertable<EventRequestsTable>;    // Type for inserting a new event record
-export type RequestEventUpdate = Updateable<EventRequestsTable>; // Type for updating an existing event record
+export type EventRequest = Selectable<EventRequestsTable>;       // Type for selecting (reading) event records
+export type NewEventRequest = Insertable<EventRequestsTable>;    // Type for inserting a new event record
+export type EventRequestUpdate = Updateable<EventRequestsTable>; // Type for updating an existing event record
