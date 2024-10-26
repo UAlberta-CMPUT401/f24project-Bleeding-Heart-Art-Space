@@ -3,6 +3,7 @@ import { TextField, Button, Grid, Typography, Container, Card, IconButton  } fro
 import axios from 'axios';
 import styles from "./RequestEvent.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 import '@components/layout/TopNav.css';
 //import '@components/layout/Dashboard.css';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -26,6 +27,7 @@ const RequestEvent: React.FC<RequestEventProps> = ({ isSidebarOpen, onAddEvent }
     const [address, setAddress] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const theme = useTheme();
     
     // Adjust form width based on sidebar state
     useEffect(() => {
@@ -119,7 +121,7 @@ const RequestEvent: React.FC<RequestEventProps> = ({ isSidebarOpen, onAddEvent }
                         onClick={() => navigate('/calendar')} // Navigate back to the calendar
                         style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10 }}
                     >
-                        <Close style={{ fontSize: '40px', color: 'white' }} />
+                        <Close style={{ fontSize: '40px', color: theme.palette.text.primary }} />
                     </IconButton>
                     <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
                         Request Event
