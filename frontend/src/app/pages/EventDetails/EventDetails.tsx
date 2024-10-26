@@ -7,6 +7,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import styles from './EventDetails.module.css';
+import { getVolunteerRoles, Shift, VolunteerRole } from '@utils/fetch';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -14,10 +15,12 @@ const EventDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [event, setEvent] = useState<any>(null);
-    const [shifts, setShifts] = useState<any[]>([]);
+    const [shifts, setShifts] = useState<Shift[]>([]);
+    const [roles, setRoles] = useState<VolunteerRole[]>([]);
 
     useEffect(() => {
         if (id) {
+            getVolunteerRoles().then(response => setRoles(response.data));
             axios.get(`${apiUrl}/events/${id}`)
                 .then(response => {
                     setEvent(response.data);
@@ -89,7 +92,7 @@ const EventDetails: React.FC = () => {
                         <Grid item xs={12} sm={6} key={index}>
                             <Card className={styles.shiftCard}>
                                 <Typography variant="h6">
-                                    <AssignmentIndIcon /> Role: {shift.volunteer_role}
+                                    <AssignmentIndIcon /> Role: {roles.find(item => item.id === shift.volunteer_role)?.name}
                                 </Typography>
                                 <Typography variant="body1">
                                     <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleTimeString()}
