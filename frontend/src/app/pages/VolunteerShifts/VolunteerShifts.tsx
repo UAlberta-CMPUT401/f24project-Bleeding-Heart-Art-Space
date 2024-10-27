@@ -4,10 +4,10 @@ import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Sel
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
-import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole } from '@utils/fetch';
+import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEventDetails } from '@utils/fetch';
 
 const emptyNewShift: NewShift = {
-    volunteer_role: -1,
+    volunteer_role: 0,
     start: '',
     end: '',
     max_volunteers: 1,
@@ -20,45 +20,56 @@ const VolunteerShifts: React.FC = () => {
     const [newShift, setNewShift] = useState<NewShift>(emptyNewShift);
     const [shifts, setShifts] = useState<NewShift[]>([]);
     const [savedShifts, setSavedShifts] = useState<Shift[]>([]);
+    const [eventDate, setEventDate] = useState<string>('');
 
     useEffect(() => {
         if (eventId) {
             getVolunteerRoles().then(response => setRoles(response.data));
             getEventShifts(Number(eventId)).then(response => setSavedShifts(response.data));
+
+            // // Fetch event details to get event date
+            // getEventDetails(Number(eventId)).then(response => {
+            //     const { start } = response.data;
+            //     if (start) {
+            //         setEventDate(start.split('T')[0]); // Format: YYYY-MM-DD
+            //         console.log(`Event date: ${start}`);
+            //     } else {
+            //         console.error(`Event date not found for event ID: ${eventId}`);
+            //     }
+            // });
         }
     }, [eventId]);
-
 
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
             alert('Please fill in all shift details.');
             return;
         }
-
         setShifts([...shifts, newShift]);
         setNewShift(emptyNewShift);
     };
 
     const handleSaveShifts = () => {
-        if (eventId === undefined) {
+        if (!eventId || !eventDate) {
+            alert("Event ID or Event Date is missing. Please try again.");
             return;
         }
 
         const formattedShifts: NewShift[] = shifts.map((shift) => ({
             ...shift,
-            event_id: eventId,  // Associate each shift with the current event
+            event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: `${new Date().toISOString().slice(0, 10)}T${shift.start}`,  // Full ISO date-time format
-            end: `${new Date().toISOString().slice(0, 10)}T${shift.end}`,
+            start: `${shift.start}`, // Combine event date with shift start time
+            end: `${shift.end}`,     // Combine event date with shift end time
         }));
-    
+
         postEventShifts(Number(eventId), formattedShifts)
             .then((response) => {
-                setSavedShifts(prev => [...prev, ...response.data])
+                setSavedShifts(prev => [...prev, ...response.data]);
                 setShifts([]);
             })
-            .catch((_error) => {
-                alert('Failed to save shifts. Please try again.')
+            .catch(() => {
+                alert('Failed to save shifts. Please try again.');
             });
     };
 
@@ -70,14 +81,18 @@ const VolunteerShifts: React.FC = () => {
                 </Typography>
 
                 <Grid container spacing={2}>
-                    {/* Select Role */}
                     <Grid item xs={12} md={4}>
                         <FormControl fullWidth>
                             <InputLabel>Role</InputLabel>
                             <Select
                                 value={newShift.volunteer_role}
                                 onChange={(e) => setNewShift({ ...newShift, volunteer_role: Number(e.target.value) })}
+                                displayEmpty
+                                renderValue={(selected) => {
+                                    return selected ? roles.find(role => role.id === selected)?.name : 'Select a Role';
+                                }}
                             >
+                                <MenuItem value="" disabled>Select a Role</MenuItem>
                                 {roles.map(role => (
                                     <MenuItem key={role.id} value={role.id}>
                                         {role.name}
@@ -87,7 +102,6 @@ const VolunteerShifts: React.FC = () => {
                         </FormControl>
                     </Grid>
 
-                    {/* Input Start Time */}
                     <Grid item xs={12} md={4}>
                         <TextField
                             label="Start Time"
@@ -98,7 +112,6 @@ const VolunteerShifts: React.FC = () => {
                         />
                     </Grid>
 
-                    {/* Input End Time */}
                     <Grid item xs={12} md={4}>
                         <TextField
                             label="End Time"
