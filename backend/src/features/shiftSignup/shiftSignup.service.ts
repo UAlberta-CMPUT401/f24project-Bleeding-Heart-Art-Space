@@ -1,4 +1,5 @@
 import { Kysely } from 'kysely';
+import { BadRequestException } from '@nestjs/common';
 import { ShiftSignupTable, NewShiftSignup } from './shiftSignup.model';
 import { db } from '@database/database';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
@@ -26,19 +27,16 @@ export class ShiftSignupService {
    * @returns The ID of the newly created signup
    */
   public async create(signupData: NewShiftSignup): Promise<number> {
-    // Check if the user is already signed up for this shift
     const existingSignup = await this.checkExistingSignup(signupData.user_id, signupData.shift_id);
     if (existingSignup) {
       throw new Error('You have already signed up for this shift.');
     }
 
-    // Check for conflicting shifts
     const hasConflict = await this.checkForShiftConflicts(signupData.user_id, signupData.shift_id);
     if (hasConflict) {
       throw new Error('This shift conflicts with another shift you have already signed up for.');
     }
 
-    // Insert the shift signup (only `user_id` and `shift_id` are included)
     const [insertedSignup] = await db
       .insertInto('shift_signup')
       .values({
@@ -52,10 +50,126 @@ export class ShiftSignupService {
   }
 
   /**
+   * Record check-in time for a user.
+   * @param signupId - The shift signup ID
+   */
+  public async checkIn(signupId: number, checkinTime: Date): Promise<void> {
+    // Fetch the shift details
+    const shiftSignup = await db
+      .selectFrom('shift_signup')
+      .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+      .select(['volunteer_shifts.start as shift_start', 'volunteer_shifts.end as shift_end'])
+      .where('shift_signup.id', '=', signupId)
+      .executeTakeFirst();
+  
+    if (!shiftSignup) {
+      throw new Error('Shift signup not found');
+    }
+  
+    const shiftStart = new Date(shiftSignup.shift_start);
+    const shiftEnd = new Date(shiftSignup.shift_end);
+  
+    // Check if the check-in time is within the shift's start and end times
+    if (checkinTime < shiftStart || checkinTime > shiftEnd) {
+      throw new BadRequestException('Check-in time must be within the shift period');
+    }
+  
+    // Proceed with the check-in if the time is valid
+    await db
+      .updateTable('shift_signup')
+      .set({ checkin_time: checkinTime })
+      .where('id', '=', signupId)
+      .execute();
+  }
+
+  /**
+   * Record check-out time for a user.
+   * @param signupId - The shift signup ID
+   */
+  public async checkOut(signupId: number, checkoutTime: Date): Promise<void> {
+    // Fetch the shift details
+    const shiftSignup = await db
+      .selectFrom('shift_signup')
+      .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+      .select(['volunteer_shifts.start as shift_start', 'volunteer_shifts.end as shift_end'])
+      .where('shift_signup.id', '=', signupId)
+      .executeTakeFirst();
+  
+    if (!shiftSignup) {
+      throw new Error('Shift signup not found');
+    }
+  
+    const shiftStart = new Date(shiftSignup.shift_start);
+    const shiftEnd = new Date(shiftSignup.shift_end);
+  
+    // Check if the checkout time is within the allowed shift period
+    if (checkoutTime < shiftStart || checkoutTime > shiftEnd) {
+      throw new BadRequestException('Check-out time must be within the shift period');
+    }
+  
+    // Proceed with the check-out if the time is valid
+    await db
+      .updateTable('shift_signup')
+      .set({ checkout_time: checkoutTime })
+      .where('id', '=', signupId)
+      .execute();
+  }
+
+  /**
+   * Automatically check out users who forgot to check out by the shift end time.
+   */
+  public async autoCheckOut(): Promise<void> {
+    const now = new Date();
+
+    const overdueSignups = await db
+      .selectFrom('shift_signup')
+      .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'volunteer_shifts.end as shift_end',
+      ])
+      .where('shift_signup.checkin_time', 'is not', null)
+      .where('shift_signup.checkout_time', 'is', null)
+      .where('volunteer_shifts.end', '<', now)
+      .execute();
+
+    for (const signup of overdueSignups) {
+      await db
+        .updateTable('shift_signup')
+        .set({ checkout_time: signup.shift_end }) // Use shift_end as checkout time
+        .where('id', '=', signup.id)
+        .execute();
+    }
+  }
+
+  /**
+   * Auto-checkout a specific shift signup by ID using the shift’s end time.
+   * @param signupId - The shift signup ID
+   */
+  public async autoCheckOutById(signupId: number): Promise<void> {
+    const signup = await db
+      .selectFrom('shift_signup')
+      .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+      .select(['shift_signup.id', 'shift_signup.checkout_time', 'volunteer_shifts.end as shift_end'])
+      .where('shift_signup.id', '=', signupId)
+      .where('shift_signup.checkin_time', 'is not', null)
+      .where('shift_signup.checkout_time', 'is', null)
+      .executeTakeFirst();
+
+    if (signup) {
+      await db
+        .updateTable('shift_signup')
+        .set({ checkout_time: signup.shift_end })
+        .where('id', '=', signup.id)
+        .execute();
+    }
+  }
+
+  /**
    * Check if a user is already signed up for a specific shift.
-   * @param user_id - The user ID
-   * @param shift_id - The shift ID
-   * @returns The signup record if found, otherwise undefined
    */
   private async checkExistingSignup(user_id: number, shift_id: number): Promise<ShiftSignupTable | undefined> {
     const result = await db
@@ -69,12 +183,8 @@ export class ShiftSignupService {
 
   /**
    * Check if the shift times conflict with any existing shift signups.
-   * @param user_id - The user ID
-   * @param shift_id - The shift ID
-   * @returns A boolean indicating whether there is a conflict
    */
   private async checkForShiftConflicts(user_id: number, shift_id: number): Promise<boolean> {
-    // Get the shift details for the shift the user is trying to sign up for
     const shiftDetails = await db
       .selectFrom('volunteer_shifts')
       .select(['start', 'end'])
@@ -85,7 +195,6 @@ export class ShiftSignupService {
       throw new Error('Shift not found');
     }
 
-    // Get all shifts the user is already signed up for
     const userShifts = await db
       .selectFrom('shift_signup')
       .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
@@ -93,7 +202,6 @@ export class ShiftSignupService {
       .where('shift_signup.user_id', '=', user_id)
       .execute();
 
-    // Check for time conflicts by ensuring the shifts do not overlap
     for (const userShift of userShifts) {
       const userShiftStart = new Date(userShift.start);
       const userShiftEnd = new Date(userShift.end);
@@ -101,8 +209,8 @@ export class ShiftSignupService {
       const newShiftEnd = new Date(shiftDetails.end);
 
       const isConflicting =
-        (newShiftStart < userShiftEnd && newShiftEnd > userShiftStart) || // new shift starts before the user's shift ends and ends after user's shift starts
-        (userShiftStart < newShiftEnd && userShiftEnd > newShiftStart);   // user's shift starts before the new shift ends and ends after the new shift starts
+        (newShiftStart < userShiftEnd && newShiftEnd > userShiftStart) ||
+        (userShiftStart < newShiftEnd && userShiftEnd > newShiftStart);
 
       if (isConflicting) {
         return true;
@@ -111,10 +219,9 @@ export class ShiftSignupService {
 
     return false;
   }
+
   /**
    * Get a specific shift signup by ID.
-   * @param id - The signup ID
-   * @returns The signup record if found, otherwise undefined
    */
   async getSignupById(id: number): Promise<ShiftSignupTable | undefined> {
     const result = await db
@@ -127,8 +234,6 @@ export class ShiftSignupService {
 
   /**
    * Update a shift signup by ID.
-   * @param id - The signup ID
-   * @param signupUpdate - The new data for the signup
    */
   async updateSignup(id: number, signupUpdate: NewShiftSignup): Promise<void> {
     await db
@@ -140,7 +245,6 @@ export class ShiftSignupService {
 
   /**
    * Delete a shift signup by ID.
-   * @param id - The signup ID
    */
   async deleteSignup(id: number): Promise<void> {
     await db
