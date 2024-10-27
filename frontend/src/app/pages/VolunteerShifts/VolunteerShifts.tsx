@@ -1,43 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Select, MenuItem, TextField } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
+import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole } from '@utils/fetch';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const emptyNewShift: NewShift = {
+    volunteer_role: -1,
+    start: '',
+    end: '',
+    max_volunteers: 1,
+    description: undefined,
+}
 
 const VolunteerShifts: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const [roles, setRoles] = useState<any[]>([]);
-    const [shifts, setShifts] = useState<any[]>([]);
-    const [savedShifts, setSavedShifts] = useState<any[]>([]);
-    const [newShift, setNewShift] = useState({
-        volunteer_role: '',
-        start: '',
-        end: ''
-    });
+    const { id: eventId } = useParams<{ id: string }>();
+    const [roles, setRoles] = useState<VolunteerRole[]>([]);
+    const [newShift, setNewShift] = useState<NewShift>(emptyNewShift);
+    const [shifts, setShifts] = useState<NewShift[]>([]);
+    const [savedShifts, setSavedShifts] = useState<Shift[]>([]);
 
     useEffect(() => {
-        if (id) {
-            axios.get(`${apiUrl}/volunteer_roles`)
-                .then(response => setRoles(response.data))
-                .catch(error => {
-                    console.error("Error fetching roles:", error);
-                });
-
-            fetchSavedShifts();
+        if (eventId) {
+            getVolunteerRoles().then(response => setRoles(response.data));
+            getEventShifts(Number(eventId)).then(response => setSavedShifts(response.data));
         }
-    }, [id]);
+    }, [eventId]);
 
-    const fetchSavedShifts = () => {
-        axios.get(`${apiUrl}/events/${id}/volunteer_shifts`)
-            .then(response => setSavedShifts(response.data))
-            .catch(error => {
-                console.error("Error fetching saved shifts:", error);
-            });
-    };
 
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
@@ -46,30 +36,29 @@ const VolunteerShifts: React.FC = () => {
         }
 
         setShifts([...shifts, newShift]);
-        setNewShift({
-            volunteer_role: '',
-            start: '',
-            end: ''
-        });
+        setNewShift(emptyNewShift);
     };
 
     const handleSaveShifts = () => {
-        const formattedShifts = shifts.map((shift) => ({
-            event_id: id,  // Associate each shift with the current event
-            volunteer_role: shift.volunteer_role,
+        if (eventId === undefined) {
+            return;
+        }
+
+        const formattedShifts: NewShift[] = shifts.map((shift) => ({
+            ...shift,
+            event_id: eventId,  // Associate each shift with the current event
+            volunteer_role: Number(shift.volunteer_role),
             start: `${new Date().toISOString().slice(0, 10)}T${shift.start}`,  // Full ISO date-time format
             end: `${new Date().toISOString().slice(0, 10)}T${shift.end}`,
         }));
     
-        axios
-            .post(`${apiUrl}/events/${id}/volunteer_shifts`, { shifts: formattedShifts })
-            .then(() => {
-                alert('Shifts successfully saved!');
-                fetchSavedShifts();  // Refresh the displayed shifts
+        postEventShifts(Number(eventId), formattedShifts)
+            .then((response) => {
+                setSavedShifts(prev => [...prev, ...response.data])
+                setShifts([]);
             })
-            .catch((error) => {
-                console.error('Error saving shifts:', error);
-                alert('Failed to save shifts. Please try again.');
+            .catch((_error) => {
+                alert('Failed to save shifts. Please try again.')
             });
     };
 
@@ -87,10 +76,10 @@ const VolunteerShifts: React.FC = () => {
                             <InputLabel>Role</InputLabel>
                             <Select
                                 value={newShift.volunteer_role}
-                                onChange={(e) => setNewShift({ ...newShift, volunteer_role: e.target.value })}
+                                onChange={(e) => setNewShift({ ...newShift, volunteer_role: Number(e.target.value) })}
                             >
                                 {roles.map(role => (
-                                    <MenuItem key={role.id} value={role.name}>
+                                    <MenuItem key={role.id} value={role.id}>
                                         {role.name}
                                     </MenuItem>
                                 ))}
@@ -138,7 +127,7 @@ const VolunteerShifts: React.FC = () => {
                         <Grid item xs={12} sm={6} key={index}>
                             <Card className={styles.shiftCard}>
                                 <Typography variant="h6">
-                                    <AssignmentIndIcon /> Role: {shift.volunteer_role}
+                                    <AssignmentIndIcon /> Role: {roles.find(item => item.id === shift.volunteer_role)?.name}
                                 </Typography>
                                 <Typography variant="body1">
                                     <AccessTimeIcon /> Start: {shift.start}
@@ -169,7 +158,7 @@ const VolunteerShifts: React.FC = () => {
                         <Grid item xs={12} sm={6} key={index}>
                             <Card className={styles.shiftCard}>
                                 <Typography variant="h6">
-                                    <AssignmentIndIcon /> Role: {shift.volunteer_role}
+                                    <AssignmentIndIcon /> Role: {roles.find(item => item.id === shift.volunteer_role)?.name}
                                 </Typography>
                                 <Typography variant="body1">
                                     <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleTimeString()}
