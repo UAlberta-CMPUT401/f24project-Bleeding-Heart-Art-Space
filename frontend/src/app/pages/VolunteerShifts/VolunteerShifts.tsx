@@ -50,7 +50,7 @@ const VolunteerShifts: React.FC = () => {
     };
 
     const handleSaveShifts = () => {
-        if (!eventId || !eventDate) {
+        if (!eventId ) {
             alert("Event ID or Event Date is missing. Please try again.");
             return;
         }
