@@ -9,14 +9,22 @@ export class VolunteerShiftsService {
    * @param shiftsData - The data for the new volunteer shifts
    * @returns The IDs of the created shifts
    */
-  public async createShifts(shiftsData: NewVolunteerShift[]): Promise<number[]> {
-    const insertedShifts = await db
+  public async createShifts(shiftsData: NewVolunteerShift[]): Promise<VolunteerShift[]> {
+    const insertedShiftsRes = await db
       .insertInto('volunteer_shifts')
       .values(shiftsData)
       .returning('id')
       .execute();
 
-    return insertedShifts.map(shift => shift.id);
+    const insertedShiftIds = insertedShiftsRes.map(shift => shift.id);
+
+    const insertedShifts = await db
+      .selectFrom('volunteer_shifts')
+      .selectAll()
+      .where('id', 'in', insertedShiftIds)
+      .execute()
+
+    return insertedShifts;
   }
 
   /**
@@ -75,5 +83,30 @@ export class VolunteerShiftsService {
       .set(shiftData)
       .where('id', '=', shiftId)
       .execute();
+  }
+
+  /**
+   * Check if the maximum number of volunteers for a shift has been reached
+   * @param shiftId - The ID of the shift to check
+   * @returns A boolean indicating if the max volunteers have been reached
+   */
+  public async hasReachedMaxVolunteers(shiftId: number): Promise<boolean> {
+    const shiftDetails = await db
+      .selectFrom('volunteer_shifts')
+      .select(['max_volunteers'])
+      .where('id', '=', shiftId)
+      .executeTakeFirst();
+
+    if (!shiftDetails) {
+      throw new Error('Shift not found');
+    }
+
+    const existingSignups = await db
+      .selectFrom('shift_signup')
+      .select('id')
+      .where('shift_id', '=', shiftId)
+      .execute();
+
+    return existingSignups.length >= shiftDetails.max_volunteers;
   }
 }

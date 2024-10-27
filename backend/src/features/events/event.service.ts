@@ -10,8 +10,8 @@ export class EventsService {
    * @param eventData - The data for the new event
    * @returns The ID of the created event
    */
-  public async createEvent(eventData: NewEvent): Promise<number> {
-    const [insertedEvent] = await db
+  public async createEvent(eventData: NewEvent): Promise<Event | undefined> {
+    const insertedEventRes = await db
       .insertInto('events')
       .values({
         start: eventData.start,
@@ -19,15 +19,25 @@ export class EventsService {
         venue: eventData.venue,
         title: eventData.title,
         address: eventData.address,
-        // number_of_artists: eventData.number_of_artists,
-        // number_of_volunteers: eventData.number_of_volunteers,
-        // volunteer_roles: eventData.volunteer_roles, // Store volunteer_roles directly as an array
-        // date: eventData.date,
       })
       .returning('id')
-      .execute();
+      .executeTakeFirst();
 
-    return insertedEvent.id;
+    if (insertedEventRes === undefined) {
+      return undefined;
+    }
+
+    const insertedEvent = await db
+      .selectFrom('events')
+      .selectAll()
+      .where('id', '=', insertedEventRes.id)
+      .executeTakeFirst();
+
+    if (insertedEvent === undefined) {
+      return undefined;
+    }
+
+    return insertedEvent;
   }
 
   /**
