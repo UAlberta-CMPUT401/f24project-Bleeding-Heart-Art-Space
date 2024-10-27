@@ -1,0 +1,32 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .leftColumn,
+  .middleColumn,
+  .rightColumn {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .leftColumn {
+    background-color: #fce4ec; /* Light pink */
+  }
+  
+  .middleColumn {
+    background-color: #ffffff;
+  }
+  
+  .rightColumn {
+    background-color: #e1f5fe; /* Light blue */
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
