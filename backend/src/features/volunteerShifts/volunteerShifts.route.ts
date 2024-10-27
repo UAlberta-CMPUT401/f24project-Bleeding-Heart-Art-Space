@@ -23,6 +23,14 @@ export class VolunteerShiftsRoute implements Routes {
       this.asyncHandler(this.volunteerShiftsController.getShiftsByEvent)
     );
 
+    // Get all shifts for a specific user
+    this.router.get(
+      '/users/:userId' + this.path,
+      // authMiddleware, // Uncomment this to enable generic auth middleware
+      // userMiddleware, // Uncomment this to enable user-specific middleware
+      this.asyncHandler(this.volunteerShiftsController.getShiftsByUser)
+    );
+
     // Create new shifts for a specific event
     this.router.post(
       '/events/:eventId' + this.path,

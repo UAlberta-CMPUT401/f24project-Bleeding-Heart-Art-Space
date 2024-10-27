@@ -44,7 +44,7 @@ export class VolunteerShiftsService {
     return await db
       .selectFrom('volunteer_shifts')
       .selectAll()
-      .where('id', '=', userId)
+      .where('user_id', '=', userId)
       .execute();
   }
 

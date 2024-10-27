@@ -4,14 +4,45 @@ import styles from "./Overview.module.css";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
+interface Event {
+  id: number;
+  name: string;
+  date: string; // Consider using Date if parsing is needed
+}
+
+interface Shift {
+  id: number;
+  event_name: string;
+  role: string;
+  start: string; // Consider using Date if parsing is needed
+  end: string; // Consider using Date if parsing is needed
+}
+
 const Overview: React.FC = () => {
-  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
-  const [userShifts, setUserShifts] = useState<any[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [userShifts, setUserShifts] = useState<Shift[]>([]);
+  const [userId, setUserId] = useState<number | null>(null); // Store user ID
 
   useEffect(() => {
+    const uid = localStorage.getItem("user.id"); // Adjust this based on how you're storing user UID
+    if (uid) {
+      fetchUserId(uid);
+    }
     fetchUpcomingEvents();
-    fetchUserShifts();
   }, []);
+
+  const fetchUserId = async (uid: string) => {
+    try {
+      const response = await axios.get(`${apiUrl}/users/${uid}`); // Ensure this endpoint exists
+      const user = response.data;
+      setUserId(user?.id || null); // Set user ID if found
+      if (user?.id) {
+        fetchUserShifts(user.id); // Fetch shifts if user ID is available
+      }
+    } catch (error) {
+      console.error("Error fetching user ID:", error);
+    }
+  };
 
   const fetchUpcomingEvents = async () => {
     try {
@@ -23,7 +54,7 @@ const Overview: React.FC = () => {
       const twoWeeksLater = new Date();
       twoWeeksLater.setDate(now.getDate() + 14);
       const upcoming = events.filter((event: any) => {
-        const eventDate = new Date(event.date);  // Assuming `date` holds the event date
+        const eventDate = new Date(event.date); // Assuming `date` holds the event date
         return eventDate >= now && eventDate <= twoWeeksLater;
       });
 
@@ -33,9 +64,9 @@ const Overview: React.FC = () => {
     }
   };
 
-  const fetchUserShifts = async () => {
+  const fetchUserShifts = async (userId: number) => {
     try {
-      const response = await axios.get(`${apiUrl}/user/shifts`);  // Endpoint for user’s signed-up shifts
+      const response = await axios.get(`${apiUrl}/volunteer-shifts/${userId}`); // Adjust endpoint to include userId
       setUserShifts(response.data);
     } catch (error) {
       console.error("Error fetching user shifts:", error);
