@@ -52,17 +52,17 @@ export async function postData<T, D>(
 }
 
 // Event details
-export type EventDetails = {
-  start: string;
-  end: string;
+export type Event = {
+  id: number;                            // Auto-generated ID
+  start: string                          // Event start date and time
+  end: string                            // Event end date and time 
+  venue: string;                         // Venue for the event
+  address: string;                       // Address of the event
+  title: string;                         // Title of the event
 };
 
-export async function getEventDetails(eventId: number): Promise<ApiResponse<EventDetails>> {
-  const response = await getData<EventDetails>(`/events/${eventId}`);
-  if (!response.data.start) {
-    console.error(`Failed to fetch eventstart for eventId ${eventId}`);
-  }
-  return response;
+export async function getEvent(eventId: number): Promise<ApiResponse<Event>> {
+  return await getData<Event>(`/events/${eventId}`);
 }
 
 export type VolunteerRole = {
@@ -97,21 +97,5 @@ export type NewShift = {
 };
 
 export async function postEventShifts(eventId: number, shifts: NewShift[]): Promise<ApiResponse<Shift[]>> {
-  // Fetch event details to get the event date
-  const eventDetails = await getEventDetails(eventId);
-
-  if (!eventDetails.data.start) {
-    throw new Error("Event start date is missing");
-  }
-
-  const eventDate = eventDetails.data.start.split('T')[0]; // Use event start date as YYYY-MM-DD
-
-  // Format shifts with event date and shift times
-  const formattedShifts = shifts.map((shift) => ({
-    ...shift,
-    start: `${eventDate}T${shift.start}`, // Combine event date with shift start time
-    end: `${eventDate}T${shift.end}`,     // Combine event date with shift end time
-  }));
-
-  return await postData<Shift[], NewShift[]>(`/events/${eventId}/volunteer_shifts`, formattedShifts);
+  return await postData<Shift[], NewShift[]>(`/events/${eventId}/volunteer_shifts`, shifts);
 }

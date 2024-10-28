@@ -4,7 +4,7 @@ import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Sel
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
-import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEventDetails } from '@utils/fetch';
+import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEvent } from '@utils/fetch';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -20,23 +20,11 @@ const VolunteerShifts: React.FC = () => {
     const [newShift, setNewShift] = useState<NewShift>(emptyNewShift);
     const [shifts, setShifts] = useState<NewShift[]>([]);
     const [savedShifts, setSavedShifts] = useState<Shift[]>([]);
-    const [eventDate, setEventDate] = useState<string>('');
 
     useEffect(() => {
         if (eventId) {
             getVolunteerRoles().then(response => setRoles(response.data));
             getEventShifts(Number(eventId)).then(response => setSavedShifts(response.data));
-
-            // // Fetch event details to get event date
-            // getEventDetails(Number(eventId)).then(response => {
-            //     const { start } = response.data;
-            //     if (start) {
-            //         setEventDate(start.split('T')[0]); // Format: YYYY-MM-DD
-            //         console.log(`Event date: ${start}`);
-            //     } else {
-            //         console.error(`Event date not found for event ID: ${eventId}`);
-            //     }
-            // });
         }
     }, [eventId]);
 
@@ -49,18 +37,27 @@ const VolunteerShifts: React.FC = () => {
         setNewShift(emptyNewShift);
     };
 
-    const handleSaveShifts = () => {
-        if (!eventId ) {
+    const handleSaveShifts = async () => {
+        if (!eventId) {
             alert("Event ID or Event Date is missing. Please try again.");
             return;
         }
+
+        // Fetch event details to get the event date
+        const eventDetails = await getEvent(Number(eventId));
+
+        if (!eventDetails.data.start) {
+            throw new Error("Event start date is missing");
+        }
+
+        const eventDate = eventDetails.data.start.split('T')[0]; // Use event start date as YYYY-MM-DD
 
         const formattedShifts: NewShift[] = shifts.map((shift) => ({
             ...shift,
             event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: `${shift.start}`, // Combine event date with shift start time
-            end: `${shift.end}`,     // Combine event date with shift end time
+            start: `${eventDate}T${shift.start}`, // Combine event date with shift start time
+            end: `${eventDate}T${shift.end}`,     // Combine event date with shift end time
         }));
 
         postEventShifts(Number(eventId), formattedShifts)
