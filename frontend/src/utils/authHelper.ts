@@ -1,16 +1,13 @@
 import { AxiosRequestConfig } from 'axios';
 import { User } from "firebase/auth";
 
-export const getUserToken = async (user: User | null): Promise<string | null> => {
-  if (user) {
-    const token = await user.getIdToken();
-    return token;
-  }
-  return null;
+export const getUserToken = async (user: User): Promise<string | null> => {
+  const token = await user.getIdToken();
+  return token;
 };
 
 export const addAuthorizationHeader = async (
-  user: User | null,
+  user: User,
   config: AxiosRequestConfig
 ): Promise<AxiosRequestConfig> => {
   try {
