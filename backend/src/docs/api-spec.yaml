@@ -11,6 +11,8 @@ tags:
     description: Event management endpoints
   - name: Shifts
     description: Shift management endpoints
+  - name: Volunteer Roles
+    description: Volunteer Roles endpoints
 
 paths:
 
@@ -422,6 +424,53 @@ paths:
         default:
           $ref: '#/components/responses/DefaultError'
 
+  # Volunteer Roles
+  /api/volunteer_roles:
+    get:
+      tags:
+        - Volunteer Roles
+      summary: Get volunteer roles
+      responses:
+        '200':
+          description: Volunteer roles list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerRoleList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Volunteer Roles
+      summary: Create volunteer role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewVolunteerRole'
+      responses:
+        '200':
+          description: Volunteer role successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerRole'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/volunteer_roles/{id}:
+    delete:
+      tags:
+        - Volunteer Roles
+      summary: Delete volunteer role by id
+      parameters:
+        - $ref: '#/components/parameters/VolunteerRoleId'
+      responses:
+        '200':
+          description: Volunteer Role successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
 components:
   schemas:
 
@@ -686,7 +735,6 @@ components:
         start: "2024-01-20T09:00:00Z"
         end: "2024-01-20T17:00:00Z"
         description: "Gallery greeting shift"
-
     VolunteerShift:
       type: object
       properties:
@@ -719,7 +767,6 @@ components:
         start: "2024-01-20T09:00:00Z"
         end: "2024-01-20T17:00:00Z"
         description: "Gallery greeting shift"
-
     VolunteerShiftList:
       type: array
       items:
@@ -757,7 +804,6 @@ components:
         user_id: 1
         shift_id: 100
         notes: "Available all day"
-
     ShiftSignup:
       type: object
       properties:
@@ -786,7 +832,6 @@ components:
         checkin_time: "2024-01-20T09:00:00Z"
         checkout_time: "2024-01-20T17:00:00Z"
         notes: "Available all day"
-
     ShiftSignupList:
       type: array
       items:
@@ -804,6 +849,41 @@ components:
           checkin_time: "2024-01-20T09:00:00Z"
           checkout_time: "2024-01-20T17:00:00Z"
           notes: "Will bring snacks"
+
+    # Volunteer Roles
+    NewVolunteerRole:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: "Gallery Host"
+    VolunteerRole:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: 1
+        name: "Gallery Host"
+    VolunteerRoleList:
+      type: array
+      items:
+        $ref: '#/components/schemas/VolunteerRole'
+      example:
+        - id: 1
+          name: "Gallery Host"
+        - id: 2
+          name: "Setup Crew"
+        - id: 3
+          name: "Event Coordinator"
 
   parameters:
     EventId:
@@ -832,6 +912,13 @@ components:
       in: path
       required: true
       description: ID of the shift signup to retrieve
+      schema:
+        type: integer
+    VolunteerRoleId:
+      name: id
+      in: path
+      required: true
+      description: ID of the volunteer role to retrieve
       schema:
         type: integer
 
