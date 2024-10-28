@@ -64,6 +64,154 @@ paths:
         default:
           $ref: '#/components/responses/DefaultError'
 
+  # Event Paths
+  /api/events:
+    get:
+      summary: Get events list
+      responses:
+        '200':
+          description: Events array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      summary: Create event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEvent'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/events/{id}:
+    get:
+      summary: Get events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Single event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    put:
+      summary: Update events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '200':
+          description: Event successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    delete:
+      summary: Delete events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Event successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+  # Event Request Paths
+  /api/event_requests:
+    get:
+      summary: Get event request list
+      responses:
+        '200':
+          description: Event request array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequestList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      summary: Create event request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEventRequest'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequest'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/event_requests/{id}:
+    get:
+      summary: Get events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventRequestId'
+      responses:
+        '200':
+          description: Single event request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequest'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    put:
+      summary: Update events request by ID
+      parameters:
+        - $ref: '#/components/parameters/EventRequestId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+      responses:
+        '200':
+          description: Event request successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequest'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    delete:
+      summary: Delete event request by ID
+      parameters:
+        - $ref: '#/components/parameters/EventRequestId'
+      responses:
+        '200':
+          description: Event successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+  #
+
 components:
   schemas:
 
@@ -135,6 +283,186 @@ components:
         is_admin: false
         is_blocked: false
 
+    # Events
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+      required:
+        - id
+        - title
+        - start
+        - end
+        - venue
+        - address
+      example:
+        id: 1
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+    NewEvent:
+      type: object
+      properties:
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+      required:
+        - title
+        - start
+        - end
+        - venue
+        - address
+      example:
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+    EventsList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Event'
+      example:
+        - id: 1
+          title: "Art Exhibition"
+          start: "2024-01-20T18:00:00Z"
+          end: "2024-01-20T21:00:00Z"
+          venue: "Gallery Space"
+          address: "123 Art Street"
+        - id: 2
+          title: "Workshop"
+          start: "2024-01-21T14:00:00Z"
+          end: "2024-01-21T16:00:00Z"
+          venue: "Workshop Room"
+          address: "456 Creative Avenue"
+
+    # Event Requests
+    EventRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+        requester:
+          type: integer
+      required:
+        - id
+        - title
+        - start
+        - end
+        - venue
+        - address
+        - requester
+      example:
+        id: 1
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+        requester: 1
+    NewEventRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+        requester:
+          type: integer
+      required:
+        - title
+        - start
+        - end
+        - venue
+        - address
+        - requester
+      example:
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+        requester: 1
+    EventRequestList:
+      type: array
+      items:
+        $ref: '#/components/schemas/EventRequest'
+      example:
+        - id: 1
+          title: "Art Exhibition"
+          start: "2024-01-20T18:00:00Z"
+          end: "2024-01-20T21:00:00Z"
+          venue: "Gallery Space"
+          address: "123 Art Street"
+          requester: 1
+        - id: 2
+          title: "Art Workshop"
+          start: "2024-01-21T14:00:00Z"
+          end: "2024-01-21T16:00:00Z"
+          venue: "Workshop Room"
+          address: "456 Creative Avenue"
+          requester: 2
+
+  parameters:
+    EventId:
+      name: id
+      in: path
+      required: true
+      description: ID of the event to retrieve
+      schema:
+        type: integer
+    EventRequestId:
+      name: id
+      in: path
+      required: true
+      description: ID of the event request to retrieve
+      schema:
+        type: integer
+
   responses:
     DefaultError:
       description: Default Error Response
@@ -170,3 +498,14 @@ components:
                 error: "Server Error"
                 status: 500
                 message: "Internal server error occurred"
+
+  # Define the security scheme
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Enter your Firebase JWT token'
+  # Apply security globally to all endpoints
+  security:
+    - BearerAuth: []
