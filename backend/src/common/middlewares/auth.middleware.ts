@@ -65,6 +65,10 @@ export const roleMiddleware = async (req: Request, res: Response, next: NextFunc
     return res.status(401).json({ error: 'User role not found in the database' });
   }
 
+  if (role.is_blocked) {
+    return res.status(401).json({ error: 'User is blocked' });
+  }
+
   req.role = role;
   next();
 }
@@ -76,14 +80,9 @@ export const roleMiddleware = async (req: Request, res: Response, next: NextFunc
  * - req.role
  */
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await firebaseAuthMiddleware(req, res, async () => {
-      await userMiddleware(req, res, async () => {
-        await roleMiddleware(req, res, next);
-      });
+  await firebaseAuthMiddleware(req, res, async () => {
+    await userMiddleware(req, res, async () => {
+      await roleMiddleware(req, res, next);
     });
-  } catch (error) {
-    console.error('Error in authentication middleware:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  });
 }
