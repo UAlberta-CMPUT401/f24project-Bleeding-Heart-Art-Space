@@ -36,66 +36,76 @@ describe('editEventTest', function() {
 
   it('editEventTest', async function() {
     // STEP 1: CREATE THE EVENT TO BE EDITED
-    await driver.get("http://localhost:5173/create-event");
-    await driver.manage().window().setRect({ width: 1292, height: 684 });
+    await driver.get("http://localhost:5173/calendar")
+    await driver.manage().window().setRect({ width: 1024, height: 768 });
+    await driver.executeScript("document.body.style.zoom='70%';");
+
+    const fabButton = await driver.wait(until.elementIsVisible(driver.findElement(By.css(".MuiFab-root > .MuiSvgIcon-root"))), 10000);
+    await driver.wait(until.elementIsEnabled(fabButton), 10000);
+    await fabButton.click()
+
+    await driver.wait(until.elementIsVisible(driver.findElement(By.css(".MuiDialog-root"))), 10000);
+    const inputField = await driver.findElement(By.id(":r3:"));
+    await driver.executeScript("arguments[0].scrollIntoView(true);", inputField);
+    await inputField.click();
 
     // This part populates the fields with values
-    const eventTitle = "Event before edit update";
-    await driver.findElement(By.id(":r1:")).click();
-    await driver.findElement(By.id(":r1:")).sendKeys(eventTitle); // Event title
-    await driver.findElement(By.id(":r3:")).click();
-    await driver.findElement(By.id(":r3:")).sendKeys("VVC butterdome"); // Location
-    await driver.findElement(By.id(":r5:")).click();
-    await driver.findElement(By.id(":r5:")).sendKeys("10/21/2024"); // Start date
-    await driver.findElement(By.id(":r7:")).click();
-    await driver.findElement(By.id(":r7:")).clear();
-    await driver.findElement(By.id(":r7:")).sendKeys("08:30"); // Start time
-    
-    await driver.findElement(By.id(":r7:")).sendKeys(Key.TAB);
-    await driver.findElement(By.id(":r7:")).sendKeys(Key.TAB);
-    await driver.findElement(By.id(":r7:")).sendKeys(Key.TAB);
-    await driver.findElement(By.id(":r7:")).sendKeys(Key.ARROW_DOWN); // Navigate to AM
-    await driver.findElement(By.id(":r7:")).sendKeys(Key.ARROW_DOWN);
-    await driver.findElement(By.id(":r7:")).sendKeys(Key.RETURN);
+    const eventTitle = "Edit Test Event";
+    await driver.findElement(By.id(":r3:")).sendKeys(eventTitle)
+    await driver.findElement(By.id(":r5:")).click()
+    await driver.findElement(By.id(":r5:")).sendKeys("VVC butterdome")
+    await driver.findElement(By.id(":r7:")).click()
+    await driver.findElement(By.id(":r7:")).sendKeys("10/31/2024")
+    await driver.findElement(By.id(":rb:")).click()
+    await driver.findElement(By.id(":rb:")).sendKeys("10/31/2024")
+    await driver.findElement(By.id(":r9:")).click()
+    await driver.findElement(By.id(":r9:")).clear()
+    await driver.findElement(By.id(":r9:")).sendKeys("08:30")
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.TAB);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.TAB);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.TAB);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.ARROW_DOWN);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.ARROW_DOWN);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.RETURN);
 
-    await driver.findElement(By.id(":r9:")).click();
-    await driver.findElement(By.id(":r9:")).sendKeys("10/21/2024"); // End date
-    await driver.findElement(By.id(":rb:")).click();
-    await driver.findElement(By.id(":rb:")).sendKeys("15:06"); // End time
+    await driver.findElement(By.id(":rd:")).click()
+    await driver.findElement(By.id(":rd:")).click()
+    await driver.findElement(By.id(":rd:")).sendKeys("15:06")
 
-    await driver.findElement(By.id(":rd:")).click();
-    await driver.findElement(By.id(":rd:")).sendKeys("VVC, UofA, Edmonton, AB, CA"); // Address
+    await driver.findElement(By.id(":rf:")).click()
+    {
+      const element = await driver.findElement(By.css(".\\_dialogCard_hfpfo_15"))
+      await driver.executeScript("arguments[0].scrollIntoView(true);", element);
+      await element.click();
+    }
+    await driver.findElement(By.id(":rf:")).sendKeys("VVC, UofA, Edmonton, AB, CA")
 
     // This part clicks the submit button and verifies the alert pop-up
-    await driver.findElement(By.css(".MuiButton-containedPrimary")).click();
+    await driver.findElement(By.css(".css-1dj9jbk-MuiButtonBase-root-MuiButton-root")).click();
     await driver.wait(until.alertIsPresent(), 5000);
     const alert = await driver.switchTo().alert();
+    await driver.sleep(2000);
     const alertText = await alert.getText();
-    assert.strictEqual(alertText, "Event created successfully!"); // This verifies success of event creation!
+    await driver.sleep(2000);
+    assert.strictEqual(alertText, "Event created successfully!");
+    await driver.sleep(2000);
     await alert.accept();
 
     // STEP 2: EDIT THE CREATED EVENT
     await driver.get("http://localhost:5173/calendar");
-    await driver.manage().window().setRect({ width: 1292, height: 684 });
+    await driver.manage().window().setRect({ width: 1024, height: 768 });
+    await driver.executeScript("document.body.style.zoom='70%';");
 
     // This part updates the fields
     const eventElement = await driver.findElement(By.xpath(`//div[text()="${eventTitle}"]`)); // This locates the event to be edited.
     await eventElement.click();
-    await driver.findElement(By.id(":r1:")).click();
-    await clearField(driver, By.id(":r1:"));
-    await driver.findElement(By.id(":r1:")).sendKeys("Updated Event Title");
-
-    await driver.findElement(By.id(":r3:")).click();
-    await clearField(driver, By.id(":r3:"));
-    await driver.findElement(By.id(":r3:")).sendKeys("HUB Mall Coffee Lounge");
-
-    await driver.findElement(By.id(":rd:")).click();
-    await clearField(driver, By.id(":rd:"));
-    await driver.findElement(By.id(":rd:")).sendKeys("HUB Mall, UofA, Edmonton, AB, CA");
-
+    await driver.sleep(2000);
+    await driver.findElement(By.css(".css-13i4rnv-MuiGrid-root")).click();
+    await driver.sleep(2000);
     // This part clicks the submit button and verifies the alert pop-up
-    await driver.findElement(By.css(".MuiGrid-grid-xs-6:nth-child(1)")).click();
-    await driver.findElement(By.css(".MuiButton-containedPrimary")).click();
+    await driver.findElement(By.css(".css-1dj9jbk-MuiButtonBase-root-MuiButton-root")).click();
+    await driver.sleep(2000);
+    
     await driver.wait(until.alertIsPresent(), 5000);
     const alertEdit = await driver.switchTo().alert();
     const alertEditText = await alertEdit.getText();

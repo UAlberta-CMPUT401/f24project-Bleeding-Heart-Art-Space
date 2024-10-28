@@ -37,26 +37,58 @@ describe('clickCalendar', function() {
     // Click a date on the calendar
     await driver.findElement(By.css(".rbc-month-row:nth-child(4) .rbc-date-cell:nth-child(4)")).click();
 
-    // Create event process
-    await driver.findElement(By.id(":r1:")).click();
-    await driver.findElement(By.id(":r1:")).sendKeys("Click Calendar Test");
-    await driver.findElement(By.id(":r3:")).click();
-    await driver.findElement(By.id(":r3:")).sendKeys("ABC");
-    await driver.findElement(By.id(":rd:")).click();
+    await driver.get("http://localhost:5173/calendar")
+    await driver.manage().window().setRect({ width: 1024, height: 768 });
+    await driver.executeScript("document.body.style.zoom='70%';");
+
+    await driver.findElement(By.css(".rbc-month-row:nth-child(4) .rbc-date-cell:nth-child(4)")).click();
+
+    await driver.wait(until.elementIsVisible(driver.findElement(By.css(".MuiDialog-root"))), 10000);
+    const inputField = await driver.findElement(By.id(":r3:"));
+    await driver.executeScript("arguments[0].scrollIntoView(true);", inputField);
+    await inputField.click();
+
+    // This part populates the fields with values
+    await driver.findElement(By.id(":r3:")).sendKeys("Click Calendar Test")
+    await driver.findElement(By.id(":r5:")).click()
+    await driver.findElement(By.id(":r5:")).sendKeys("ABC")
+    await driver.findElement(By.id(":r7:")).click()
+    await driver.findElement(By.id(":r7:")).sendKeys("10/28/2024")
+    await driver.findElement(By.id(":rb:")).click()
+    await driver.findElement(By.id(":rb:")).sendKeys("10/28/2024")
+    await driver.findElement(By.id(":r9:")).click()
+    await driver.findElement(By.id(":r9:")).clear()
+    await driver.findElement(By.id(":r9:")).sendKeys("08:30")
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.TAB);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.TAB);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.TAB);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.ARROW_DOWN);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.ARROW_DOWN);
+    await driver.findElement(By.id(":r9:")).sendKeys(Key.RETURN);
+
+    await driver.findElement(By.id(":rd:")).click()
+    await driver.findElement(By.id(":rd:")).click()
+    await driver.findElement(By.id(":rd:")).sendKeys("15:06")
+
+    await driver.findElement(By.id(":rf:")).click()
     {
-      const element = await driver.findElement(By.css(".MuiButton-containedPrimary"));
+      const element = await driver.findElement(By.css(".\\_dialogCard_hfpfo_15"))
       await driver.executeScript("arguments[0].scrollIntoView(true);", element);
       await element.click();
     }
-    await driver.findElement(By.id(":rd:")).sendKeys("DEF");
-    await driver.findElement(By.css(".MuiButton-containedPrimary")).click();
+    await driver.findElement(By.id(":rf:")).sendKeys("DEF")
 
-    // Wait for alert and verify event creation success
+    // This part clicks the submit button and verifies the alert pop-up
+    await driver.findElement(By.css(".css-1dj9jbk-MuiButtonBase-root-MuiButton-root")).click();
     await driver.wait(until.alertIsPresent(), 5000);
     const alert = await driver.switchTo().alert();
+    await driver.sleep(2000);
     const alertText = await alert.getText();
+    await driver.sleep(2000);
     assert.strictEqual(alertText, "Event created successfully!");
+    await driver.sleep(2000);
     await alert.accept();
+
 
     // STEP 2: VERIFY THE EVENT EXISTS ON THE CALENDAR
 
