@@ -6,7 +6,7 @@
 
 We have implemented this by letting users know when an event or change has taken place in the system through alert pop-ups seen in the browser.
 
-![Create-event][images/create-event.png]
+![Create-event](images/create-event.png)
 
 ## **Aesthetic and Minimal Design**
 
@@ -14,7 +14,7 @@ We have implemented this by letting users know when an event or change has taken
 
 By building the UI of the app as a minimal interface with just the necessary tasks, we have achieved a minimal design while adopting Bleeding Heart Art Space’s color theme to add to the aesthetic.
 
-![Calendar][images/calendar.png]
+![Calendar](images/calendar.png)
 
 ## **User Control and Freedom**
 
@@ -22,14 +22,14 @@ By building the UI of the app as a minimal interface with just the necessary tas
 
 By adding a way to exit or undo an action, users are able to navigate back from an unwanted action without having to complete the whole process. This is done in our app by adding an exit/close button on the top left of our pop-up windows.
 
-![Create-event][images/create-event2.png]
+![Create-event](images/create-event2.png)
 
 # **Accessibility**
 
 To test our website’s accessibility, we used Google’s Lighthouse to generate reports. More info on Lighthouse can be found [here.](https://developer.chrome.com/docs/lighthouse/overview)
 
 Upon running the tool on our website, we get an 82% for accessibility.   
-![Accessibility][images/accessibility.png]
+![Accessibility](images/accessibility.png)
 
 Lighthouse tests accessibility in these areas:
 
