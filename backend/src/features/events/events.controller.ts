@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { EventsService, EventRequestsService } from './event.service';
 import { NewEvent, NewEventRequest } from './events.model';
+import { container } from 'tsyringe';
 
 export class EventsController {
-  private eventsService = new EventsService();
-  private eventRequestsService = new EventRequestsService();
+  private eventsService = container.resolve(EventsService);
+  private eventRequestsService = container.resolve(EventRequestsService);
+
   /**
    * Create a new event
    * @route POST /api/events
