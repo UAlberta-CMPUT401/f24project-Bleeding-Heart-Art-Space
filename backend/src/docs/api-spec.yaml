@@ -1,0 +1,172 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Bleeding Heart Art Space
+  description: Volunteer management app
+paths:
+
+  # Users Paths
+  /api/users/is-signed-in:
+    get:
+      summary: Check if user is signed in to firebase
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "true"
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/users/user:
+    get:
+      summary: Get backend user details
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      summary: Create new volunteer user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                message:
+                  type: string
+              example:
+                message: "Success"
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/users/role:
+    get:
+      summary: Get role of user
+      responses:
+        '200':
+          description: Role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+components:
+  schemas:
+
+    # Users
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        uid:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+      example:
+        id: 1
+        uid: "xajKSAjajfksLIWKXJajwoxK"
+        first_name: "John"
+        last_name: "Doe"
+        email: "john@example.com"
+    NewUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        uid:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+      example:
+        uid: "xajKSAjajfksLIWKXJajwoxK"
+        first_name: "John"
+        last_name: "Doe"
+        email: "john@example.com"
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        can_take_shift:
+          type: boolean
+        can_request_event:
+          type: boolean
+        is_admin:
+          type: boolean
+        is_blocked:
+          type: boolean
+      required:
+        - id
+        - title
+        - can_take_shift
+        - can_request_event
+        - is_admin
+        - is_blocked
+      example:
+        id: 1
+        title: "Volunteer"
+        can_take_shift: true
+        can_request_event: true
+        is_admin: false
+        is_blocked: false
+
+  responses:
+    DefaultError:
+      description: Default Error Response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              status:
+                type: integer
+              message:
+                type: string
+          examples:
+            validationError:
+              value:
+                error: "Validation Error"
+                status: 400
+                message: "Invalid input provided"
+            authError:
+              value:
+                error: "Authentication Error"
+                status: 401
+                message: "User not authenticated"
+            notFound:
+              value:
+                error: "Not Found"
+                status: 404
+                message: "Resource not found"
+            serverError:
+              value:
+                error: "Server Error"
+                status: 500
+                message: "Internal server error occurred"
