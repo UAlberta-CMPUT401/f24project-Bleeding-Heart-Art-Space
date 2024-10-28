@@ -9,6 +9,9 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.references('users.id').onDelete('cascade').notNull())  // Foreign key referencing users table
     .addColumn('shift_id', 'integer', (col) => 
       col.references('volunteer_shifts.id').onDelete('cascade').notNull())  // Foreign key referencing volunteer_shifts table
+    .addColumn('checkin_time', 'timestamptz', (col) => col.defaultTo(null))  // Timestamp for check-in time
+    .addColumn('checkout_time', 'timestamptz', (col) => col.defaultTo(null))  // Timestamp for check-out time
+    .addColumn('notes', 'text', (col) => col.defaultTo(null))  // Optional notes field
     .execute();
 
   // Create index on user_id for better performance when querying by user

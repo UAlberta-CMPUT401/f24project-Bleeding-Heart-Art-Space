@@ -24,3 +24,8 @@
 .shiftCard:hover {
     transform: scale(1.05);
 }
+
+.signedUpIcon {
+    color: green;
+    margin-left: 8px;
+}

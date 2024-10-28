@@ -12,6 +12,7 @@
   "description": "",
   "dependencies": {
     "@jest/globals": "^29.7.0",
+    "@nestjs/common": "^10.4.6",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
