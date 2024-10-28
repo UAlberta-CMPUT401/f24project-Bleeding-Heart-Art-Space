@@ -9,7 +9,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import styles from './EventDetails.module.css';
 import { getVolunteerRoles, Shift, VolunteerRole } from '@utils/fetch';
-import { isBefore, isAfter } from 'date-fns'; // Importing date-fns for date comparison
+import { isBefore, isAfter } from 'date-fns';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -21,9 +21,9 @@ const EventDetails: React.FC = () => {
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [signedUpShifts, setSignedUpShifts] = useState<{ shiftId: number; signupId: number }[]>([]);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
+
     const [checkinDialogOpen, setCheckinDialogOpen] = useState(false);
     const [checkinSignupId, setCheckinSignupId] = useState<number | null>(null);
-        // New state for Check Out
     const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
     const [checkoutSignupId, setCheckoutSignupId] = useState<number | null>(null);
     
@@ -46,7 +46,6 @@ const EventDetails: React.FC = () => {
                     console.error("Error fetching shifts:", error);
                 });
 
-            // Fetch all shift signups and filter for current user
             axios.get(`${apiUrl}/shift-signups`)
                 .then(response => {
                     const userSignups = response.data.filter((signup: any) => signup.user_id === 1);
@@ -89,9 +88,9 @@ const EventDetails: React.FC = () => {
             });
     };
 
-    // Updated function to handle check-in
+    // Function to handle check-in
     const handleCheckIn = (signupId: number) => {
-        const checkinTime = new Date().toISOString(); // Get current time in UTC format
+        const checkinTime = new Date().toISOString();
 
         axios.post(`${apiUrl}/shift-signups/${signupId}/checkin`, { checkin_time: checkinTime })
             .then(() => {
@@ -104,9 +103,9 @@ const EventDetails: React.FC = () => {
             });
     };
 
-    // New function to handle check-out
+    // Function to handle check-out
     const handleCheckOut = (signupId: number) => {
-        const checkoutTime = new Date().toISOString(); // Get current time in UTC format
+        const checkoutTime = new Date().toISOString();
 
         axios.post(`${apiUrl}/shift-signups/${signupId}/checkout`, { checkout_time: checkoutTime })
             .then(() => {
