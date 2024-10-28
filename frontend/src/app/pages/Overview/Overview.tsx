@@ -21,28 +21,12 @@ interface Shift {
 const Overview: React.FC = () => {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [userShifts, setUserShifts] = useState<Shift[]>([]);
-  const [userId, setUserId] = useState<number | null>(null); // Store user ID
 
   useEffect(() => {
-    const uid = localStorage.getItem("user.id"); // Adjust this based on how you're storing user UID
-    if (uid) {
-      fetchUserId(uid);
-    }
     fetchUpcomingEvents();
+    fetchUserShifts()
   }, []);
 
-  const fetchUserId = async (uid: string) => {
-    try {
-      const response = await axios.get(`${apiUrl}/users/${uid}`); // Ensure this endpoint exists
-      const user = response.data;
-      setUserId(user?.id || null); // Set user ID if found
-      if (user?.id) {
-        fetchUserShifts(user.id); // Fetch shifts if user ID is available
-      }
-    } catch (error) {
-      console.error("Error fetching user ID:", error);
-    }
-  };
 
   const fetchUpcomingEvents = async () => {
     try {
@@ -64,9 +48,15 @@ const Overview: React.FC = () => {
     }
   };
 
-  const fetchUserShifts = async (userId: number) => {
+  // Update fetchUserShifts to use query parameters to filter by user_id
+  const fetchUserShifts = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/volunteer-shifts/${userId}`); // Adjust endpoint to include userId
+      const userId = localStorage.getItem("user.id"); // Get the user ID from local storage
+      if (!userId) return; // Exit if user ID isn't found
+  
+      const response = await axios.get(`${apiUrl}/shift-signups`, {
+        params: { user_id: userId }, // Pass user_id as a query parameter
+      });
       setUserShifts(response.data);
     } catch (error) {
       console.error("Error fetching user shifts:", error);
