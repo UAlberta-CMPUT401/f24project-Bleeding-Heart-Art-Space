@@ -124,6 +124,18 @@ const VolunteerShifts: React.FC = () => {
                             onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
                         />
                     </Grid>
+
+                    {/* Input Max Volunteers */}
+                    <Grid item xs={12} md={4}>
+                        <TextField
+                            label="Max Volunteers"
+                            type="number"
+                            fullWidth
+                            inputProps={{ min: 1 }}
+                            value={newShift.max_volunteers}
+                            onChange={(e) => setNewShift({ ...newShift, max_volunteers: parseInt(e.target.value) })}
+                        />
+                    </Grid>
                 </Grid>
 
                 <Button
@@ -150,6 +162,9 @@ const VolunteerShifts: React.FC = () => {
                                 </Typography>
                                 <Typography variant="body1">
                                     <AccessTimeIcon /> End: {shift.end}
+                                </Typography>
+                                <Typography variant="body1">
+                                    Max Volunteers: {shift.max_volunteers}
                                 </Typography>
                             </Card>
                         </Grid>
@@ -181,6 +196,9 @@ const VolunteerShifts: React.FC = () => {
                                 </Typography>
                                 <Typography variant="body1">
                                     <AccessTimeIcon /> End: {new Date(shift.end).toLocaleTimeString()}
+                                </Typography>
+                                <Typography variant="body1">
+                                    Max Volunteers: {shift.max_volunteers}
                                 </Typography>
                             </Card>
                         </Grid>

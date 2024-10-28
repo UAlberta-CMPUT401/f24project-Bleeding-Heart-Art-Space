@@ -1,0 +1,970 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Bleeding Heart Art Space
+  description: Volunteer management app
+
+tags:
+  - name: Users
+    description: User authentication endpoints
+  - name: Events
+    description: Event management endpoints
+  - name: Shifts
+    description: Shift management endpoints
+  - name: Volunteer Roles
+    description: Volunteer Roles endpoints
+
+paths:
+
+  # Users Paths
+  /api/users/is-signed-in:
+    get:
+      tags:
+        - Users
+      summary: Check if user is signed in to firebase
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "true"
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/users/user:
+    get:
+      tags:
+        - Users
+      summary: Get backend user details
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Users
+      summary: Create new volunteer user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                message:
+                  type: string
+              example:
+                message: "Success"
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/users/role:
+    get:
+      tags:
+        - Users
+      summary: Get role of user
+      responses:
+        '200':
+          description: Role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+  # Event Paths
+  /api/events:
+    get:
+      tags:
+        - Events
+      summary: Get events list
+      responses:
+        '200':
+          description: Events array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Events
+      summary: Create event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEvent'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/events/{id}:
+    get:
+      tags:
+        - Events
+      summary: Get events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Single event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    put:
+      tags:
+        - Events
+      summary: Update events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '200':
+          description: Event successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    delete:
+      tags:
+        - Events
+      summary: Delete events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Event successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+  # Event Request Paths
+  /api/event_requests:
+    get:
+      tags:
+        - Events
+      summary: Get event request list
+      responses:
+        '200':
+          description: Event request array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequestList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Events
+      summary: Create event request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEventRequest'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequest'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/event_requests/{id}:
+    get:
+      tags:
+        - Events
+      summary: Get events by ID
+      parameters:
+        - $ref: '#/components/parameters/EventRequestId'
+      responses:
+        '200':
+          description: Single event request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequest'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    put:
+      tags:
+        - Events
+      summary: Update events request by ID
+      parameters:
+        - $ref: '#/components/parameters/EventRequestId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+      responses:
+        '200':
+          description: Event request successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRequest'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    delete:
+      tags:
+        - Events
+      summary: Delete event request by ID
+      parameters:
+        - $ref: '#/components/parameters/EventRequestId'
+      responses:
+        '200':
+          description: Event successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+  # Shifts
+  /api/events/{id}/volunteer_shifts:
+    get:
+      tags:
+        - Shifts
+      summary: Get shifts by event ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Shifts list for event ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerShiftList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Shifts
+      summary: Create shift for event ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewVolunteerShift'
+      responses:
+        '200':
+          description: Shift successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerShift'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    delete:
+      tags:
+        - Shifts
+      summary: Delete shift by ID
+      parameters:
+        - $ref: '#/components/parameters/ShiftId'
+      responses:
+        '200':
+          description: Shift successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+  # Shift Signup
+  /api/shift-signups:
+    get:
+      tags:
+        - Shifts
+      summary: Get shift signup
+      responses:
+        '200':
+          description: Shift signup array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSignupList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Shifts
+      summary: Create shift signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewShiftSignup'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSignup'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/shift-signups/{id}:
+    get:
+      tags:
+        - Shifts
+      summary: Get events by ID
+      parameters:
+        - $ref: '#/components/parameters/ShiftSignupId'
+      responses:
+        '200':
+          description: Single shift signup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSignup'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    put:
+      tags:
+        - Shifts
+      summary: Update shift signup
+      parameters:
+        - $ref: '#/components/parameters/ShiftSignupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShiftSignup'
+      responses:
+        '200':
+          description: Shift signup successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftSignup'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    delete:
+      tags:
+        - Shifts
+      summary: Delete shift signup by ID
+      parameters:
+        - $ref: '#/components/parameters/ShiftSignupId'
+      responses:
+        '200':
+          description: Shift signup successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/shift-signups/{id}/checkin:
+    post:
+      tags:
+        - Shifts
+      summary: Checkin to shift signup
+      parameters:
+        - $ref: '#/components/parameters/ShiftSignupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                checkin_time:
+                  type: string
+      responses:
+        '200':
+          description: Shift signup checkin successfully updated
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/shift-signups/{id}/checkout:
+    post:
+      tags:
+        - Shifts
+      summary: Checkout from shift signup
+      parameters:
+        - $ref: '#/components/parameters/ShiftSignupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                checkout_time:
+                  type: string
+      responses:
+        '200':
+          description: Shift signup checkout successfully updated
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+  # Volunteer Roles
+  /api/volunteer_roles:
+    get:
+      tags:
+        - Volunteer Roles
+      summary: Get volunteer roles
+      responses:
+        '200':
+          description: Volunteer roles list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerRoleList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Volunteer Roles
+      summary: Create volunteer role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewVolunteerRole'
+      responses:
+        '200':
+          description: Volunteer role successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerRole'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/volunteer_roles/{id}:
+    delete:
+      tags:
+        - Volunteer Roles
+      summary: Delete volunteer role by id
+      parameters:
+        - $ref: '#/components/parameters/VolunteerRoleId'
+      responses:
+        '200':
+          description: Volunteer Role successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
+components:
+  schemas:
+
+    # Users
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        uid:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+      example:
+        id: 1
+        uid: "xajKSAjajfksLIWKXJajwoxK"
+        first_name: "John"
+        last_name: "Doe"
+        email: "john@example.com"
+    NewUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        uid:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+      example:
+        uid: "xajKSAjajfksLIWKXJajwoxK"
+        first_name: "John"
+        last_name: "Doe"
+        email: "john@example.com"
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        can_take_shift:
+          type: boolean
+        can_request_event:
+          type: boolean
+        is_admin:
+          type: boolean
+        is_blocked:
+          type: boolean
+      required:
+        - id
+        - title
+        - can_take_shift
+        - can_request_event
+        - is_admin
+        - is_blocked
+      example:
+        id: 1
+        title: "Volunteer"
+        can_take_shift: true
+        can_request_event: true
+        is_admin: false
+        is_blocked: false
+
+    # Events
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+      required:
+        - id
+        - title
+        - start
+        - end
+        - venue
+        - address
+      example:
+        id: 1
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+    NewEvent:
+      type: object
+      properties:
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+      required:
+        - title
+        - start
+        - end
+        - venue
+        - address
+      example:
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+    EventsList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Event'
+      example:
+        - id: 1
+          title: "Art Exhibition"
+          start: "2024-01-20T18:00:00Z"
+          end: "2024-01-20T21:00:00Z"
+          venue: "Gallery Space"
+          address: "123 Art Street"
+        - id: 2
+          title: "Workshop"
+          start: "2024-01-21T14:00:00Z"
+          end: "2024-01-21T16:00:00Z"
+          venue: "Workshop Room"
+          address: "456 Creative Avenue"
+
+    # Event Requests
+    EventRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+        requester:
+          type: integer
+      required:
+        - id
+        - title
+        - start
+        - end
+        - venue
+        - address
+        - requester
+      example:
+        id: 1
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+        requester: 1
+    NewEventRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        venue:
+          type: string
+        address:
+          type: string
+        requester:
+          type: integer
+      required:
+        - title
+        - start
+        - end
+        - venue
+        - address
+        - requester
+      example:
+        title: "Art Exhibition"
+        start: "2024-01-20T18:00:00Z"
+        end: "2024-01-20T21:00:00Z"
+        venue: "Gallery Space"
+        address: "123 Art Street"
+        requester: 1
+    EventRequestList:
+      type: array
+      items:
+        $ref: '#/components/schemas/EventRequest'
+      example:
+        - id: 1
+          title: "Art Exhibition"
+          start: "2024-01-20T18:00:00Z"
+          end: "2024-01-20T21:00:00Z"
+          venue: "Gallery Space"
+          address: "123 Art Street"
+          requester: 1
+        - id: 2
+          title: "Art Workshop"
+          start: "2024-01-21T14:00:00Z"
+          end: "2024-01-21T16:00:00Z"
+          venue: "Workshop Room"
+          address: "456 Creative Avenue"
+          requester: 2
+
+    # Shift
+    NewVolunteerShift:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        volunteer_role:
+          type: integer
+        max_volunteers:
+          type: integer
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        description:
+          type: string
+      required:
+        - event_id
+        - volunteer_role
+        - max_volunteers
+      example:
+        event_id: 1
+        volunteer_role: 2
+        max_volunteers: 5
+        start: "2024-01-20T09:00:00Z"
+        end: "2024-01-20T17:00:00Z"
+        description: "Gallery greeting shift"
+    VolunteerShift:
+      type: object
+      properties:
+        id:
+          type: integer
+        event_id:
+          type: integer
+        volunteer_role:
+          type: integer
+        max_volunteers:
+          type: integer
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        description:
+          type: string
+      required:
+        - id
+        - event_id
+        - volunteer_role
+        - max_volunteers
+      example:
+        id: 1
+        event_id: 1
+        volunteer_role: 2
+        max_volunteers: 5
+        start: "2024-01-20T09:00:00Z"
+        end: "2024-01-20T17:00:00Z"
+        description: "Gallery greeting shift"
+    VolunteerShiftList:
+      type: array
+      items:
+        $ref: '#/components/schemas/VolunteerShift'
+      example:
+        - id: 1
+          event_id: 1
+          volunteer_role: 2
+          max_volunteers: 5
+          start: "2024-01-20T09:00:00Z"
+          end: "2024-01-20T17:00:00Z"
+          description: "Gallery greeting shift"
+        - id: 2
+          event_id: 1
+          volunteer_role: 3
+          max_volunteers: 3
+          start: "2024-01-20T09:00:00Z"
+          end: "2024-01-20T17:00:00Z"
+          description: "Setup crew"
+
+    # Shift Signup
+    NewShiftSignup:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        shift_id:
+          type: integer
+        notes:
+          type: string
+      required:
+        - user_id
+        - shift_id
+      example:
+        user_id: 1
+        shift_id: 100
+        notes: "Available all day"
+    ShiftSignup:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        shift_id:
+          type: integer
+        checkin_time:
+          type: string
+          format: date-time
+        checkout_time:
+          type: string
+          format: date-time
+        notes:
+          type: string
+      required:
+        - id
+        - user_id
+        - shift_id
+      example:
+        id: 1
+        user_id: 1
+        shift_id: 100
+        checkin_time: "2024-01-20T09:00:00Z"
+        checkout_time: "2024-01-20T17:00:00Z"
+        notes: "Available all day"
+    ShiftSignupList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ShiftSignup'
+      example:
+        - id: 1
+          user_id: 1
+          shift_id: 100
+          checkin_time: "2024-01-20T09:00:00Z"
+          checkout_time: "2024-01-20T17:00:00Z"
+          notes: "Available all day"
+        - id: 2
+          user_id: 2
+          shift_id: 100
+          checkin_time: "2024-01-20T09:00:00Z"
+          checkout_time: "2024-01-20T17:00:00Z"
+          notes: "Will bring snacks"
+
+    # Volunteer Roles
+    NewVolunteerRole:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+      example:
+        name: "Gallery Host"
+    VolunteerRole:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+        - id
+        - name
+      example:
+        id: 1
+        name: "Gallery Host"
+    VolunteerRoleList:
+      type: array
+      items:
+        $ref: '#/components/schemas/VolunteerRole'
+      example:
+        - id: 1
+          name: "Gallery Host"
+        - id: 2
+          name: "Setup Crew"
+        - id: 3
+          name: "Event Coordinator"
+
+  parameters:
+    EventId:
+      name: id
+      in: path
+      required: true
+      description: ID of the event to retrieve
+      schema:
+        type: integer
+    EventRequestId:
+      name: id
+      in: path
+      required: true
+      description: ID of the event request to retrieve
+      schema:
+        type: integer
+    ShiftId:
+      name: id
+      in: path
+      required: true
+      description: ID of the shift to retrieve
+      schema:
+        type: integer
+    ShiftSignupId:
+      name: id
+      in: path
+      required: true
+      description: ID of the shift signup to retrieve
+      schema:
+        type: integer
+    VolunteerRoleId:
+      name: id
+      in: path
+      required: true
+      description: ID of the volunteer role to retrieve
+      schema:
+        type: integer
+
+  responses:
+    DefaultError:
+      description: Default Error Response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              status:
+                type: integer
+              message:
+                type: string
+          examples:
+            validationError:
+              value:
+                error: "Validation Error"
+                status: 400
+                message: "Invalid input provided"
+            authError:
+              value:
+                error: "Authentication Error"
+                status: 401
+                message: "User not authenticated"
+            notFound:
+              value:
+                error: "Not Found"
+                status: 404
+                message: "Resource not found"
+            serverError:
+              value:
+                error: "Server Error"
+                status: 500
+                message: "Internal server error occurred"
+
+  # Define the security scheme
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Enter your Firebase JWT token'
+  # Apply security globally to all endpoints
+  security:
+    - BearerAuth: []
