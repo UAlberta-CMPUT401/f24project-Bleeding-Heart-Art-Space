@@ -39,8 +39,15 @@ describe('EventsController', () => {
   });
 
   test('should create an event', async () => {
-    mockEventsService.createEvent.mockResolvedValue(1);
-
+    mockEventsService.createEvent.mockResolvedValue({
+      id: 1,
+      start: new Date('2024-10-15T09:00:00.000Z'),
+      end: new Date('2024-10-15T17:00:00.000Z'),
+      venue: 'Test Venue',
+      address: '123 Test St',
+      title: 'Test Event'
+    });
+    
     const response = await request(app)
       .post('/events')
       .send({
@@ -52,7 +59,14 @@ describe('EventsController', () => {
       });
 
     expect(response.status).toBe(201);
-    expect(response.body).toEqual({ message: 'Event created', eventId: 1 });
+    expect(response.body).toEqual({
+      id: 1,
+      start: new Date('2024-10-15T09:00:00.000Z'),
+      end: new Date('2024-10-15T17:00:00.000Z'),
+      venue: 'Test Venue',
+      address: '123 Test St',
+      title: 'Test Event'
+    });
   });
 
 
