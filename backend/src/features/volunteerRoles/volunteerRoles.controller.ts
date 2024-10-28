@@ -35,8 +35,13 @@ export class VolunteerRolesController {
         res.status(400).json({ error: 'Role ID is required' });
         return;
       }
+
+      // Delete associated shifts first
+      await this.volunteerRolesService.deleteShiftsByRoleId(Number(id));
+
+      // Then delete the role
       await this.volunteerRolesService.deleteVolunteerRole(Number(id));
-      res.status(200).json({ message: 'Volunteer role deleted successfully' });
+      res.status(200).json({ message: 'Volunteer role and associated shifts deleted successfully' });
     } catch (error) {
       next(error);
     }

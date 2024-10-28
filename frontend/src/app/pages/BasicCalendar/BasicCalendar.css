@@ -1,29 +1,135 @@
+/* Calendar toolbar buttons */
 .rbc-toolbar button {
-    background-color: #af2020; /* Change the button background */
-    color: rgb(14, 12, 12); /* Change the button text color */
+    background-color: var(--mui-palette-primary-main); /* Darker background for better contrast */
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: bold;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.rbc-toolbar button:hover {
+    background-color: var(--mui-palette-primary-dark); /* Keep theme color for hover effect */
+    color: #fff; /* Lighten the text color on hover */
     border-radius: 5px; /* Add rounded corners */
     padding: 10px 20px; /* Adjust padding */
 }
-
-.rbc-toolbar button:hover{
-    background-color: #e61414; /* Change the button background */
-    color: rgb(39, 14, 14); /* Change the button text color */
-    border-radius: 5px; /* Add rounded corners */
-    padding: 10px 20px; /* Adjust padding */
-}
-
 
 .rbc-btn-group {
-    background-color: #9c2424; /* Change the button background */
+    background-color: var(--mui-palette-primary-main); /* Change the button background */
     color: rgb(255, 255, 255); /* Change the button text color */
     border-radius: 5px; /* Add rounded corners */
     padding: 10px 20px; /* Adjust padding */
 }
 
-
 .rbc-toolbar{
-    background-color: #9c2424; /* Change the button background */
+    background-color: var(--mui-palette-primary-main); /* Change the button background */
     color: rgb(255, 255, 255); /* Change the button text color */
     border-radius: 5px; /* Add rounded corners */
-    padding: 10px 20px; /* Adjust padding */
+    padding: 10px 30px; /* Adjust padding */
+}
+
+.rbc-active{
+    color: black !important;
+}
+
+
+.rbc-off-range-bg {
+    background-color: rgba(200, 200, 200, 0.5); /* Light gray */
+}
+.rbc-today {
+    color: var(--mui-palette-primary-main);
+    background-color: #F2C0BD;
+}
+.rbc-current {
+    color: black;
+}
+.floating-button {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 1000;
+}
+
+/* Ensure the container stretches across the available space and aligns the button to the right */
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px; /* Adds space between the button and the calendar */
+    position: relative;; /* Ensure positioning works for floating */
+}
+
+
+/* Create Event button */
+.create-event-button {
+    padding: 12px 24px; /* Slightly larger padding for a bigger, easier-to-click button */
+    background-color: var(--mui-palette-primary-main);
+    color: white;
+    border: none;
+    border-radius: 8px; /* Increased radius for a more modern look */
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* More defined shadow for a floating effect */
+    font-size: 16px; /* Bigger font size for better readability */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.create-event-button:hover {
+    background-color: #e61414; /* Keep hover state vibrant */
+    transform: scale(1.05); /* Subtle scale effect on hover */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Increase shadow for hover effect */
+}
+
+/* Main content area improvements */
+.main-content {
+    width: calc(100% - 200px); /* Adjust to take up the remaining space */
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Calendar Wrapper - To ensure the calendar occupies more space */
+.calendar-wrapper {
+    width: 100%;
+    height: 100%; /* Full height of the container */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    align-items: flex-start;
+}
+
+/* Event Calendar - Full width and height */
+.event-calendar {
+    width: 100%;
+    height: 80vh; /* 80% of the viewport height */
+    min-height: 500px; /* Ensure minimum height for small screens */
+    margin-bottom: 20px;
+}
+
+/*mobile view*/
+@media (max-width: 1200px) {
+    .calendar-wrapper {
+        width: 100%;
+        height: 75vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-wrapper {
+        height: 70vh; /* Adjust height for mobile */
+    }
+
+    .create-event-button {
+        font-size: 14px; /* Adjust button size for smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .floating-button {
+        bottom: 10px;
+        right: 10px;
+    }
 }
