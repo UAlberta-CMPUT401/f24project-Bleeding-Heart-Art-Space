@@ -5,6 +5,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
 import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEvent } from '@utils/fetch';
+import { useAuth } from '@lib/context/AuthContext';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -20,13 +21,14 @@ const VolunteerShifts: React.FC = () => {
     const [newShift, setNewShift] = useState<NewShift>(emptyNewShift);
     const [shifts, setShifts] = useState<NewShift[]>([]);
     const [savedShifts, setSavedShifts] = useState<Shift[]>([]);
+    const { user } = useAuth();
 
     useEffect(() => {
-        if (eventId) {
-            getVolunteerRoles().then(response => setRoles(response.data));
-            getEventShifts(Number(eventId)).then(response => setSavedShifts(response.data));
+        if (eventId && user) {
+            getVolunteerRoles(user).then(response => setRoles(response.data));
+            getEventShifts(Number(eventId), user).then(response => setSavedShifts(response.data));
         }
-    }, [eventId]);
+    }, [eventId, user]);
 
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
@@ -42,9 +44,13 @@ const VolunteerShifts: React.FC = () => {
             alert("Event ID or Event Date is missing. Please try again.");
             return;
         }
+        if (!user) {
+            alert("Not authorized. Wait for sign in to load or try signing in again");
+            return;
+        }
 
         // Fetch event details to get the event date
-        const eventDetails = await getEvent(Number(eventId));
+        const eventDetails = await getEvent(Number(eventId), user);
 
         if (!eventDetails.data.start) {
             throw new Error("Event start date is missing");
@@ -60,7 +66,7 @@ const VolunteerShifts: React.FC = () => {
             end: `${eventDate}T${shift.end}`,     // Combine event date with shift end time
         }));
 
-        postEventShifts(Number(eventId), formattedShifts)
+        postEventShifts(Number(eventId), formattedShifts, user)
             .then((response) => {
                 setSavedShifts(prev => [...prev, ...response.data]);
                 setShifts([]);
