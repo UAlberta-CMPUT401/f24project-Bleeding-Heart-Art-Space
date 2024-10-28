@@ -21,6 +21,11 @@ export const AuthProvider: React.FC = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
+
+      // redirect if not logged in
+      if (!user) {
+        navigate('/login', { replace: true });
+      }
     });
 
     return () => unsubscribe();
