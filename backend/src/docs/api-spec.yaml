@@ -247,6 +247,56 @@ paths:
         default:
           $ref: '#/components/responses/DefaultError'
 
+  # Shifts
+  /api/events/{id}/volunteer_shifts:
+    get:
+      tags:
+        - Shifts
+      summary: Get shifts by event ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      responses:
+        '200':
+          description: Shifts list for event ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerShiftList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    post:
+      tags:
+        - Shifts
+      summary: Create shift for event ID
+      parameters:
+        - $ref: '#/components/parameters/EventId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewVolunteerShift'
+      responses:
+        '200':
+          description: Shift successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerShift'
+        default:
+          $ref: '#/components/responses/DefaultError'
+    delete:
+      tags:
+        - Shifts
+      summary: Delete shift by ID
+      parameters:
+        - $ref: '#/components/parameters/ShiftId'
+      responses:
+        '200':
+          description: Shift successfully deleted
+        default:
+          $ref: '#/components/responses/DefaultError'
+
   # Shift Signup
   /api/shift-signups:
     get:
@@ -607,6 +657,89 @@ components:
           address: "456 Creative Avenue"
           requester: 2
 
+    # Shift
+    NewVolunteerShift:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        volunteer_role:
+          type: integer
+        max_volunteers:
+          type: integer
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        description:
+          type: string
+      required:
+        - event_id
+        - volunteer_role
+        - max_volunteers
+      example:
+        event_id: 1
+        volunteer_role: 2
+        max_volunteers: 5
+        start: "2024-01-20T09:00:00Z"
+        end: "2024-01-20T17:00:00Z"
+        description: "Gallery greeting shift"
+
+    VolunteerShift:
+      type: object
+      properties:
+        id:
+          type: integer
+        event_id:
+          type: integer
+        volunteer_role:
+          type: integer
+        max_volunteers:
+          type: integer
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        description:
+          type: string
+      required:
+        - id
+        - event_id
+        - volunteer_role
+        - max_volunteers
+      example:
+        id: 1
+        event_id: 1
+        volunteer_role: 2
+        max_volunteers: 5
+        start: "2024-01-20T09:00:00Z"
+        end: "2024-01-20T17:00:00Z"
+        description: "Gallery greeting shift"
+
+    VolunteerShiftList:
+      type: array
+      items:
+        $ref: '#/components/schemas/VolunteerShift'
+      example:
+        - id: 1
+          event_id: 1
+          volunteer_role: 2
+          max_volunteers: 5
+          start: "2024-01-20T09:00:00Z"
+          end: "2024-01-20T17:00:00Z"
+          description: "Gallery greeting shift"
+        - id: 2
+          event_id: 1
+          volunteer_role: 3
+          max_volunteers: 3
+          start: "2024-01-20T09:00:00Z"
+          end: "2024-01-20T17:00:00Z"
+          description: "Setup crew"
+
     # Shift Signup
     NewShiftSignup:
       type: object
@@ -685,6 +818,13 @@ components:
       in: path
       required: true
       description: ID of the event request to retrieve
+      schema:
+        type: integer
+    ShiftId:
+      name: id
+      in: path
+      required: true
+      description: ID of the shift to retrieve
       schema:
         type: integer
     ShiftSignupId:
