@@ -10,6 +10,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import styles from './EventDetails.module.css';
 import { getVolunteerRoles, Shift, VolunteerRole } from '@utils/fetch';
 import { isBefore, isAfter } from 'date-fns';
+import { useAuth } from '@lib/context/AuthContext';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -26,11 +27,11 @@ const EventDetails: React.FC = () => {
     const [checkinSignupId, setCheckinSignupId] = useState<number | null>(null);
     const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
     const [checkoutSignupId, setCheckoutSignupId] = useState<number | null>(null);
-    
+    const { user } = useAuth();
 
     useEffect(() => {
-        if (id) {
-            getVolunteerRoles().then(response => setRoles(response.data));
+        if (id && user) {
+            getVolunteerRoles(user).then(response => setRoles(response.data));
             axios.get(`${apiUrl}/events/${id}`)
                 .then(response => {
                     setEvent(response.data);
@@ -53,7 +54,7 @@ const EventDetails: React.FC = () => {
                 })
                 .catch(error => console.error("Error fetching shift signups:", error));
         }
-    }, [id]);
+    }, [id, user]);
 
     const handleEdit = () => {
         navigate(`/edit-event/${id}`);
