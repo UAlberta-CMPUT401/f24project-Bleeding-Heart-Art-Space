@@ -10,7 +10,6 @@ import {
 export interface VolunteerShiftsTable {
   id: Generated<number>;         // Primary key
   event_id: number;              // Foreign key referencing the event
-  user_id: number;              // Foreign key referencing the user (optional)
   volunteer_role: number;        // Volunteer role for the shift (stored as an integer referencing volunteer_roles.id)
   start: ColumnType<Date, string | undefined, never>;  // Start time of the shift
   end: ColumnType<Date, string | undefined, never>;    // End time of the shift

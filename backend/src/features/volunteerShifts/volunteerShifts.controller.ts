@@ -23,25 +23,6 @@ export class VolunteerShiftsController {
       next(error);
     }
   };
-
-  /**
-   * Retrieve all shifts for a specific user.
-   */
-  public getShiftsByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { userId } = req.params;
-
-      if (!userId) {
-        res.status(400).json({ error: 'User ID is required' });
-        return;
-      }
-
-      const shifts = await this.volunteerShiftsService.getShiftsByUserId(Number(userId));
-      res.status(200).json(shifts);
-    } catch (error) {
-      next(error);
-    }
-  };
   
   /**
    * Create new shifts for a specific event.

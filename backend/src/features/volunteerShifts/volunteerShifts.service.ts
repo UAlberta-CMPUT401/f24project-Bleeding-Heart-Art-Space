@@ -40,14 +40,6 @@ export class VolunteerShiftsService {
       .execute();
   }
 
-  public async getShiftsByUserId(userId: number): Promise<VolunteerShift[]> {
-    return await db
-      .selectFrom('volunteer_shifts')
-      .selectAll()
-      .where('user_id', '=', userId)
-      .execute();
-  }
-
   /**
    * Retrieve a specific shift by its ID
    * @param shiftId - The ID of the shift to retrieve
