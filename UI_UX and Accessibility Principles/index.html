@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Tests Matrix - Bleeding Heart Art Space</title>
+        <title>Usability Heuristics for User Interface Design - Bleeding Heart Art Space</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/fontawesome.min.css" rel="stylesheet">
         <link href="../css/brands.min.css" rel="stylesheet">
@@ -50,7 +50,7 @@
                                 <a href="../teamwork/" class="nav-link">Teamwork</a>
                             </li>
                             <li class="nav-item">
-                                <a href="./" class="nav-link active" aria-current="page">Tests Matrix</a>
+                                <a href="../requirements-traceability-matrix/" class="nav-link">Tests Matrix</a>
                             </li>
                         </ul>
 
@@ -60,16 +60,6 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li class="nav-item">
-                                <a rel="prev" href="../teamwork/" class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
                     </ul>
                 </div>
             </div>
@@ -88,12 +78,25 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="1"><a href="#requirements-traceability-matrix" class="nav-link">Requirements Traceability Matrix</a>
+            <li class="nav-item" data-bs-level="1"><a href="#usability-heuristics-for-user-interface-design" class="nav-link">Usability Heuristics for User Interface Design</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#tests" class="nav-link">Tests</a>
+            <li class="nav-item" data-bs-level="2"><a href="#visibility-of-system-status" class="nav-link">Visibility of system status</a>
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#aesthetic-and-minimal-design" class="nav-link">Aesthetic and Minimal Design</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#user-control-and-freedom" class="nav-link">User Control and Freedom</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#accessibility" class="nav-link">Accessibility</a>
+              <ul class="nav flex-column">
               </ul>
             </li>
         </ul>
@@ -101,78 +104,40 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="requirements-traceability-matrix">Requirements Traceability Matrix</h1>
-<p>This page outlines the tests that are being carried to verify that all requirements are met.</p>
-<h2 id="tests">Tests</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Requirement Description</th>
-<th>Justification</th>
-<th>User Story</th>
-<th>Test Name</th>
-<th>Test Result</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>Manage Events</td>
-<td>Admins can create, delete and edit events</td>
-<td>1.03</td>
-<td>createEventTest, deleteEventTest, editEventTest</td>
-<td>Pass</td>
-<td>UI Test</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Calendar Events</td>
-<td>Events can be seen on the calendar and admins can create the events from the calendar</td>
-<td>2.03</td>
-<td>clickCalendar</td>
-<td>Pass</td>
-<td>UI Test</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Calendar View</td>
-<td>Admins, volunteers, and artists can view an interactive calendar</td>
-<td>4.02</td>
-<td>viewCalendar</td>
-<td>Pass</td>
-<td>UI Test</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Volunteer Roles</td>
-<td>Admins can create and delete volunteer roles</td>
-<td>Feature</td>
-<td>createRoleTest, deleteRoleTest</td>
-<td>Pass</td>
-<td>UI Test</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Shifts</td>
-<td>Admin can create shifts on events</td>
-<td>1.05</td>
-<td>createShiftTest</td>
-<td>Pass</td>
-<td>UI Test</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Sign Up to Shift</td>
-<td>Volunteers can sign up to shifts</td>
-<td>2.04</td>
-<td>shiftSignupTest</td>
-<td>Pass</td>
-<td>UI Test</td>
-</tr>
-</tbody>
-</table></div>
+<h1 id="usability-heuristics-for-user-interface-design">Usability Heuristics for User Interface Design</h1>
+<h2 id="visibility-of-system-status"><strong>Visibility of system status</strong></h2>
+<p><strong>The design should always keep users informed about what is going on, through appropriate feedback within a reasonable amount of time.</strong></p>
+<p>We have implemented this by letting users know when an event or change has taken place in the system through alert pop-ups seen in the browser.</p>
+<p><img alt="Create-event" src="../images/create-event.png" /></p>
+<h2 id="aesthetic-and-minimal-design"><strong>Aesthetic and Minimal Design</strong></h2>
+<p><strong>Interfaces should not contain information that is irrelevant or rarely needed. Every extra unit of information in an interface competes with the relevant units of information and diminishes their relative visibility.</strong></p>
+<p>By building the UI of the app as a minimal interface with just the necessary tasks, we have achieved a minimal design while adopting Bleeding Heart Art Space’s color theme to add to the aesthetic.</p>
+<p><img alt="Calendar" src="../images/calendar.png" /></p>
+<h2 id="user-control-and-freedom"><strong>User Control and Freedom</strong></h2>
+<p><strong>Users often perform actions by mistake. They need a clearly marked "emergency exit" to leave the unwanted action without having to go through an extended process.</strong></p>
+<p>By adding a way to exit or undo an action, users are able to navigate back from an unwanted action without having to complete the whole process. This is done in our app by adding an exit/close button on the top left of our pop-up windows.</p>
+<p><img alt="Create-event" src="../images/create-event2.png" /></p>
+<h1 id="accessibility"><strong>Accessibility</strong></h1>
+<p>To test our website’s accessibility, we used Google’s Lighthouse to generate reports. More info on Lighthouse can be found <a href="https://developer.chrome.com/docs/lighthouse/overview">here.</a></p>
+<p>Upon running the tool on our website, we get an 82% for accessibility. <br />
+<img alt="Accessibility" src="../images/accessibility.png" /></p>
+<p>Lighthouse tests accessibility in these areas:</p>
+<ul>
+<li><strong>Keyboard Navigation:</strong> Ensures all features work with a keyboard.  </li>
+<li><strong>Color Contrast:</strong> Checks text readability against backgrounds.  </li>
+<li><strong>Alt Text:</strong> Verifies images have descriptive text.  </li>
+<li><strong>ARIA Labels:</strong> Assesses proper ARIA roles for screen readers.  </li>
+<li><strong>Page Structure:</strong> Ensures proper use of headings and HTML tags.  </li>
+<li><strong>Form Labels:</strong> Confirms all inputs have clear labels.  </li>
+<li><strong>Interactive Elements:</strong> Checks buttons/links are labeled and focusable.</li>
+</ul>
+<p>These help improve usability for users with disabilities.</p>
+<p>Areas we will improve on in Sprint 4 include:</p>
+<ul>
+<li><strong>Aria:</strong> roles on incompatible elements  </li>
+<li><strong>Names and Labels:</strong> Images do not have alt attributes  </li>
+<li><strong>Contrast:</strong> Background and foreground colors do not have a sufficient contrast ratio.</li>
+</ul></div>
             </div>
         </div>
 
