@@ -6,11 +6,15 @@ import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import cors from 'cors';
+import * as path from 'path';
+import * as swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 export class App {
   public app: express.Application;
   public env: string;
   public port: string | number;
+  public apiSpecPath = path.join(__dirname, 'docs', 'api-spec.yaml');
 
   constructor(routes: Routes[]) {
     this.app = express();
@@ -39,6 +43,8 @@ export class App {
     if (NODE_ENV === 'development') {
       this.app.use(cors())
     }
+    const swaggerDocument = YAML.load(this.apiSpecPath);
+    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   }
 
   private initializeRoutes(routes: Routes[]) {

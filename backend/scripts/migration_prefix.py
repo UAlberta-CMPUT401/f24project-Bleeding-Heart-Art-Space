@@ -5,7 +5,7 @@ import datetime
 
 def generate_migration_prefix():
     # Get the current UTC time
-    utc_now = datetime.datetime.now(datetime.UTC)
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
     
     # Format the date and time according to ISO 8601
     iso_date = utc_now.strftime("%Y%m%d%H%M%S")

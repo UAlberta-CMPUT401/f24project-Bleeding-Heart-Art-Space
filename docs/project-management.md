@@ -70,10 +70,9 @@ Estimated Sprint Velocity: **39**
 | US 3.01 - Artist requests event            | 3            |
 | US 3.02 - Artist signs up to oversee an event | 3          |
 | US 3.03 - Artist creates shifts for the event | 3          |
-| US 3.04 - Artist assign one-time volunteers| 2            |
 | US 3.05 - Artist manage events             | 3            |
 
-Estimated Sprint Velocity: **37**
+Estimated Sprint Velocity: **32**
 
 #### **Tasks**
 
@@ -102,18 +101,35 @@ Estimated Sprint Velocity: **37**
 
 | User Story                                 | Story Points |
 | ------------------------------------------ | ------------ |
+| US 1.04 - Admin assign permissions         | 3            |
 | US 1.07 - Send communication emails        | 1            |
 | US 1.09 - Assign one-time volunteers       | 2            |
 | US 1.10 - Approve artist event requests    | 3            |
 | US 2.05 - Manage notification preferences  | 3            |
 | US 2.11 - View other volunteer status      | 1            |
+| US 3.04 - Artist assign one-time volunteers| 2            |
 | US 4.01 - Receive events notifications     | 5            |
 
-Estimated Sprint Velocity: **15**
+Estimated Sprint Velocity: **20**
 
 #### **Tasks**
 
-Sprint 4 tasks will be added during Sprint 3.
+| Task | Related US | Assigned To                                       | Due Date  |
+|--------------------------------------------|---------------------------------|-------------------------------------|--------|
+| Fix frontend for check-in and check-out for shifts           | US 2.06, US 2.07, US 2.08          | Anhadpreet Singh, Rushabh Shah       | Nov 10   |
+| Allow artists and admins to create one-time volunteers       | US 1.09, US 3.04                   | Samuel Chan                          | Nov 10   |
+| View other volunteers who have signed up for shifts          | US 2.04, US 2.11                   | Amaan Mohammed                       | Nov 10   |
+| As an Admin, approve event requests                          | US 1.10                            | Samuel Chan                          | Nov 10   |
+| Overview page: Have a shift/event view for accessibility     | US 1.05                            | Samuel Chan, Amaan Mohammed          | Nov 10   |
+| Create notifications view and UI, allow users to manage preferences | US 2.05                      | Amaan Mohammed                       | Nov 10   |
+| Create notification functionality                            | US 2.05, US 4.01                   | Amaan Mohammed, Samuel Chan          | Nov 10   |
+| Send out and receive notifications                           | US 4.01                            | Amaan Mohammed                       | Nov 10   |
+| Gather and send out emails                                   | US 1.07                            | Amaan Mohammed                       | Nov 10   |
+| Page to complete signup                                      | US 1.01, US 1.02, US 2.01, US 2.02 | Chase Johnson, Rishit Gajjar         | Nov 3    |
+| Enforce authorization on endpoints                           | US 1.01, US 1.02, US 2.01, US 2.02 | Chase Johnson, Rishit Gajjar         | Nov 3    |
+| Create different dashboard views for Admin, volunteers, and artists | US 1.05, US 1.08           | Chase Johnson, Rishit Gajjar         | Nov 3    |
+| Create edit page for roles/permissions of users              | US 1.04                            | Chase Johnson, Rishit Gajjar         | Nov 10   |
+| Profile page                                                 | US 1.01, US 1.02, US 2.01, US 2.02 | Chase Johnson, Rishit Gajjar         | Nov 10   |
 
 ### **Sprint 5**
 
