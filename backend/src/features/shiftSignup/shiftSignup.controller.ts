@@ -28,6 +28,21 @@ export class ShiftSignupController {
     }
   };
 
+  public getUserShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = Number(req.query.user_id); // Extract user ID from query parameters
+      if (!userId) {
+        res.status(400).json({ error: "User ID is required." });
+        return;
+      }
+  
+      const shifts = await this.shiftSignupService.getShiftsByUserId(userId);
+      res.json(shifts);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   /**
    * Get all shift signups
    * @route GET /api/shift-signups

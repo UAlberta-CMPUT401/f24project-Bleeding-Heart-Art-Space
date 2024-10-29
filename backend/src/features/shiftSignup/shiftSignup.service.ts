@@ -21,6 +21,15 @@ export class ShiftSignupService {
     return result as unknown as ShiftSignupTable[];
   }
 
+  async getShiftsByUserId(userId: number): Promise<ShiftSignupTable[]> {
+    const result = await db
+      .selectFrom('shift_signup')
+      .selectAll()
+      .where('user_id', '=', userId)
+      .execute();
+    return result as unknown as ShiftSignupTable[];
+  }
+
   /**
    * Create a new shift signup.
    * @param signupData - The data for the new signup

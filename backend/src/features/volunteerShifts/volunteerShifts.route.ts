@@ -19,22 +19,29 @@ export class VolunteerShiftsRoute implements Routes {
     // Get all shifts for a specific event
     this.router.get(
       '/events/:eventId' + this.path,
-      // firebaseAuthMiddleware, // Uncomment this to enable Firebase authentication
+      // authMiddleware,
       this.asyncHandler(this.volunteerShiftsController.getShiftsByEvent)
+    );
+
+    // Get all shifts for a specific user
+    this.router.get(
+      '/users/:userId' + this.path,
+      // authMiddleware, // Uncomment this to enable generic auth middleware
+      // userMiddleware, // Uncomment this to enable user-specific middleware
+      this.asyncHandler(this.volunteerShiftsController.getShiftsByUser)
     );
 
     // Create new shifts for a specific event
     this.router.post(
       '/events/:eventId' + this.path,
-      // authMiddleware, // Uncomment this to enable generic auth middleware
-      // userMiddleware, // Uncomment this to enable user-specific middleware
+      // authMiddleware,
       this.asyncHandler(this.volunteerShiftsController.createShifts)
     );
 
     // Delete a specific shift by ID
     this.router.delete(
       `${this.path}/:id`,
-      // authMiddleware, // Uncomment for authorization
+      // authMiddleware,
       this.asyncHandler(this.volunteerShiftsController.deleteShift)
     );
   }
