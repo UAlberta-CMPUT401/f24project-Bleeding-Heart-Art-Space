@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Calendar, momentLocalizer, SlotInfo } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { useEventStore } from '@pages/EventStore/useEventStore';
+import { useEventStore } from '@stores/useEventStore';
 
 const localizer = momentLocalizer(moment); // Using moment for date localization
 

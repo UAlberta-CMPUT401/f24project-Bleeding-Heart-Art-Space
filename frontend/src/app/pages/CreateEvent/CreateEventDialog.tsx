@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Grid, Typography } from '@mui/material';
 import styles from "./CreateEventDialog.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
-import { useEventStore } from '@pages/EventStore/useEventStore';
+import { useEventStore } from '@stores/useEventStore';
 import { useTheme } from '@mui/material/styles';
 
 interface CreateEventDialogProps {

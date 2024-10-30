@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EventCalendar from './Components/CalendarEvent';
 import CreateEventDialog from '../CreateEvent/CreateEventDialog';
 import './BasicCalendar.css';
-import { useEventStore } from '@pages/EventStore/useEventStore';
+import { useEventStore } from '@stores/useEventStore';
 
 const BasicCalendar: React.FC = () => {
     const { fetchEvents } = useEventStore(); //---> Fetch events function from EventStore!
