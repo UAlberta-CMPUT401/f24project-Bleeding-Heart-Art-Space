@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ShiftSignupService } from './shiftSignup.service';
 import { NewShiftSignup, ShiftSignupUpdate } from './shiftSignup.model';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
+import { isAuthenticated } from '@/common/utils/auth';
 
 export class ShiftSignupController {
   private shiftSignupService = new ShiftSignupService();
@@ -28,15 +29,13 @@ export class ShiftSignupController {
     }
   };
 
-  public getUserShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getUserSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = Number(req.query.user_id); // Extract user ID from query parameters
-      if (!userId) {
-        res.status(400).json({ error: "User ID is required." });
+      if (!isAuthenticated(req)) {
+        res.status(401);
         return;
       }
-  
-      const shifts = await this.shiftSignupService.getShiftsByUserId(userId);
+      const shifts = await this.shiftSignupService.getShiftsSignupByUser(req.auth.uid);
       res.json(shifts);
     } catch (error) {
       next(error);

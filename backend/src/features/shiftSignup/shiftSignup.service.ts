@@ -21,11 +21,19 @@ export class ShiftSignupService {
     return result;
   }
 
-  async getShiftsByUserId(userId: number): Promise<ShiftSignup[]> {
+  async getShiftsSignupByUser(userId: string): Promise<ShiftSignup[]> {
     const result = await db
       .selectFrom('shift_signup')
-      .selectAll()
-      .where('user_id', '=', userId)
+      .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.notes',
+      ])
+      .where('users.uid', '=', userId)
       .execute();
     return result;
   }
