@@ -3,10 +3,11 @@ import { Button } from '@mui/material';
 import { auth } from '@utils/firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
+import { useBackendUserStore } from '@stores/useBackendUserStore';
 
 const Account: React.FC = () => {
-
   const navigate = useNavigate();
+  const { backendUser } = useBackendUserStore();
 
   const handleSignOut = () => {
     signOut(auth).then(() => {
@@ -17,8 +18,7 @@ const Account: React.FC = () => {
 
   return (
     <>
-      <h2>First Name</h2>
-      <h2>Last Name</h2>
+      {backendUser && <h2>{backendUser.first_name} {backendUser.last_name}</h2>}
       <Button
         onClick={handleSignOut}
         variant='outlined'
