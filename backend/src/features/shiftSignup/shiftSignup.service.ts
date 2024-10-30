@@ -1,6 +1,6 @@
 import { Kysely } from 'kysely';
 import { BadRequestException } from '@nestjs/common';
-import { ShiftSignupTable, NewShiftSignup } from './shiftSignup.model';
+import { NewShiftSignup, ShiftSignup } from './shiftSignup.model';
 import { db } from '@database/database';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
 import { singleton } from 'tsyringe';
@@ -13,21 +13,21 @@ export class ShiftSignupService {
    * Fetch all shift signups.
    * @returns A list of all shift signups
    */
-  async getAllSignups(): Promise<ShiftSignupTable[]> {
+  async getAllSignups(): Promise<ShiftSignup[]> {
     const result = await db
       .selectFrom('shift_signup')
       .selectAll()
       .execute();
-    return result as unknown as ShiftSignupTable[];
+    return result;
   }
 
-  async getShiftsByUserId(userId: number): Promise<ShiftSignupTable[]> {
+  async getShiftsByUserId(userId: number): Promise<ShiftSignup[]> {
     const result = await db
       .selectFrom('shift_signup')
       .selectAll()
       .where('user_id', '=', userId)
       .execute();
-    return result as unknown as ShiftSignupTable[];
+    return result;
   }
 
   /**
@@ -180,14 +180,14 @@ export class ShiftSignupService {
   /**
    * Check if a user is already signed up for a specific shift.
    */
-  private async checkExistingSignup(user_id: number, shift_id: number): Promise<ShiftSignupTable | undefined> {
+  private async checkExistingSignup(user_id: number, shift_id: number): Promise<ShiftSignup | undefined> {
     const result = await db
       .selectFrom('shift_signup')
       .selectAll()
       .where('user_id', '=', user_id)
       .where('shift_id', '=', shift_id)
       .executeTakeFirst();
-    return result as ShiftSignupTable | undefined;
+    return result;
   }
 
   /**
@@ -232,13 +232,13 @@ export class ShiftSignupService {
   /**
    * Get a specific shift signup by ID.
    */
-  async getSignupById(id: number): Promise<ShiftSignupTable | undefined> {
+  async getSignupById(id: number): Promise<ShiftSignup | undefined> {
     const result = await db
       .selectFrom('shift_signup')
       .selectAll()
       .where('id', '=', id)
       .executeTakeFirst();
-    return result as ShiftSignupTable | undefined;
+    return result;
   }
 
   /**
