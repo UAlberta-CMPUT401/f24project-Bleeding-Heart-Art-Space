@@ -21,7 +21,7 @@ export class EventsRoute implements Routes {
     this.router.get(`${this.path}`, authMiddleware, this.eventsController.getAllEvents);
 
     // Route to get a specific event by ID
-    this.router.get(`${this.path}/:id`, this.eventsController.getEventById);
+    this.router.get(`${this.path}/:id`, authMiddleware, this.eventsController.getEventById);
 
     // Route to delete an event by ID
     this.router.delete(`${this.path}/:id`, this.eventsController.deleteEvent);

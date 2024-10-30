@@ -4,7 +4,7 @@ import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Sel
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
-import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEvent } from '@utils/fetch';
+import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEvent, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 
 const emptyNewShift: NewShift = {
@@ -50,30 +50,23 @@ const VolunteerShifts: React.FC = () => {
         }
 
         // Fetch event details to get the event date
-        const eventDetails = await getEvent(Number(eventId), user);
-
-        if (!eventDetails.data.start) {
-            throw new Error("Event start date is missing");
-        }
-
-        const eventDate = eventDetails.data.start.split('T')[0]; // Use event start date as YYYY-MM-DD
+        const event = await getEvent(Number(eventId), user);
 
         const formattedShifts: NewShift[] = shifts.map((shift) => ({
             ...shift,
             event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: `${eventDate}T${shift.start}`, // Combine event date with shift start time
-            end: `${eventDate}T${shift.end}`,     // Combine event date with shift end time
+            start: `${event.data.start.toLocaleDateString()}T${shift.start}`, // Combine event date with shift start time
+            end: `${event.data.start.toLocaleDateString()}T${shift.end}`,     // Combine event date with shift end time
         }));
 
         postEventShifts(Number(eventId), formattedShifts, user)
             .then((response) => {
-                setSavedShifts(prev => [...prev, ...response.data]);
-                setShifts([]);
+                if (isOk(response.status)) {
+                    setSavedShifts(prev => [...prev, ...response.data]);
+                    setShifts([]);
+                }
             })
-            .catch(() => {
-                alert('Failed to save shifts. Please try again.');
-            });
     };
 
     return (

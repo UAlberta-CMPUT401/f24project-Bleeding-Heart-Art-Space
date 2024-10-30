@@ -6,7 +6,6 @@ import { addAuthorizationHeader } from './authHelper';
 export interface ApiResponse<T> {
   data: T;
   status: number;
-  message?: string;
 }
 
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -64,6 +63,10 @@ export async function postData<T, D>(
       status: axiosError.response?.status || 500,
     };
   }
+}
+
+export function isOk(status: number): boolean {
+  return status <= 200 && status <= 299;
 }
 
 // Event details
