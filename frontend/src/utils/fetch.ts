@@ -32,7 +32,6 @@ export async function getData<T>(
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
-      message: axiosError.message,
     };
   }
 }
@@ -51,7 +50,8 @@ export async function postData<T, D>(
     }
     const response: AxiosResponse<T> = await axios.post(
       `${BASE_URL}${endpoint}`,
-      payload
+      payload,
+      config
     );
     return {
       data: response.data,
@@ -62,7 +62,6 @@ export async function postData<T, D>(
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
-      message: axiosError.message,
     };
   }
 }
@@ -111,7 +110,27 @@ export type NewShift = {
   max_volunteers: number;
   description?: string;
 };
-
 export async function postEventShifts(eventId: number, shifts: NewShift[], user: User): Promise<ApiResponse<Shift[]>> {
   return await postData<Shift[], NewShift[]>(`/events/${eventId}/volunteer_shifts`, shifts, user);
+}
+
+export type BackendUser = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  id: number;
+  uid: string;
+  phone: string | null;
+  role: number | null;
+}
+export async function getBackendUser(user: User): Promise<ApiResponse<BackendUser>> {
+  return await getData<BackendUser>(`/users/user`, user);
+}
+export type NewBackendUser = {
+  first_name: string;
+  last_name: string;
+  phone: string | null;
+}
+export async function postBackendUser(user: User, newBackendUser: NewBackendUser): Promise<ApiResponse<void>> {
+  return await postData<void, NewBackendUser>('/users/user', newBackendUser, user);
 }

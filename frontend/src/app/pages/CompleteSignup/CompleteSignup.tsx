@@ -1,20 +1,59 @@
 import React, { useState } from "react";
 import { Button, Card, TextField, Alert } from "@mui/material";
 import styles from '../Login/Login.module.css';
+import { NewBackendUser, postBackendUser } from "@utils/fetch";
+import { useAuth } from "@lib/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const CompleteSignup: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   //TODO: make sure user hasn't already been created by calling get /api/users
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      return;
+    }
     setError(null);
 
-    //TODO: create user on backend with by calling post /api/users
+    setFirstName(prev => prev.trim());
+    if (!firstName) {
+      setError('Missing First Name');
+      return;
+    }
+
+    setLastName(prev => prev.trim());
+    if (!lastName) {
+      setError('Missing Last Name');
+      return;
+    }
+
+    setPhone(prev => prev.trim());
+    if (phone) {
+      const phoneRegex = /^[\+]?[0-9]{0,3}\W?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+      if (!phoneRegex.test(phone)) {
+        setError('Invalid Phone Format');
+        return;
+      }
+    }
+
+    const newBackendUser: NewBackendUser = {
+      first_name: firstName,
+      last_name: lastName,
+      phone: phone ? phone : null,
+    }
+    const response = await postBackendUser(user, newBackendUser);
+    if (response.status === 200) {
+      navigate('/overview');
+    } else {
+      setError(`Failed to created user`);
+    }
   }
 
   return (

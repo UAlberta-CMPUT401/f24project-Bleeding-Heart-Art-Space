@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../../utils/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { Outlet, useNavigate } from "react-router-dom";
+import { getBackendUser } from '@utils/fetch';
 
 // Define the AuthContext type
 interface AuthContextType {
@@ -25,7 +26,14 @@ export const AuthProvider: React.FC = () => {
       // redirect if not logged in
       if (!user) {
         navigate('/login', { replace: true });
+        return;
       }
+
+      getBackendUser(user).then((response) => {
+        if (response.status !== 200) {
+          navigate('/complete-signup', { replace: true });
+        }
+      });
     });
 
     return () => unsubscribe();

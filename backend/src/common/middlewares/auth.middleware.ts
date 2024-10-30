@@ -10,13 +10,15 @@ export const firebaseAuthMiddleware = async (req: Request, res: Response, next: 
   const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader) {
-    return res.status(401).json({ error: 'No authorization header provided' });
+    res.status(401).json({ error: 'No authorization header provided' });
+    return;
   }
 
   const idToken = authorizationHeader.startsWith('Bearer ') ? authorizationHeader.split('Bearer ')[1] : authorizationHeader;
 
   if (!idToken) {
-    return res.status(401).json({ error: 'Invalid authorization header format' });
+    res.status(401).json({ error: 'Invalid authorization header format' });
+    return;
   }
 
   try {
@@ -24,8 +26,8 @@ export const firebaseAuthMiddleware = async (req: Request, res: Response, next: 
     req.auth = decodedToken;
     next();
   } catch (error) {
-    console.error("Error verifying Firebase token:", error);
-    return res.status(401).json({ error: 'Invalid token' });
+    res.status(401).json({ error: 'Invalid token' });
+    return;
   }
 }
 
@@ -35,14 +37,16 @@ export const firebaseAuthMiddleware = async (req: Request, res: Response, next: 
 export const userMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const auth = req.auth;
   if (!auth) {
-    return res.status(401).json({ error: 'Missing authentication information' });
+    res.status(401).json({ error: 'Missing authentication information' });
+    return;
   }
 
   const usersService = container.resolve(UsersService);
   const user = await usersService.getUser(auth.uid);
 
   if (!user) {
-    return res.status(401).json({ error: 'User not found in the database' });
+    res.status(401).json({ error: 'User not found in the database' });
+    return;
   }
 
   req.user = user;

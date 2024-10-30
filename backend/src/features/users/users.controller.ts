@@ -29,8 +29,7 @@ export class UsersController {
         return;
       }
       if (req.body.first_name === undefined ||
-        req.body.last_name === undefined ||
-        req.body.email === undefined) {
+        req.body.last_name === undefined) {
         res.status(400).json({ error: "Missing fields in body" });
         return;
       }
@@ -38,11 +37,16 @@ export class UsersController {
         res.status(400).json({ error: "User already exists" });
         return;
       }
+      if (req.auth.email === undefined) {
+        res.status(500).json({ error: "Email doesn't exist in auth token" });
+        return;
+      }
       const result = await this.usersService.createVolunteer({
         uid: req.auth.uid,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        email: req.body.email,
+        email: req.auth.email,
+        phone: req.body.phone,
       });
       if (result.numInsertedOrUpdatedRows === BigInt(0)) {
         res.status(500).json({ error: "Create failed" });
