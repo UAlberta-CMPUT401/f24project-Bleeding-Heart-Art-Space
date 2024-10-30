@@ -25,7 +25,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onEventClick, onSlotSelec
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500 }}
-        onSelectEvent={(event) => onEventClick(event.id)}
+        onSelectEvent={(event) => onEventClick(String(event.id))}
         onSelectSlot={onSlotSelect}
         selectable
       />

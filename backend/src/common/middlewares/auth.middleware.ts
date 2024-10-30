@@ -90,3 +90,20 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     });
   });
 }
+
+/*
+ * Use this middleware after authMiddleware to ensure user is an admin
+ */
+export const isAdminMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.role) {
+    res.status(401).json({ error: 'User role not found in the database' });
+    return;
+  }
+
+  if (req.role.is_admin) {
+    next();
+  } else {
+    res.status(401).json({ error: 'User must be an admin for this operation' });
+    return;
+  }
+}

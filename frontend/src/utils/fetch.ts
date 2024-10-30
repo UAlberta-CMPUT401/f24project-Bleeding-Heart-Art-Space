@@ -67,24 +67,68 @@ export async function postData<T, D>(
 }
 
 // Event details
-export type Event = {
+export type EventData = {
   id: number;                            // Auto-generated ID
-  start: string                          // Event start date and time
-  end: string                            // Event end date and time 
+  start: string;                          // Event start date and time
+  end: string;                            // Event end date and time 
   venue: string;                         // Venue for the event
   address: string;                       // Address of the event
   title: string;                         // Title of the event
 };
-
+export type Event = {
+  id: number;                            // Auto-generated ID
+  start: Date;                          // Event start date and time
+  end: Date;                            // Event end date and time 
+  venue: string;                         // Venue for the event
+  address: string;                       // Address of the event
+  title: string;                         // Title of the event
+};
+export type NewEvent = {
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+};
 export async function getEvent(eventId: number, user: User): Promise<ApiResponse<Event>> {
-  return await getData<Event>(`/events/${eventId}`, user);
+  const response = await getData<EventData>(`/events/${eventId}`, user);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      start: new Date(response.data.start),
+      end: new Date(response.data.end),
+    }
+  }
+}
+export async function getEvents(user: User): Promise<ApiResponse<Event[]>> {
+  const response = await getData<EventData[]>('/events', user);
+  const formattedResponse: ApiResponse<Event[]> = {
+    ...response,
+    data: response.data.map((eventData) => ({
+      ...eventData,
+      start: new Date(eventData.start),
+      end: new Date(eventData.end),
+    })),
+  }
+  return formattedResponse;
+}
+export async function postEvent(newEvent: NewEvent, user: User): Promise<ApiResponse<Event>> {
+  const response = await postData<EventData, NewEvent>('/events', newEvent, user);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      start: new Date(response.data.start),
+      end: new Date(response.data.end),
+    }
+  }
 }
 
 export type VolunteerRole = {
   id: number;
   name: string;
 };
-
 export async function getVolunteerRoles(user: User): Promise<ApiResponse<VolunteerRole[]>> {
   return await getData<VolunteerRole[]>('/volunteer_roles', user);
 }

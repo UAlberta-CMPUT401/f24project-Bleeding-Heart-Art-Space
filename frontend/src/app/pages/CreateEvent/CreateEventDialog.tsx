@@ -4,6 +4,7 @@ import styles from "./CreateEventDialog.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useEventStore } from '@stores/useEventStore';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from '@lib/context/AuthContext';
 
 interface CreateEventDialogProps {
     open: boolean;
@@ -25,6 +26,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
     const [loading, setLoading] = useState(false);
     const { addEvent } = useEventStore(); //---> Add event function from EventStore!
     const theme = useTheme();
+    const { user } = useAuth();
 
 
     const handleClear = () => {
@@ -44,6 +46,9 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user) {
+            return;
+        }
         const startDateTime = new Date(`${startDateLocal}T${startTimeLocal}`);
         const endDateTime = new Date(`${endDateLocal}T${endTimeLocal}`);
 
@@ -66,9 +71,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
         };
 
         setLoading(true);
-        await addEvent(
-            eventData
-        );
+        addEvent(eventData, user);
         dialogClose();
         setLoading(false);
     };

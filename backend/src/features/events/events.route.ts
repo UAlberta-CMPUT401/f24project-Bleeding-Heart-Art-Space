@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { EventsController } from './events.controller';
+import { authMiddleware, isAdminMiddleware } from '@/common/middlewares/auth.middleware';
 
 export class EventsRoute implements Routes {
   public path = '/events';
@@ -14,10 +15,10 @@ export class EventsRoute implements Routes {
 
   private initializeRoutes() {
     // Route to create an event
-    this.router.post(`${this.path}`, this.eventsController.createEvent);
+    this.router.post(`${this.path}`, authMiddleware, isAdminMiddleware, this.eventsController.createEvent);
 
     // Route to get all events
-    this.router.get(`${this.path}`, this.eventsController.getAllEvents);
+    this.router.get(`${this.path}`, authMiddleware, this.eventsController.getAllEvents);
 
     // Route to get a specific event by ID
     this.router.get(`${this.path}/:id`, this.eventsController.getEventById);
