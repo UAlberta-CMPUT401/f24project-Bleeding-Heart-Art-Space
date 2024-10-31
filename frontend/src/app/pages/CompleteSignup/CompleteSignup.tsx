@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, TextField, Alert } from "@mui/material";
 import styles from '../Login/Login.module.css';
-import { NewBackendUser, postBackendUser } from "@utils/fetch";
+import { getBackendUser, isOk, NewBackendUser, postBackendUser } from "@utils/fetch";
 import { useAuth } from "@lib/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +13,15 @@ const CompleteSignup: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  //TODO: make sure user hasn't already been created by calling get /api/users
+  useEffect(() => {
+    if (user) {
+      getBackendUser(user).then(response => {
+        if (isOk(response.status)) {
+          navigate('/overview');
+        }
+      })
+    }
+  }, [user]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
