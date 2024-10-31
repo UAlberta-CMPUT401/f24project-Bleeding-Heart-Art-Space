@@ -65,6 +65,64 @@ export async function postData<T, D>(
   }
 }
 
+// Generic PUT request
+// If user is defined then the request will have authorization
+export async function putData<T, D>(
+  endpoint: string,
+  payload: D,
+  user?: User,
+): Promise<ApiResponse<T>> {
+  try {
+    let config: AxiosRequestConfig = {};
+    if (user) {
+      config = await addAuthorizationHeader(user, config);
+    }
+    const response: AxiosResponse<T> = await axios.put(
+      `${BASE_URL}${endpoint}`,
+      payload,
+      config
+    );
+    return {
+      data: response.data,
+      status: response.status,
+    };
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    return {
+      data: {} as T,
+      status: axiosError.response?.status || 500,
+    };
+  }
+}
+
+// Generic DELETE request
+// If user is defined then the request will have authorization
+export async function deleteData<T>(
+  endpoint: string,
+  user?: User,
+): Promise<ApiResponse<T>> {
+  try {
+    let config: AxiosRequestConfig = {};
+    if (user) {
+      config = await addAuthorizationHeader(user, config);
+    }
+    const response: AxiosResponse<T> = await axios.delete(
+      `${BASE_URL}${endpoint}`,
+      config
+    );
+    return {
+      data: response.data,
+      status: response.status,
+    };
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    return {
+      data: {} as T,
+      status: axiosError.response?.status || 500,
+    };
+  }
+}
+
 export function isOk(status: number): boolean {
   return status >= 200 && status <= 299;
 }
@@ -132,8 +190,17 @@ export type VolunteerRole = {
   id: number;
   name: string;
 };
+export type NewVolunteerRole = {
+  name: string;
+};
 export async function getVolunteerRoles(user: User): Promise<ApiResponse<VolunteerRole[]>> {
   return await getData<VolunteerRole[]>('/volunteer_roles', user);
+}
+export async function postVolunteerRole(newVolunteerRole: NewVolunteerRole, user: User): Promise<ApiResponse<VolunteerRole>> {
+  return await postData<VolunteerRole, NewVolunteerRole>('/volunteer_roles', newVolunteerRole, user);
+}
+export async function deleteVolunteerRole(volunteerRoleId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/volunteer_roles/${volunteerRoleId}`, user);
 }
 
 export type Shift = {

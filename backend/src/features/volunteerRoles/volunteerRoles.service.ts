@@ -13,10 +13,21 @@ export class VolunteerRolesService {
       .execute();
   }
 
-  public async createVolunteerRole(newVolunteerRole: NewVolunteerRole): Promise<InsertResult> {
-    return await db
+  public async createVolunteerRole(newVolunteerRole: NewVolunteerRole): Promise<VolunteerRole | undefined> {
+    const res = await db
       .insertInto('volunteer_roles')
       .values(newVolunteerRole)
+      .returning('id')
+      .executeTakeFirst();
+
+    if (res === undefined) {
+      return undefined;
+    }
+
+    return await db
+      .selectFrom('volunteer_roles')
+      .selectAll()
+      .where('volunteer_roles.id', '=', res.id)
       .executeTakeFirst();
   }
 

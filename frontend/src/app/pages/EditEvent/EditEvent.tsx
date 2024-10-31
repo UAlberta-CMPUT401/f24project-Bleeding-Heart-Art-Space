@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Typography, Container, Card, IconButton } from '@mui/material';
-import axios from 'axios';
 import styles from "./EditEvent.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
+import { getEvent, isOk } from '@utils/fetch';
+import { useAuth } from '@lib/context/AuthContext';
 
 interface EditEventProps {
     isSidebarOpen: boolean;
@@ -22,6 +23,7 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
     const [address, setAddress] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const { user } = useAuth();
 
     // Adjust form width based on sidebar state
     useEffect(() => {
@@ -30,32 +32,30 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
 
     // Fetch event details and populate the form
     useEffect(() => {
-        if (id) {
-            axios.get(`${apiUrl}/events/${id}`)
+        if (id && user) {
+            getEvent(Number(id), user)
                 .then(response => {
-                    const event = response.data;
+                    if (isOk(response.status)) {
+                        const event = response.data;
 
-                    const startUTC = new Date(event.start);
-                    const endUTC = new Date(event.end);
-                    const startDateLocal = startUTC.toLocaleDateString('en-CA');
-                    const startTimeLocal = startUTC.toTimeString().slice(0, 5);
-                    const endDateLocal = endUTC.toLocaleDateString('en-CA');
-                    const endTimeLocal = endUTC.toTimeString().slice(0, 5);
+                        const startUTC = new Date(event.start);
+                        const endUTC = new Date(event.end);
+                        const startDateLocal = startUTC.toLocaleDateString('en-CA');
+                        const startTimeLocal = startUTC.toTimeString().slice(0, 5);
+                        const endDateLocal = endUTC.toLocaleDateString('en-CA');
+                        const endTimeLocal = endUTC.toTimeString().slice(0, 5);
 
-                    setTitle(event.title);
-                    setVenue(event.venue);
-                    setStartDate(startDateLocal);
-                    setEndDate(endDateLocal);
-                    setStartTime(startTimeLocal);
-                    setEndTime(endTimeLocal);
-                    setAddress(event.address);
-                })
-                .catch(error => {
-                    console.error("Error fetching event details:", error);
-                    alert('Failed to load event details. Please try again.');
+                        setTitle(event.title);
+                        setVenue(event.venue);
+                        setStartDate(startDateLocal);
+                        setEndDate(endDateLocal);
+                        setStartTime(startTimeLocal);
+                        setEndTime(endTimeLocal);
+                        setAddress(event.address);
+                    }
                 });
         }
-    }, [id]);
+    }, [id, user]);
 
     // Handle form submission for updating event
     const handleSubmit = (e: React.FormEvent) => {
