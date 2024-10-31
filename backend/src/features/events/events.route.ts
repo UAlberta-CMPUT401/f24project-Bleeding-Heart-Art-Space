@@ -24,10 +24,10 @@ export class EventsRoute implements Routes {
     this.router.get(`${this.path}/:id`, authMiddleware, this.eventsController.getEventById);
 
     // Route to delete an event by ID
-    this.router.delete(`${this.path}/:id`, this.eventsController.deleteEvent);
+    this.router.delete(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.eventsController.deleteEvent);
 
     // Route to update an event by ID
-    this.router.put(`${this.path}/:id`, this.eventsController.updateEvent);
+    this.router.put(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.eventsController.updateEvent);
 
     // Event request routes
     this.router.post('/event_requests', this.eventsController.createEventRequest);
