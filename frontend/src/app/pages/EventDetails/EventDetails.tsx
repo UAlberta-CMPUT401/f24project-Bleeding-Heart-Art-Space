@@ -8,9 +8,10 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import styles from './EventDetails.module.css';
-import { getEvent, getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts } from '@utils/fetch';
+import { getEvent, getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup } from '@utils/fetch';
 import { isBefore, isAfter } from 'date-fns';
 import { useAuth } from '@lib/context/AuthContext';
+import { useBackendUserStore } from '@stores/useBackendUserStore';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -20,7 +21,8 @@ const EventDetails: React.FC = () => {
     const [event, setEvent] = useState<Event | null>(null);
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
-    const [signedUpShifts, setSignedUpShifts] = useState<{ shiftId: number; signupId: number }[]>([]);
+    const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
+    const [eventSignups, setEventSignups] = useState<ShiftSignupUser[]>([]);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
 
     const [checkinDialogOpen, setCheckinDialogOpen] = useState(false);
@@ -28,8 +30,8 @@ const EventDetails: React.FC = () => {
     const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
     const [checkoutSignupId, setCheckoutSignupId] = useState<number | null>(null);
     const { user } = useAuth();
+    const { backendUser } = useBackendUserStore();
     
-
     useEffect(() => {
         if (eventIdStr && user) {
             const eventId = Number(eventIdStr);
@@ -48,13 +50,12 @@ const EventDetails: React.FC = () => {
                     setShifts(response.data)
                 }
             });
-
-            axios.get(`${apiUrl}/shift-signups`)
-                .then(response => {
-                    const userSignups = response.data.filter((signup: any) => signup.user_id === 1);
-                    setSignedUpShifts(userSignups.map((signup: any) => ({ shiftId: signup.shift_id, signupId: signup.id })));
-                })
-                .catch(error => console.error("Error fetching shift signups:", error));
+            getEventShiftSignups(eventId, user).then(response => {
+                if (isOk(response.status)) {
+                    setEventSignups(response.data)
+                    setUserSignups(response.data.filter(signup => signup.uid === user.uid));
+                }
+            });
         }
     }, [eventIdStr, user]);
 
@@ -67,28 +68,28 @@ const EventDetails: React.FC = () => {
     };
 
     const handleShiftClick = (shift: Shift) => {
-        if (signedUpShifts.find(s => s.shiftId === shift.id)) return; // Disable click if already signed up
+        if (userSignups.find(s => s.shift_id === shift.id)) return; // Disable click if already signed up
         setSelectedShift(shift);  // Open confirmation dialog
     };
 
     const handleConfirmSignup = () => {
         if (!selectedShift) return;
+        if (!user) return;
+        if (!backendUser) return;
 
-        axios.post(`${apiUrl}/shift-signups`, { user_id: 1, shift_id: selectedShift.id })  // Replace 1 with actual user_id
-            .then(response => {
-                // Add the new signup to the state with its ID
-                setSignedUpShifts(prev => [...prev, { shiftId: selectedShift.id, signupId: response.data.id }]);  
-                setSelectedShift(null);  // Close confirmation dialog
-            })
-            .catch(error => {
-                // Check if the error response contains a specific conflict message
-                if (error.response && error.response.data && error.response.data.message === "This shift conflicts with another shift you have already signed up for.") {
-                    alert("This shift conflicts with another shift you have already signed up for.");
-                } else {
-                    alert('Failed to sign up for the shift. Please try again.');
-                }
-                console.error("Error signing up for shift:", error);
-            });
+        const newShiftSignup: NewShiftSignup = {
+            user_id: backendUser.id,
+            shift_id: selectedShift.id,
+            checkin_time: null,
+            checkout_time: null,
+            notes: null,
+        }
+        postShiftSignup(newShiftSignup, user).then(response => {
+            if (isOk(response.status)) {
+                setUserSignups(prev => [...prev, response.data]);
+                setEventSignups(prev => [...prev, response.data]);
+            }
+        })
     };
 
     // Function to handle check-in
@@ -172,7 +173,7 @@ const EventDetails: React.FC = () => {
                             return (
                                 <Grid item xs={12} sm={6} key={index}>
                                     <Card 
-                                        className={`${styles.shiftCard} ${signedUpShifts.find(s => s.shiftId === shift.id) ? styles.signedUp : ''}`}
+                                        className={`${styles.shiftCard} ${userSignups.find(s => s.shift_id === shift.id) ? styles.signedUp : ''}`}
                                         onClick={() => handleShiftClick(shift)}
                                     >
                                         <Typography variant="h6">
@@ -184,7 +185,7 @@ const EventDetails: React.FC = () => {
                                         <Typography variant="body1">
                                             <AccessTimeIcon /> End: {shiftEndTime.toLocaleTimeString()}
                                         </Typography>
-                                        {signedUpShifts.find(s => s.shiftId === shift.id) && (  // Show green tick if shift is signed up
+                                        {userSignups.find(s => s.shift_id === shift.id) && (  // Show green tick if shift is signed up
                                             <>
                                                 <CheckCircleIcon className={styles.signedUpIcon} />
                                                 {/* Check In / Check Out Buttons only show if current time is within shift's duration */}
@@ -196,15 +197,15 @@ const EventDetails: React.FC = () => {
                                                                 color="primary" 
                                                                 onClick={() => {
                                                                     setCheckinDialogOpen(true);
-                                                                    const signup = signedUpShifts.find(s => s.shiftId === shift.id);
-                                                                    if (signup) setCheckinSignupId(signup.signupId);
+                                                                    const signup = userSignups.find(s => s.shift_id === shift.id);
+                                                                    if (signup) setCheckinSignupId(signup.id);
                                                                 }}
                                                             >
                                                                 Check In
                                                             </Button>
                                                         </Grid>
                                                         <Grid item>
-                                                            <Button variant="contained" color="secondary" onClick={() => { setCheckoutSignupId(signedUpShifts.find(s => s.shiftId === shift.id)?.signupId || null); setCheckoutDialogOpen(true); }}>
+                                                            <Button variant="contained" color="secondary" onClick={() => { setCheckoutSignupId(userSignups.find(s => s.shift_id === shift.id)?.id || null); setCheckoutDialogOpen(true); }}>
                                                                 Check Out
                                                             </Button>
                                                         </Grid>

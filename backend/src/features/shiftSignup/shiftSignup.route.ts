@@ -14,10 +14,10 @@ export class ShiftSignupRoute implements Routes {
 
   private initializeRoutes() {
     // Route to create a new shift signup
-    this.router.post(`${this.path}`, this.shiftSignupController.create);
+    this.router.post(`${this.path}`, authMiddleware, this.shiftSignupController.create);
 
-    // Route to get all shift signups
-    this.router.get(`${this.path}`, this.shiftSignupController.getAll);
+    // Route to get all shift signups for an event
+    this.router.get(`${this.path}`, authMiddleware, this.shiftSignupController.getEventShiftSignups);
 
     // Route to get shift signups for a specific user
     this.router.get(`${this.path}/user`, authMiddleware, this.shiftSignupController.getUserSignups);
