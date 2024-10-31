@@ -84,6 +84,7 @@ describe('UsersController', () => {
       first_name: "test_first_name",
       last_name: "test_last_name",
       email: "test_email",
+      phone: '12345678910',
       role: 1
     });
   });
@@ -101,6 +102,7 @@ describe('UsersController', () => {
         first_name: 'test_first_name',
         last_name: 'test_last_name',
         email: 'test_email',
+        phone: '12345678910',
       })
       .expect('Content-Type', /json/)
       .expect(400);
@@ -122,6 +124,7 @@ describe('UsersController', () => {
         first_name: 'test_first_name',
         last_name: 'test_last_name',
         email: 'test_email',
+        phone: '12345678910',
       })
       .expect('Content-Type', /json/)
       .expect(200);
