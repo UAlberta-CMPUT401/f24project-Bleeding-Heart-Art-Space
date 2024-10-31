@@ -185,6 +185,12 @@ export async function postEvent(newEvent: NewEvent, user: User): Promise<ApiResp
     }
   }
 }
+export async function putEvent(eventId: number, event: NewEvent, user: User): Promise<ApiResponse<void>> {
+  return await putData<void, NewEvent>(`/events/${eventId}`, event, user);
+}
+export async function deleteEvent(eventId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/events/${eventId}`, user);
+}
 
 export type VolunteerRole = {
   id: number;

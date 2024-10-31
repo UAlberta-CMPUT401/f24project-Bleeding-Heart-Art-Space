@@ -3,14 +3,12 @@ import { TextField, Button, Grid, Typography, Container, Card, IconButton } from
 import styles from "./EditEvent.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getEvent, isOk } from '@utils/fetch';
+import { deleteEvent, getEvent, isOk, NewEvent, putEvent } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 
 interface EditEventProps {
     isSidebarOpen: boolean;
 }
-
-const apiUrl = import.meta.env.VITE_API_URL;
 
 const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
     const { id } = useParams<{ id: string }>();
@@ -60,6 +58,7 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
     // Handle form submission for updating event
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user) return;
         const startDateTime = new Date(`${startDate}T${startTime}`);
         const endDateTime = new Date(`${endDate}T${endTime}`);
 
@@ -67,38 +66,38 @@ const EditEvent: React.FC<EditEventProps> = ({ isSidebarOpen }) => {
             alert("End time must be after start time.");
             return;
         } else {
-            const eventData = {
+            const eventData: NewEvent = {
                 title,
                 venue,
                 start: `${startDate}T${startTime}`,
                 end: `${endDate}T${endTime}`,
                 address
             };
-
-            axios.put(`${apiUrl}/events/${id}`, eventData)
+            putEvent(Number(id), eventData, user)
                 .then(response => {
-                    console.log("Event updated successfully:", response.data);
-                    alert('Event updated successfully!');
-                    navigate('/calendar');
+                    if (isOk(response.status)) {
+                        alert('Event updated successfully!');
+                        navigate('/calendar');
+                    } else {
+                        console.error("Error updating event: ", id);
+                        alert('Failed to update event. Please try again.');
+                    }
                 })
-                .catch(error => {
-                    console.error("Error updating event:", error.response?.data || error.message);
-                    alert('Failed to update event. Please try again.');
-                });
         }
     };
 
     // Handle event deletion
     const handleDelete = () => {
-        axios.delete(`${apiUrl}/events/${id}`)
-            .then(() => {
-                alert('Event deleted successfully!');
-                navigate('/calendar'); // Redirect to events list or another page
+        if (!user) return;
+        deleteEvent(Number(id), user)
+            .then(response => {
+                if (isOk(response.status)) {
+                    alert('Event deleted successfully!');
+                    navigate('/calendar');
+                } else {
+                    alert('Failed to delete event. Please try again.');
+                }
             })
-            .catch(error => {
-                console.error("Error deleting event:", error.response?.data || error.message);
-                alert('Failed to delete event. Please try again.');
-            });
     };
 
     return (
