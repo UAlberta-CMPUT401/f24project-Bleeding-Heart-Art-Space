@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import axios from 'axios';
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import { deleteVolunteerRole, getVolunteerRoles, isOk, postVolunteerRole, VolunteerRole } from '@utils/fetch';
+import { useAuth } from '@lib/context/AuthContext';
 
 const VolunteerManagement: React.FC = () => {
     const [open, setOpen] = useState(false);
     const [roleName, setRoleName] = useState('');
-    const [roles, setRoles] = useState<any[]>([]); // State for existing roles
+    const [roles, setRoles] = useState<VolunteerRole[]>([]); // State for existing roles
     const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null); // State for selected role ID
+    const { user } = useAuth();
 
     // Fetch existing roles when the component mounts
     useEffect(() => {
-        const fetchRoles = async () => {
-            try {
-                const response = await axios.get(`${apiUrl}/volunteer_roles`);
-                setRoles(response.data);
-            } catch (error) {
-                console.error('Error fetching roles:', error);
-                alert('Failed to load roles. Please try again.');
-            }
-        };
-
-        fetchRoles();
-    }, []);
+        if (user) {
+            getVolunteerRoles(user).then(response => {
+                if (isOk(response.status)) {
+                    setRoles(response.data);
+                }
+            });
+        }
+    }, [user]);
 
     // Open the dialog to create a new volunteer role
     const handleOpen = () => {
@@ -39,39 +35,41 @@ const VolunteerManagement: React.FC = () => {
 
     // Handle form submission for creating a new role
     const handleCreateRole = async () => {
+        if (!user) return;
         if (roleName.trim() === '') {
             alert('Please enter a role name');
             return;
         }
 
-        try {
-            // Post the new role to the backend
-            await axios.post(`${apiUrl}/volunteer_roles`, { name: roleName });
-            alert('Volunteer role created successfully!');
-            handleClose();
-        } catch (error) {
-            console.error('Error creating volunteer role:', error);
-            alert('Failed to create volunteer role. Please try again.');
-        }
+        postVolunteerRole({ name: roleName }, user).then(response => {
+            if (isOk(response.status)) {
+                alert('Volunteer role created successfully!');
+                setRoles(prev => [...prev, response.data]);
+                handleClose();
+            } else {
+                console.error('Error creating volunteer role:', roleName);
+                alert('Failed to create volunteer role. Please try again.');
+            }
+        });
     };
 
     const handleDeleteRole = async () => {
+        if (!user) return;
         if (selectedRoleId === null || !window.confirm('Are you sure you want to delete this role?')) {
             return;
         }
 
-        try {
-            // Delete the role from the backend
-            await axios.delete(`${apiUrl}/volunteer_roles/${selectedRoleId}`);
-            alert('Volunteer role deleted successfully!');
-            // Refresh the roles list after deletion
-            const updatedRoles = roles.filter(role => role.id !== selectedRoleId);
-            setRoles(updatedRoles);
-            setSelectedRoleId(null); // Reset selected role after deletion
-        } catch (error) {
-            console.error('Error deleting volunteer role:', error);
-            alert('Failed to delete volunteer role. Please try again.');
-        }
+        deleteVolunteerRole(selectedRoleId, user).then(response => {
+            if (isOk(response.status)) {
+                alert('Volunteer role deleted successfully!');
+                const updatedRoles = roles.filter(role => role.id !== selectedRoleId);
+                setRoles(updatedRoles);
+                setSelectedRoleId(null);
+            } else {
+                console.error('Error deleting volunteer role:', selectedRoleId);
+                alert('Failed to delete volunteer role. Please try again.');
+            }
+        })
     };
 
     return (

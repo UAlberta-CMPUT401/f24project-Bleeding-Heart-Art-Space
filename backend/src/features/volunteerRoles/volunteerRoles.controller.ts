@@ -21,8 +21,12 @@ export class VolunteerRolesController {
         res.status(400).json({ error: 'Role name is required' });
         return;
       }
-      await this.volunteerRolesService.createVolunteerRole({ name });
-      res.status(201).json({ message: 'Volunteer role created successfully' });
+      const insertedRole = await this.volunteerRolesService.createVolunteerRole({ name });
+      if (insertedRole === undefined) {
+        res.status(400)
+        return;
+      }
+      res.status(201).json(insertedRole);
     } catch (error) {
       next(error);
     }
