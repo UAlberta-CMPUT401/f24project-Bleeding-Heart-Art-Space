@@ -29,3 +29,10 @@
     color: green;
     margin-left: 8px;
 }
+
+.signedupBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -183,7 +183,12 @@ const EventDetails: React.FC = () => {
                                     </Typography>
                                     {signedUpShifts.find(s => s.shiftId === shift.id) && (  // Show green tick if shift is signed up
                                         <>
-                                            <CheckCircleIcon className={styles.signedUpIcon} />
+                                            <Box className={styles.signedupBox}>
+                                                <CheckCircleIcon className={styles.signedUpIcon} />
+                                                <Typography variant="body2" color="green" style={{ marginLeft: '5px' }}>
+                                                    Signed Up!
+                                                </Typography>
+                                            </Box>
                                             {/* Check In / Check Out Buttons only show if current time is within shift's duration */}
                                             {isAfter(currentTime, shiftStartTime) && isBefore(currentTime, shiftEndTime) && (
                                                 <Grid container spacing={1} justifyContent="center" style={{ marginTop: '10px' }}>
