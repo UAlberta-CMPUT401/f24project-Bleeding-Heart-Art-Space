@@ -32,10 +32,10 @@ export class ShiftSignupRoute implements Routes {
     this.router.put(`${this.path}/:id`, this.shiftSignupController.update);
 
     // Route to check in for a shift
-    this.router.post(`${this.path}/:id/checkin`, this.shiftSignupController.checkIn);
+    this.router.post(`${this.path}/:id/checkin`, authMiddleware, this.shiftSignupController.checkIn);
 
     // Route to check out from a shift
-    this.router.post(`${this.path}/:id/checkout`, this.shiftSignupController.checkOut);
+    this.router.post(`${this.path}/:id/checkout`, authMiddleware, this.shiftSignupController.checkOut);
 
     // Route to auto-checkout users (e.g., using cron job)
     // this.router.post(`${this.path}/auto-checkout`, this.shiftSignupController.autoCheckOut);

@@ -1,4 +1,3 @@
-import { Kysely } from 'kysely';
 import { BadRequestException } from '@nestjs/common';
 import { NewShiftSignup, ShiftSignup } from './shiftSignup.model';
 import { db } from '@database/database';

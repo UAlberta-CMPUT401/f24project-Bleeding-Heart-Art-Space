@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
@@ -8,12 +7,10 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import styles from './EventDetails.module.css';
-import { getEvent, getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup } from '@utils/fetch';
+import { getEvent, getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup, checkin, checkout } from '@utils/fetch';
 import { isBefore, isAfter } from 'date-fns';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
-
-const apiUrl = import.meta.env.VITE_API_URL;
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -94,32 +91,28 @@ const EventDetails: React.FC = () => {
 
     // Function to handle check-in
     const handleCheckIn = (signupId: number) => {
-        const checkinTime = new Date().toISOString();
+        if (!user) return;
+        const checkin_time = new Date().toISOString();
 
-        axios.post(`${apiUrl}/shift-signups/${signupId}/checkin`, { checkin_time: checkinTime })
-            .then(() => {
+        checkin(signupId, { checkin_time }, user).then(response => {
+            if (isOk(response.status)) {
                 alert('Checked in successfully!');
                 setCheckinDialogOpen(false);
-            })
-            .catch(error => {
-                console.error("Error during check-in:", error);
-                alert('Failed to check in. Please try again.');
-            });
+            }
+        })
     };
 
     // Function to handle check-out
     const handleCheckOut = (signupId: number) => {
-        const checkoutTime = new Date().toISOString();
+        if (!user) return;
+        const checkout_time = new Date().toISOString();
 
-        axios.post(`${apiUrl}/shift-signups/${signupId}/checkout`, { checkout_time: checkoutTime })
-            .then(() => {
+        checkout(signupId, { checkout_time }, user).then(response => {
+            if (isOk(response.status)) {
                 alert('Checked out successfully!');
-                setCheckoutDialogOpen(false);
-            })
-            .catch(error => {
-                console.error("Error during check-out:", error);
-                alert('Failed to check out. Please try again.');
-            });
+                setCheckinDialogOpen(false);
+            }
+        })
     };
 
     return (

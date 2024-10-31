@@ -224,3 +224,15 @@ export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): 
   }
   return formattedResponse;
 }
+export type CheckIn = {
+  checkin_time: string
+}
+export async function checkin(signupId: number, time: CheckIn, user: User): Promise<ApiResponse<void>> {
+  return await postData<void, CheckIn>(`/shift-signups/${signupId}/checkin`, time, user);
+}
+export type CheckOut = {
+  checkout_time: string
+}
+export async function checkout(signupId: number, time: CheckOut, user: User): Promise<ApiResponse<void>> {
+  return await postData<void, CheckOut>(`/shift-signups/${signupId}/checkin`, time, user);
+}
