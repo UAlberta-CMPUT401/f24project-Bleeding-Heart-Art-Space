@@ -3,6 +3,21 @@ import { DeleteResult, InsertResult, UpdateResult } from "kysely";
 import { db } from "@database/database";
 import { NewUser, Role, User } from "./users.model";
 
+type UserAndRole = {
+  id: number;
+  uid: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  role: number | null;
+  title: string | null;
+  can_take_shift: boolean | null;
+  can_request_event: boolean | null;
+  is_admin: boolean | null;
+  is_blocked: boolean | null;
+};
+
 @singleton()
 export class UsersService {
 
@@ -42,7 +57,7 @@ export class UsersService {
       .executeTakeFirst();
   }
 
-  public async getUserAndRole(uid: string) {
+  public async getUserAndRole(uid: string): Promise<UserAndRole | undefined> {
     const userAndRole = await db
       .selectFrom('roles')
       .rightJoin(

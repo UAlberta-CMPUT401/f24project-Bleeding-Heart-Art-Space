@@ -1,4 +1,3 @@
-import { logger } from '@utils/logger';
 import { Request, Response, NextFunction } from 'express';
 import { container } from 'tsyringe';
 import { UsersService } from './users.service';
@@ -89,7 +88,11 @@ export class UsersController {
         res.status(401);
         return;
       }
-      const userAndRole = this.usersService.getUserAndRole(req.auth.uid);
+      const userAndRole = await this.usersService.getUserAndRole(req.auth.uid);
+      if (userAndRole === undefined) {
+        res.status(400);
+        return;
+      }
       res.status(200).json(userAndRole);
     } catch (error) {
       next(error);

@@ -305,20 +305,23 @@ export type BackendUser = {
   role: number | null | undefined;
 }
 export type BackendUserAndRole = {
-    uid: string;
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string | null;
-    role: number | null;
-    title: string | null;
-    can_take_shift: boolean | null;
-    can_request_event: boolean | null;
-    is_admin: boolean | null;
-    is_blocked: boolean | null;
+  uid: string;
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  role: number | null;
+  title: string | null;
+  can_take_shift: boolean | null;
+  can_request_event: boolean | null;
+  is_admin: boolean | null;
+  is_blocked: boolean | null;
 }
-export async function getBackendUser(user: User): Promise<ApiResponse<BackendUserAndRole>> {
+export async function getBackendUser(user: User): Promise<ApiResponse<BackendUser>> {
+  return await getData<BackendUser>(`/users/user`, user);
+}
+export async function getBackendUserAndRole(user: User): Promise<ApiResponse<BackendUserAndRole>> {
   return await getData<BackendUserAndRole>(`/users/user-role`, user);
 }
 export type NewBackendUser = {
