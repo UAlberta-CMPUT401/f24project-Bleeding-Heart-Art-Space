@@ -307,5 +307,5 @@ export type CheckOut = {
   checkout_time: string
 }
 export async function checkout(signupId: number, time: CheckOut, user: User): Promise<ApiResponse<void>> {
-  return await postData<void, CheckOut>(`/shift-signups/${signupId}/checkin`, time, user);
+  return await postData<void, CheckOut>(`/shift-signups/${signupId}/checkout`, time, user);
 }
