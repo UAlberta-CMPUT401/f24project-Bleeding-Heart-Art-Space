@@ -192,6 +192,67 @@ export async function deleteEvent(eventId: number, user: User): Promise<ApiRespo
   return await deleteData<void>(`/events/${eventId}`, user);
 }
 
+export type EventRequestData = {
+  id: number;
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+}
+export type EventRequest = {
+  id: number;
+  start: Date;
+  end: Date;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+}
+export type NewEventRequest = {
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+}
+export async function getEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<EventRequest>> {
+  const response = await getData<EventRequestData>(`/events/event_requests/${eventRequestId}`, user);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      start: new Date(response.data.start),
+      end: new Date(response.data.end),
+    }
+  }
+}
+export async function getEventRequests(user: User): Promise<ApiResponse<EventRequest[]>> {
+  const response = await getData<EventRequestData[]>('/events/event_requests', user);
+  const formattedResponse: ApiResponse<EventRequest[]> = {
+    ...response,
+    data: response.data.map((eventData) => ({
+      ...eventData,
+      start: new Date(eventData.start),
+      end: new Date(eventData.end),
+    })),
+  }
+  return formattedResponse;
+}
+export async function postEventRequest(newEventRequest: NewEventRequest, user: User): Promise<ApiResponse<EventRequest>> {
+  const response = await postData<EventRequestData, NewEventRequest>('/events/event_requests', newEventRequest, user);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      start: new Date(response.data.start),
+      end: new Date(response.data.end),
+    }
+  }
+}
+
 export type VolunteerRole = {
   id: number;
   name: string;
@@ -243,8 +304,22 @@ export type BackendUser = {
   phone: string | null | undefined;
   role: number | null | undefined;
 }
-export async function getBackendUser(user: User): Promise<ApiResponse<BackendUser>> {
-  return await getData<BackendUser>(`/users/user`, user);
+export type BackendUserAndRole = {
+    uid: string;
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string | null;
+    role: number | null;
+    title: string | null;
+    can_take_shift: boolean | null;
+    can_request_event: boolean | null;
+    is_admin: boolean | null;
+    is_blocked: boolean | null;
+}
+export async function getBackendUser(user: User): Promise<ApiResponse<BackendUserAndRole>> {
+  return await getData<BackendUserAndRole>(`/users/user-role`, user);
 }
 export type NewBackendUser = {
   first_name: string;

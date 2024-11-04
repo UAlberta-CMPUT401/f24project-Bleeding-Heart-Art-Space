@@ -42,4 +42,34 @@ export class UsersService {
       .executeTakeFirst();
   }
 
+  public async getUserAndRole(uid: string) {
+    const userAndRole = await db
+      .selectFrom('roles')
+      .rightJoin(
+        (eb) => eb
+          .selectFrom('users')
+          .selectAll()
+          .where('uid', '=', uid)
+          .as('users'),
+        (join) => join
+          .onRef('users.role', '=', 'roles.id')
+      )
+      .select([
+        'users.id',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+        'users.email',
+        'users.phone',
+        'users.role',
+        'roles.title',
+        'roles.can_take_shift',
+        'roles.can_request_event',
+        'roles.is_admin',
+        'roles.is_blocked',
+      ])
+      .executeTakeFirst();
+
+    return userAndRole;
+  }
 }
