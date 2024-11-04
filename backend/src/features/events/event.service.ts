@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import { Database, db } from '@database/database';
-import { Event, NewEvent, EventUpdate, NewEventRequest } from './events.model';
+import { Event, NewEvent, EventUpdate, NewEventRequest, EventRequest } from './events.model';
 import { Kysely } from 'kysely';
 
 @singleton()
@@ -11,7 +11,7 @@ export class EventsService {
    * @returns The ID of the created event
    */
   public async createEvent(eventData: NewEvent): Promise<Event | undefined> {
-    const insertedEventRes = await db
+    const insertedEvent = await db
       .insertInto('events')
       .values({
         start: eventData.start,
@@ -20,22 +20,8 @@ export class EventsService {
         title: eventData.title,
         address: eventData.address,
       })
-      .returning('id')
+      .returningAll()
       .executeTakeFirst();
-
-    if (insertedEventRes === undefined) {
-      return undefined;
-    }
-
-    const insertedEvent = await db
-      .selectFrom('events')
-      .selectAll()
-      .where('id', '=', insertedEventRes.id)
-      .executeTakeFirst();
-
-    if (insertedEvent === undefined) {
-      return undefined;
-    }
 
     return insertedEvent;
   }
@@ -109,21 +95,14 @@ export class EventsService {
 
 
 export class EventRequestsService {
-  public async createEventRequest(eventData: NewEventRequest): Promise<number> {
-    const [insertedEvent] = await db
+  public async createEventRequest(eventData: NewEventRequest): Promise<EventRequest | undefined> {
+    const insertedEvent = await db
       .insertInto('event_requests')
-      .values({
-        start: eventData.start,
-        end: eventData.end,
-        venue: eventData.venue,
-        title: eventData.title,
-        address: eventData.address,
-        requester: eventData.requester,
-      })
-      .returning('id')
-      .execute();
+      .values(eventData)
+      .returningAll()
+      .executeTakeFirst();
 
-    return insertedEvent.id;
+    return insertedEvent;
   }
 
   public async getAllEventRequests(): Promise<Event[]> {
