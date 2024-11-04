@@ -91,10 +91,6 @@ export class EventsService {
       .execute();
   }
 
-}
-
-
-export class EventRequestsService {
   public async createEventRequest(eventData: NewEventRequest): Promise<EventRequest | undefined> {
     const insertedEvent = await db
       .insertInto('event_requests')

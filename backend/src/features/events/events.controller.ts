@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { EventsService, EventRequestsService } from './event.service';
+import { EventsService } from './event.service';
 import { NewEvent, NewEventRequest } from './events.model';
 import { container } from 'tsyringe';
 
 export class EventsController {
   private eventsService = container.resolve(EventsService);
-  private eventRequestsService = container.resolve(EventRequestsService);
 
   /**
    * Create a new event
@@ -97,8 +96,12 @@ export class EventsController {
   public createEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const eventData: NewEventRequest = req.body;
-      const eventId = await this.eventRequestsService.createEventRequest(eventData);
-      res.status(201).json({ message: 'Event request created', eventId });
+      const insertedEvent = await this.eventsService.createEventRequest(eventData);
+      if (insertedEvent === undefined) {
+        res.status(400)
+        return;
+      }
+      res.status(201).json(insertedEvent);
     } catch (error) {
       next(error);
     }
@@ -111,7 +114,7 @@ export class EventsController {
    */
   public getAllEventRequests = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const eventRequests = await this.eventRequestsService.getAllEventRequests();
+      const eventRequests = await this.eventsService.getAllEventRequests();
       res.json(eventRequests);
     } catch (error) {
       next(error);
@@ -126,7 +129,7 @@ export class EventsController {
   public getEventRequestById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const eventId = parseInt(req.params.id, 10);
-      const eventRequest = await this.eventRequestsService.getEventRequestById(eventId);
+      const eventRequest = await this.eventsService.getEventRequestById(eventId);
 
       if (!eventRequest) {
         res.status(404).json({ message: 'Event request not found' });
@@ -147,7 +150,7 @@ export class EventsController {
   public deleteEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const eventId = parseInt(req.params.id, 10);
-      await this.eventRequestsService.deleteEventRequest(eventId);
+      await this.eventsService.deleteEventRequest(eventId);
       res.status(200).json({ message: 'Event request deleted successfully' });
     } catch (error) {
       next(error);
@@ -163,7 +166,7 @@ export class EventsController {
     try {
       const eventId = parseInt(req.params.id, 10);
       const eventData = req.body;
-      await this.eventRequestsService.updateEventRequest(eventId, eventData);
+      await this.eventsService.updateEventRequest(eventId, eventData);
       res.status(200).json({ message: 'Event request updated successfully' });
     } catch (error) {
       next(error);
@@ -173,7 +176,7 @@ export class EventsController {
   public getRequesterFullName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const requesterId = parseInt(req.params.id, 10);
-      const requesterName = await this.eventRequestsService.getRequesterFullName(requesterId);
+      const requesterName = await this.eventsService.getRequesterFullName(requesterId);
       res.json(requesterName);
     } catch (error) {
       next(error);
