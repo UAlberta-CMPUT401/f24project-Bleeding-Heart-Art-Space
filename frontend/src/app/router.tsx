@@ -6,7 +6,6 @@ import Signup from "./pages/Signup/Signup";
 import BasicCalendar from './pages/BasicCalendar/BasicCalendar';
 import Overview from './pages/Overview/Overview';
 import CreateEvent from "./pages/CreateEvent/CreateEvent";
-import CreateEventRequest from "./pages/CreateEventRequests/CreateEventRequests";
 import EditEvent from "./pages/EditEvent/EditEvent";
 import { AuthProvider } from '../lib/context/AuthContext';
 import VolunteerManagement from "./pages/VolunteerManagement/VolunteerManagement";
@@ -55,7 +54,6 @@ const Router: React.FC = () => {
         <Route element={<Sidebar />}>
           <Route path="/overview" element={<Overview />} />
           <Route path="/create-event" element={<CreateEvent isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
-          <Route path="/create-event-request" element={<CreateEventRequest isSidebarOpen={false} onAddEvent={handleAddEvent} />} />
           <Route path="/event-requests" element ={<EventRequests/>} />
           <Route path="/edit-event/:id" element={<EditEvent isSidebarOpen={false} />} />
           <Route path="/volunteer-shifts/:id" element={<VolunteerShifts />} />
