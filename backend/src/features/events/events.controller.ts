@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { EventsService } from './event.service';
 import { NewEvent, NewEventRequest } from './events.model';
 import { container } from 'tsyringe';
+import { isAuthenticated } from '@/common/utils/auth';
 
 export class EventsController {
   private eventsService = container.resolve(EventsService);
@@ -95,8 +96,12 @@ export class EventsController {
 
   public createEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const eventData: NewEventRequest = req.body;
-      const insertedEvent = await this.eventsService.createEventRequest(eventData);
+      if (!isAuthenticated(req)) {
+        res.status(401);
+        return;
+      }
+      const eventData = req.body;
+      const insertedEvent = await this.eventsService.createEventRequest(req.auth.uid, eventData);
       if (insertedEvent === undefined) {
         res.status(400)
         return;

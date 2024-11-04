@@ -30,11 +30,11 @@ export class EventsRoute implements Routes {
     this.router.put(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.eventsController.updateEvent);
 
     // Event request routes
-    this.router.post('/event_requests', this.eventsController.createEventRequest);
-    this.router.get('/event_requests', this.eventsController.getAllEventRequests);
-    this.router.get(`/event_requests/:id`, this.eventsController.getEventRequestById);
-    this.router.delete('/event_requests/:id', this.eventsController.deleteEventRequest);
-    this.router.put('/event_requests/:id', this.eventsController.updateEventRequest);
+    this.router.post('/event_requests', authMiddleware, this.eventsController.createEventRequest);
+    this.router.get('/event_requests', authMiddleware, this.eventsController.getAllEventRequests);
+    this.router.get(`/event_requests/:id`, authMiddleware, this.eventsController.getEventRequestById);
+    this.router.delete('/event_requests/:id', authMiddleware, this.eventsController.deleteEventRequest);
+    this.router.put('/event_requests/:id', authMiddleware, this.eventsController.updateEventRequest);
     
     // Retrieve requester's full name
     this.router.get('/event_requests/:id/requester', this.eventsController.getRequesterFullName);

@@ -91,10 +91,22 @@ export class EventsService {
       .execute();
   }
 
-  public async createEventRequest(eventData: NewEventRequest): Promise<EventRequest | undefined> {
+  public async createEventRequest(
+    uid: string, 
+    eventData: {
+      start: string;
+      end: string;
+      venue: string;
+      address: string;
+      title: string;
+    }
+  ): Promise<EventRequest | undefined> {
     const insertedEvent = await db
       .insertInto('event_requests')
-      .values(eventData)
+      .values(({ selectFrom }) => ({
+        ...eventData,
+        requester: selectFrom('users').select('id').where('uid', '=', uid),
+      }))
       .returningAll()
       .executeTakeFirst();
 

@@ -216,7 +216,6 @@ export type NewEventRequest = {
   venue: string;
   address: string;
   title: string;
-  requester: number;
 }
 export async function getEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<EventRequest>> {
   const response = await getData<EventRequestData>(`/events/event_requests/${eventRequestId}`, user);
