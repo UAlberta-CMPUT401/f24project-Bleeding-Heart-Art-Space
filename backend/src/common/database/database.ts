@@ -8,9 +8,10 @@ import * as path from 'path'
 import { logger } from "@utils/logger";
 import { RolesTable, UsersTable } from "@features/users/users.model";
 import { VolunteerRolesTable } from "@/features/volunteerRoles/volunteerRoles.model";
-import { EventsTable, EventRequestsTable } from "@/features/events/events.model";
+import { EventsTable } from "@/features/events/events.model";
 import { VolunteerShiftsTable } from "@/features/volunteerShifts/volunteerShifts.model";
 import { ShiftSignupTable } from "@/features/shiftSignup/shiftSignup.model";
+import { EventRequestsTable } from "@/features/eventRequests/eventRequests.model";
 
 export interface Database {
   users: UsersTable

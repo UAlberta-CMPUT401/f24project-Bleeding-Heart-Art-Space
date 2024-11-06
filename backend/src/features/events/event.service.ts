@@ -1,7 +1,6 @@
 import { singleton } from 'tsyringe';
-import { Database, db } from '@database/database';
-import { Event, NewEvent, EventUpdate, NewEventRequest, EventRequest } from './events.model';
-import { Kysely } from 'kysely';
+import { db } from '@database/database';
+import { Event, NewEvent, EventUpdate} from './events.model';
 
 @singleton()
 export class EventsService {
@@ -53,9 +52,6 @@ export class EventsService {
       .where('id', '=', eventId)
       .executeTakeFirst();
 
-    if (event) {
-      // volunteer_roles is already an array, no need to parse
-    }
     return event;
   }
 
@@ -65,14 +61,14 @@ export class EventsService {
    */
   public async deleteEvent(eventId: number): Promise<void> {
     await db
-      .deleteFrom('events' as any)
+      .deleteFrom('events')
       .where('id', '=', eventId)
       .execute();
   }
 
   public async deleteShiftsByEventId(eventId: number): Promise<void> {
     await db
-      .deleteFrom('volunteer_shifts' as any)
+      .deleteFrom('volunteer_shifts')
       .where('event_id', '=', eventId)
       .execute();
   }
@@ -89,71 +85,5 @@ export class EventsService {
       .set(eventData)
       .where('id', '=', eventId)
       .execute();
-  }
-
-  public async createEventRequest(
-    uid: string, 
-    eventData: {
-      start: string;
-      end: string;
-      venue: string;
-      address: string;
-      title: string;
-    }
-  ): Promise<EventRequest | undefined> {
-    const insertedEvent = await db
-      .insertInto('event_requests')
-      .values(({ selectFrom }) => ({
-        ...eventData,
-        requester_id: selectFrom('users').select('id').where('uid', '=', uid),
-      }))
-      .returningAll()
-      .executeTakeFirst();
-
-    return insertedEvent;
-  }
-
-  public async getAllEventRequests(): Promise<Event[]> {
-    return await db
-      .selectFrom('event_requests')
-      .selectAll()
-      .execute()
-      .then(events => events.map(event => ({
-        ...event,
-      })));
-  }
-
-  public async getEventRequestById(eventId: number): Promise<Event | undefined> {
-    const event = await db
-      .selectFrom('event_requests')
-      .selectAll()
-      .where('id', '=', eventId)
-      .executeTakeFirst();
-
-    return event;
-  }
-
-  public async deleteEventRequest(eventId: number): Promise<void> {
-    await db
-      .deleteFrom('event_requests' as any)
-      .where('id', '=', eventId)
-      .execute();
-  }
-
-  public async updateEventRequest(eventId: number, eventData: EventUpdate): Promise<void> {
-    await db
-      .updateTable('event_requests')
-      .set(eventData)
-      .where('id', '=', eventId)
-      .execute();
-  }
-  
-  public async getRequesterFullName(requesterId: number): Promise<{ firstName: string, lastName: string } | null> {
-    const requester = await db
-        .selectFrom('users') // Assuming 'users' table holds the requester info
-        .select(['first_name', 'last_name']) // Assuming these columns exist
-        .where('id', '=', requesterId)
-        .executeTakeFirst();
-    return requester ? { firstName: requester.first_name, lastName: requester.last_name } : null;
   }
 }

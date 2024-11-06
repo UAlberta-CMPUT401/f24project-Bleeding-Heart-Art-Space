@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { EventsService } from './event.service';
-import { NewEvent, NewEventRequest } from './events.model';
+import { NewEvent } from './events.model';
 import { container } from 'tsyringe';
-import { isAuthenticated } from '@/common/utils/auth';
 
 export class EventsController {
   private eventsService = container.resolve(EventsService);
@@ -93,99 +92,4 @@ export class EventsController {
       next(error);
     }
   };
-
-  public createEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      if (!isAuthenticated(req)) {
-        res.status(401);
-        return;
-      }
-      const eventData = req.body;
-      const insertedEvent = await this.eventsService.createEventRequest(req.auth.uid, eventData);
-      if (insertedEvent === undefined) {
-        res.status(400)
-        return;
-      }
-      res.status(201).json(insertedEvent);
-    } catch (error) {
-      next(error);
-    }
-  }
-  
-  /**
-   * Get all event requests
-   * @route GET /api/event-requests
-   * @access Public (Adjust as needed)
-   */
-  public getAllEventRequests = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventRequests = await this.eventsService.getAllEventRequests();
-      res.json(eventRequests);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
-   * Get a specific event request by ID
-   * @route GET /api/event-requests/:id
-   * @access Public (Adjust as needed)
-   */
-  public getEventRequestById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventId = parseInt(req.params.id, 10);
-      const eventRequest = await this.eventsService.getEventRequestById(eventId);
-
-      if (!eventRequest) {
-        res.status(404).json({ message: 'Event request not found' });
-      } else {
-        res.json(eventRequest);
-      }
-    } catch (error) {
-      next(error);
-    }
-
-  }
-
-  /**
-   * Delete an event request by ID
-   * @route DELETE /api/event-requests/:id
-   * @access Public (Adjust as needed)
-   */
-  public deleteEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventId = parseInt(req.params.id, 10);
-      await this.eventsService.deleteEventRequest(eventId);
-      res.status(200).json({ message: 'Event request deleted successfully' });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
-   * Update an existing event request
-   * @route PUT /api/event-requests/:id
-   * @access Public (Adjust as needed)
-   */
-  public updateEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventId = parseInt(req.params.id, 10);
-      const eventData = req.body;
-      await this.eventsService.updateEventRequest(eventId, eventData);
-      res.status(200).json({ message: 'Event request updated successfully' });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  public getRequesterFullName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const requesterId = parseInt(req.params.id, 10);
-      const requesterName = await this.eventsService.getRequesterFullName(requesterId);
-      res.json(requesterName);
-    } catch (error) {
-      next(error);
-    }
-  }
-
 }

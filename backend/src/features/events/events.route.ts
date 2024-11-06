@@ -28,12 +28,5 @@ export class EventsRoute implements Routes {
 
     // Route to update an event by ID
     this.router.put(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.eventsController.updateEvent);
-
-    // Event request routes
-    this.router.post(`${this.path}/event_requests`, authMiddleware, this.eventsController.createEventRequest);
-    this.router.get(`${this.path}/event_requests`, authMiddleware, this.eventsController.getAllEventRequests);
-    this.router.get(`${this.path}/event_requests/:id`, authMiddleware, this.eventsController.getEventRequestById);
-    this.router.delete(`${this.path}/event_requests/:id`, authMiddleware, this.eventsController.deleteEventRequest);
-    this.router.put(`${this.path}/event_requests/:id`, authMiddleware, this.eventsController.updateEventRequest);
   }
 }
