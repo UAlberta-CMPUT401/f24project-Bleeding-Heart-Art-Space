@@ -27,7 +27,7 @@ export interface EventRequestsTable {
   venue: string;                         // Venue for the event
   address: string;                       // Address of the event
   title: string;                         // Title of the event
-  requester: number;                    // ID of the requester
+  requester_id: number;                    // ID of the requester
 }
 
 // Define the types for various operations on the EventsTable

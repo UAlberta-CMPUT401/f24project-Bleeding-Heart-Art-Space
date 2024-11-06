@@ -105,7 +105,7 @@ export class EventsService {
       .insertInto('event_requests')
       .values(({ selectFrom }) => ({
         ...eventData,
-        requester: selectFrom('users').select('id').where('uid', '=', uid),
+        requester_id: selectFrom('users').select('id').where('uid', '=', uid),
       }))
       .returningAll()
       .executeTakeFirst();
