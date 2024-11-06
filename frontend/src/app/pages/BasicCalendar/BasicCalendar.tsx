@@ -28,6 +28,10 @@ const BasicCalendar: React.FC = () => {
 
     // Function to handle slot selection
     const handleSlotSelect = (slotInfo: { start: Date; end: Date }) => {
+        // can't create event if not admin and can't request event if not artist
+        if (!backendUser) return;
+        if (!backendUser.is_admin || !backendUser.can_request_event) return;
+
         // Set initial start and end dates
         setStartDate(slotInfo.start.toISOString().split('T')[0]);
         setEndDate(slotInfo.end.toISOString().split('T')[0]);
