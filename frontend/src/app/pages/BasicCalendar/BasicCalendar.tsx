@@ -52,7 +52,7 @@ const BasicCalendar: React.FC = () => {
                 onEventClick={handleEventClick} 
                 onSlotSelect={handleSlotSelect} 
             />
-            <Fab 
+            {(backendUser?.is_admin || backendUser?.can_request_event) && <Fab 
                 variant='extended'
                 color="primary" 
                 aria-label="add" 
@@ -67,7 +67,7 @@ const BasicCalendar: React.FC = () => {
                 }}
             >
                 {backendUser?.is_admin ? <AddIcon /> : "Request Event"}
-            </Fab>
+            </Fab>}
             <CreateEventDialog 
                 open={dialogOpen} 
                 onClose={handleDialogClose} 
