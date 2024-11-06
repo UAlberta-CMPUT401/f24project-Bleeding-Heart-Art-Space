@@ -192,15 +192,6 @@ export async function deleteEvent(eventId: number, user: User): Promise<ApiRespo
   return await deleteData<void>(`/events/${eventId}`, user);
 }
 
-export type EventRequestData = {
-  id: number;
-  start: string;
-  end: string;
-  venue: string;
-  address: string;
-  title: string;
-  requester: number;
-}
 export type EventRequest = {
   id: number;
   start: Date;
@@ -210,6 +201,39 @@ export type EventRequest = {
   title: string;
   requester: number;
 }
+export type EventRequestData = {
+  id: number;
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+}
+export type EventRequestUser = {
+  id: number;
+  start: Date;
+  end: Date;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+  uid: string;
+  first_name: string;
+  last_name: string;
+}
+export type EventRequestUserData = {
+  id: number;
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+  uid: string;
+  first_name: string;
+  last_name: string;
+}
 export type NewEventRequest = {
   start: string;
   end: string;
@@ -218,7 +242,7 @@ export type NewEventRequest = {
   title: string;
 }
 export async function getEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<EventRequest>> {
-  const response = await getData<EventRequestData>(`/events/event_requests/${eventRequestId}`, user);
+  const response = await getData<EventRequestData>(`/event_requests/${eventRequestId}`, user);
   return {
     ...response,
     data: {
@@ -228,9 +252,9 @@ export async function getEventRequest(eventRequestId: number, user: User): Promi
     }
   }
 }
-export async function getEventRequests(user: User): Promise<ApiResponse<EventRequest[]>> {
-  const response = await getData<EventRequestData[]>('/events/event_requests', user);
-  const formattedResponse: ApiResponse<EventRequest[]> = {
+export async function getEventRequests(user: User): Promise<ApiResponse<EventRequestUser[]>> {
+  const response = await getData<EventRequestUserData[]>('/event_requests', user);
+  const formattedResponse: ApiResponse<EventRequestUser[]> = {
     ...response,
     data: response.data.map((eventData) => ({
       ...eventData,
@@ -241,7 +265,7 @@ export async function getEventRequests(user: User): Promise<ApiResponse<EventReq
   return formattedResponse;
 }
 export async function postEventRequest(newEventRequest: NewEventRequest, user: User): Promise<ApiResponse<EventRequest>> {
-  const response = await postData<EventRequestData, NewEventRequest>('/events/event_requests', newEventRequest, user);
+  const response = await postData<EventRequestData, NewEventRequest>('/event_requests', newEventRequest, user);
   return {
     ...response,
     data: {
@@ -250,6 +274,12 @@ export async function postEventRequest(newEventRequest: NewEventRequest, user: U
       end: new Date(response.data.end),
     }
   }
+}
+export async function deleteEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/event_requests/${eventRequestId}`, user);
+}
+export async function confirmEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<Event>> {
+  return await postData<Event, void>(`/event_requests/${eventRequestId}/confirm`, undefined, user);
 }
 
 export type VolunteerRole = {
