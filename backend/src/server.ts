@@ -6,6 +6,7 @@ import { EventsRoute } from './features/events/events.route';
 import { VolunteerShiftsRoute } from '@features/volunteerShifts/volunteerShifts.route';
 import { ShiftSignupRoute } from './features/shiftSignup/shiftSignup.route';
 import 'reflect-metadata';
+import { EventRequestsRoute } from './features/eventRequests/eventRequests.route';
 
 
 async function startServer() {
@@ -13,7 +14,14 @@ async function startServer() {
   await migrateToLatest();
 
   // Initialize all routes in a single App instance
-  const app = new App([new UsersRoute(), new VolunteerRolesRoute(), new EventsRoute(), new VolunteerShiftsRoute(), new ShiftSignupRoute()]);
+  const app = new App([
+    new UsersRoute(), 
+    new VolunteerRolesRoute(), 
+    new EventsRoute(), 
+    new VolunteerShiftsRoute(), 
+    new ShiftSignupRoute(),
+    new EventRequestsRoute(),
+  ]);
 
   // Start the server
   app.listen();

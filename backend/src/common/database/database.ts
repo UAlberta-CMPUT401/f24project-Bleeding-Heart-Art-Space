@@ -8,9 +8,10 @@ import * as path from 'path'
 import { logger } from "@utils/logger";
 import { RolesTable, UsersTable } from "@features/users/users.model";
 import { VolunteerRolesTable } from "@/features/volunteerRoles/volunteerRoles.model";
-import { EventsTable, EventRequestsTable } from "@/features/events/events.model";
+import { EventsTable } from "@/features/events/events.model";
 import { VolunteerShiftsTable } from "@/features/volunteerShifts/volunteerShifts.model";
-import { ShiftSignup } from "@/features/shiftSignup/shiftSignup.model";
+import { ShiftSignupTable } from "@/features/shiftSignup/shiftSignup.model";
+import { EventRequestsTable } from "@/features/eventRequests/eventRequests.model";
 
 export interface Database {
   users: UsersTable
@@ -18,9 +19,8 @@ export interface Database {
   volunteer_roles: VolunteerRolesTable
   events: EventsTable
   volunteer_shifts: VolunteerShiftsTable
-  shift_signup: ShiftSignup
+  shift_signup: ShiftSignupTable
   event_requests: EventRequestsTable
-
 }
 
 // make sure that postgres 'numeric' types are numbers, not strings
