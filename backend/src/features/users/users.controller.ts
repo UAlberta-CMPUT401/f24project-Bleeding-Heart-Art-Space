@@ -90,7 +90,7 @@ export class UsersController {
       }
       const userAndRole = await this.usersService.getUserAndRole(req.auth.uid);
       if (userAndRole === undefined) {
-        res.status(400);
+        res.status(400).json({ error: "Missing user and role" });
         return;
       }
       res.status(200).json(userAndRole);
