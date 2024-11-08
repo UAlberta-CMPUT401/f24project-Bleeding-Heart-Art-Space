@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { ShiftSignupService } from './shiftSignup.service';
 import { NewShiftSignup, ShiftSignupUpdate } from './shiftSignup.model';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
+import { isAuthenticated } from '@/common/utils/auth';
+import { logger } from '@/common/utils/logger';
 
 export class ShiftSignupController {
   private shiftSignupService = new ShiftSignupService();
@@ -21,22 +23,20 @@ export class ShiftSignupController {
         return;
       }
 
-      const signupId = await this.shiftSignupService.create(signupData);
-      res.status(201).json({ message: 'Shift signup created', signupId });
+      const insertedSignupUser = await this.shiftSignupService.create(signupData);
+      res.status(201).json(insertedSignupUser);
     } catch (error) {
       next(error);
     }
   };
 
-  public getUserShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getUserSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = Number(req.query.user_id); // Extract user ID from query parameters
-      if (!userId) {
-        res.status(400).json({ error: "User ID is required." });
+      if (!isAuthenticated(req)) {
+        res.status(401);
         return;
       }
-  
-      const shifts = await this.shiftSignupService.getShiftsByUserId(userId);
+      const shifts = await this.shiftSignupService.getShiftsSignupByUser(req.auth.uid);
       res.json(shifts);
     } catch (error) {
       next(error);
@@ -47,9 +47,10 @@ export class ShiftSignupController {
    * Get all shift signups
    * @route GET /api/shift-signups
    */
-  public getAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getEventShiftSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const signups = await this.shiftSignupService.getAllSignups();
+      const eventId = Number(req.query.eventId);
+      const signups = await this.shiftSignupService.getEventShiftSignups(eventId);
       res.json(signups);
     } catch (error) {
       next(error);

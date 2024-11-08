@@ -13,6 +13,7 @@ export interface UsersTable {
   first_name: string
   last_name: string
   email: string
+  phone: string | null
   role: number | null
 }
 

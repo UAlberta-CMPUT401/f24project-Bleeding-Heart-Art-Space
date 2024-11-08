@@ -10,6 +10,7 @@ export const UsersService = jest.fn().mockImplementation(() => ({
         first_name: "test_first_name",
         last_name: "test_last_name",
         email: "test_email",
+        phone: '12345678910',
         role: 1
       }
       return ret;

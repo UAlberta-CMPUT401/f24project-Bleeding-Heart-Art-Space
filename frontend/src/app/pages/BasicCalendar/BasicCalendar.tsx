@@ -5,7 +5,8 @@ import AddIcon from '@mui/icons-material/Add';
 import EventCalendar from './Components/CalendarEvent';
 import CreateEventDialog from '../CreateEvent/CreateEventDialog';
 import './BasicCalendar.css';
-import { useEventStore } from '@pages/EventStore/useEventStore';
+import { useEventStore } from '@stores/useEventStore';
+import { useAuth } from '@lib/context/AuthContext';
 
 const BasicCalendar: React.FC = () => {
     const { fetchEvents } = useEventStore(); //---> Fetch events function from EventStore!
@@ -15,10 +16,13 @@ const BasicCalendar: React.FC = () => {
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const navigate = useNavigate();
+    const { user } = useAuth();
     
     useEffect(() => {
-        fetchEvents();
-    }, []);
+        if (user) {
+            fetchEvents(user);
+        }
+    }, [user]);
 
     // Function to handle slot selection
     const handleSlotSelect = (slotInfo: { start: Date; end: Date }) => {
