@@ -1,14 +1,14 @@
-import { BackendUser } from '@utils/fetch';
+import { BackendUserAndRole } from '@utils/fetch';
 import { create } from 'zustand';
 
 type BackendUserStore = {
-    backendUser: BackendUser | null;
-    setBackendUser: (backendUser: BackendUser) => void;
+    backendUser: BackendUserAndRole | null;
+    setBackendUser: (backendUser: BackendUserAndRole) => void;
 }
 
 export const useBackendUserStore = create<BackendUserStore>((set) => ({
     backendUser: null,
-    setBackendUser: async (backendUser: BackendUser) => {
+    setBackendUser: async (backendUser: BackendUserAndRole) => {
         set({ backendUser: backendUser })
     },
 }));

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { ShiftSignupController } from './shiftSignup.controller';
-import { authMiddleware } from '@/common/middlewares/auth.middleware';
+import { authMiddleware, isAdminMiddleware } from '@/common/middlewares/auth.middleware';
 
 export class ShiftSignupRoute implements Routes {
   public path = '/shift-signups';
@@ -23,13 +23,13 @@ export class ShiftSignupRoute implements Routes {
     this.router.get(`${this.path}/user`, authMiddleware, this.shiftSignupController.getUserSignups);
 
     // Route to get a specific shift signup by ID
-    this.router.get(`${this.path}/:id`, this.shiftSignupController.getById);
+    this.router.get(`${this.path}/:id`, authMiddleware, this.shiftSignupController.getById);
 
     // Route to delete a shift signup by ID
-    this.router.delete(`${this.path}/:id`, this.shiftSignupController.delete);
+    this.router.delete(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.shiftSignupController.delete);
 
     // Route to update a shift signup by ID
-    this.router.put(`${this.path}/:id`, this.shiftSignupController.update);
+    this.router.put(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.shiftSignupController.update);
 
     // Route to check in for a shift
     this.router.post(`${this.path}/:id/checkin`, authMiddleware, this.shiftSignupController.checkIn);

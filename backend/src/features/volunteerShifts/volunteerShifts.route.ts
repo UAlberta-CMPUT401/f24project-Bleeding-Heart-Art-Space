@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { VolunteerShiftsController } from './volunteerShifts.controller';
-import { authMiddleware, firebaseAuthMiddleware, userMiddleware } from '@middlewares/auth.middleware';
+import { authMiddleware, firebaseAuthMiddleware, isAdminMiddleware, userMiddleware } from '@middlewares/auth.middleware';
 
 export class VolunteerShiftsRoute implements Routes {
   public path = '/volunteer_shifts';
@@ -19,21 +19,23 @@ export class VolunteerShiftsRoute implements Routes {
     // Get all shifts for a specific event
     this.router.get(
       '/events/:eventId' + this.path,
-      // authMiddleware,
+      authMiddleware,
       this.asyncHandler(this.volunteerShiftsController.getShiftsByEvent)
     );
 
     // Create new shifts for a specific event
     this.router.post(
       '/events/:eventId' + this.path,
-      // authMiddleware,
+      authMiddleware,
+      isAdminMiddleware,
       this.asyncHandler(this.volunteerShiftsController.createShifts)
     );
 
     // Delete a specific shift by ID
     this.router.delete(
       `${this.path}/:id`,
-      // authMiddleware,
+      authMiddleware,
+      isAdminMiddleware,
       this.asyncHandler(this.volunteerShiftsController.deleteShift)
     );
   }

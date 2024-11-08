@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../../utils/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { Outlet, useNavigate } from "react-router-dom";
-import { getBackendUser, isOk } from '@utils/fetch';
+import { getBackendUserAndRole, isOk } from '@utils/fetch';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 
 // Define the AuthContext type
@@ -31,7 +31,7 @@ export const AuthProvider: React.FC = () => {
         return;
       }
 
-      getBackendUser(user).then((response) => {
+      getBackendUserAndRole(user).then((response) => {
         if (isOk(response.status)) {
           setBackendUser(response.data);
         } else {
