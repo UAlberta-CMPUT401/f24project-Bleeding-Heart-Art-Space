@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -85,6 +85,7 @@ const EventDetails: React.FC = () => {
             if (isOk(response.status)) {
                 setUserSignups(prev => [...prev, response.data]);
                 setEventSignups(prev => [...prev, response.data]);
+                setSelectedShift(null);  // Close confirmation dialog
             }
         })
     };
@@ -155,7 +156,7 @@ const EventDetails: React.FC = () => {
 
                     {/* Created Shifts Section */}
                     <Typography variant="h5" gutterBottom style={{ marginTop: '30px' }}>
-                        Created Shifts
+                        CLICK ON A SHIFT TO SIGN UP
                     </Typography>
                     <Grid container spacing={2}>
                         {shifts.map((shift, index) => {
@@ -180,7 +181,12 @@ const EventDetails: React.FC = () => {
                                         </Typography>
                                         {userSignups.find(s => s.shift_id === shift.id) && (  // Show green tick if shift is signed up
                                             <>
-                                                <CheckCircleIcon className={styles.signedUpIcon} />
+                                                <Box className={styles.signedUpBox}>
+                                                    <CheckCircleIcon className={styles.signedUpIcon} />
+                                                    <Typography variant="body2" color="green" style={{ marginLeft: '5px' }}>
+                                                        Signed up!
+                                                    </Typography>
+                                                </Box>
                                                 {/* Check In / Check Out Buttons only show if current time is within shift's duration */}
                                                 {isAfter(currentTime, shiftStartTime) && isBefore(currentTime, shiftEndTime) && (
                                                     <Grid container spacing={1} justifyContent="center" style={{ marginTop: '10px' }}>
