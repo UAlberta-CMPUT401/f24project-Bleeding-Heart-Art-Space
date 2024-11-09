@@ -58,6 +58,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('first_name', 'varchar(64)', (col) => col.notNull())
     .addColumn('last_name', 'varchar(64)', (col) => col.notNull())
     .addColumn('email', 'varchar(256)', (col) => col.notNull().unique())
+    .addColumn('phone', 'varchar(20)')
     .addColumn('role', 'integer', (col) => col
       .references('roles.id').onDelete('set null')
       .defaultTo(null)

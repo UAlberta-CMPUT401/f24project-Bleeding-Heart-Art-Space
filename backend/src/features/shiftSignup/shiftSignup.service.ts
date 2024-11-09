@@ -1,33 +1,70 @@
-import { Kysely } from 'kysely';
 import { BadRequestException } from '@nestjs/common';
-import { ShiftSignupTable, NewShiftSignup } from './shiftSignup.model';
+import { NewShiftSignup, ShiftSignup } from './shiftSignup.model';
 import { db } from '@database/database';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
 import { singleton } from 'tsyringe';
+
+type ShiftSignupUser = ShiftSignup & {
+  uid: string;
+  first_name: string;
+  last_name: string;
+}
 
 @singleton()
 export class ShiftSignupService {
   private volunteerShiftsService = new VolunteerShiftsService();
 
   /**
-   * Fetch all shift signups.
-   * @returns A list of all shift signups
+   * Fetch all shift signups for an event.
+   * @returns A list of all shift signups for an event
    */
-  async getAllSignups(): Promise<ShiftSignupTable[]> {
+  async getEventShiftSignups(eventId: number): Promise<ShiftSignupUser[]> {
     const result = await db
       .selectFrom('shift_signup')
+      .innerJoin(
+        (eb) => eb
+          .selectFrom('volunteer_shifts')
+          .select('volunteer_shifts.id')
+          .where('volunteer_shifts.event_id', '=', eventId)
+          .as('volunteer_shifts'),
+        (join) => join
+          .onRef('volunteer_shifts.id', '=', 'shift_signup.shift_id'),
+      )
+      .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.notes',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+      ])
       .selectAll()
       .execute();
-    return result as unknown as ShiftSignupTable[];
+    return result;
   }
 
-  async getShiftsByUserId(userId: number): Promise<ShiftSignupTable[]> {
+  async getShiftsSignupByUser(uid: string): Promise<ShiftSignupUser[]> {
     const result = await db
       .selectFrom('shift_signup')
-      .selectAll()
-      .where('user_id', '=', userId)
+      .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.notes',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+      ])
+      .where('users.uid', '=', uid)
       .execute();
-    return result as unknown as ShiftSignupTable[];
+    return result;
   }
 
   /**
@@ -35,7 +72,7 @@ export class ShiftSignupService {
    * @param signupData - The data for the new signup
    * @returns The ID of the newly created signup
    */
-  public async create(signupData: NewShiftSignup): Promise<number> {
+  public async create(signupData: NewShiftSignup): Promise<ShiftSignupUser | undefined> {
     const existingSignup = await this.checkExistingSignup(signupData.user_id, signupData.shift_id);
     if (existingSignup) {
       throw new Error('You have already signed up for this shift.');
@@ -46,16 +83,44 @@ export class ShiftSignupService {
       throw new Error('This shift conflicts with another shift you have already signed up for.');
     }
 
-    const [insertedSignup] = await db
+    const insertedSignupRes = await db
       .insertInto('shift_signup')
       .values({
         user_id: signupData.user_id,
         shift_id: signupData.shift_id,
       })
       .returning('id')
-      .execute();
+      .executeTakeFirst();
 
-    return insertedSignup.id;
+    if (insertedSignupRes === undefined) {
+      return undefined;
+    }
+
+    const insertedSignupUser = await db
+      .selectFrom('users')
+      .innerJoin(
+        (eb) => eb
+          .selectFrom('shift_signup')
+          .selectAll()
+          .where('shift_signup.id', '=', insertedSignupRes.id)
+          .as('shift_signup'),
+        (join) => join
+          .onRef('shift_signup.user_id', '=', 'users.id')
+      )
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.notes',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+      ])
+      .executeTakeFirst();
+
+    return insertedSignupUser;
   }
 
   /**
@@ -180,14 +245,14 @@ export class ShiftSignupService {
   /**
    * Check if a user is already signed up for a specific shift.
    */
-  private async checkExistingSignup(user_id: number, shift_id: number): Promise<ShiftSignupTable | undefined> {
+  private async checkExistingSignup(user_id: number, shift_id: number): Promise<ShiftSignup | undefined> {
     const result = await db
       .selectFrom('shift_signup')
       .selectAll()
       .where('user_id', '=', user_id)
       .where('shift_id', '=', shift_id)
       .executeTakeFirst();
-    return result as ShiftSignupTable | undefined;
+    return result;
   }
 
   /**
@@ -232,13 +297,13 @@ export class ShiftSignupService {
   /**
    * Get a specific shift signup by ID.
    */
-  async getSignupById(id: number): Promise<ShiftSignupTable | undefined> {
+  async getSignupById(id: number): Promise<ShiftSignup | undefined> {
     const result = await db
       .selectFrom('shift_signup')
       .selectAll()
       .where('id', '=', id)
       .executeTakeFirst();
-    return result as ShiftSignupTable | undefined;
+    return result;
   }
 
   /**
