@@ -3,7 +3,7 @@ import { IconButton,  Grid, Typography, Dialog, DialogActions, DialogContent, Di
 import { useEventStore } from '@stores/useEventStore';
 import { NewEvent } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
-import styles from "./EditEvent.module.css";
+import styles from "./EditEventDialog.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
