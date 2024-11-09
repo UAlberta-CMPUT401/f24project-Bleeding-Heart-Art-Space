@@ -6,6 +6,7 @@ import { addAuthorizationHeader } from './authHelper';
 export interface ApiResponse<T> {
   data: T;
   status: number;
+  error: string | undefined;
 }
 
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -25,12 +26,14 @@ export async function getData<T>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
@@ -55,12 +58,14 @@ export async function postData<T, D>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
@@ -85,12 +90,14 @@ export async function putData<T, D>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
@@ -113,12 +120,14 @@ export async function deleteData<T>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
