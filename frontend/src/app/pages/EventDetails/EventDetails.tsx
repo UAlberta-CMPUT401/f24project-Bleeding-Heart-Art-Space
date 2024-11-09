@@ -11,6 +11,7 @@ import { getEvent, getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEven
 import { isBefore, isAfter } from 'date-fns';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
+import EditEventDialog from '@pages/EditEvent/EditEventDialog';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -28,7 +29,8 @@ const EventDetails: React.FC = () => {
     const [checkoutSignupId, setCheckoutSignupId] = useState<number | null>(null);
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
-    
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+
     useEffect(() => {
         if (eventIdStr && user) {
             const eventId = Number(eventIdStr);
@@ -57,7 +59,16 @@ const EventDetails: React.FC = () => {
     }, [eventIdStr, user]);
 
     const handleEdit = () => {
-        navigate(`/edit-event/${eventIdStr}`);
+        setEditDialogOpen(true);
+    };
+
+    const handleEditDialogClose = () => {
+        setEditDialogOpen(false);
+        navigate('/calendar');
+    };
+
+    const handleEditDialogCancel = () => {
+        setEditDialogOpen(false);
     };
 
     const handleGoToShifts = () => {
@@ -280,6 +291,12 @@ const EventDetails: React.FC = () => {
                         </Grid>
                     </Grid>
                 </Card>
+                <EditEventDialog
+                    open={editDialogOpen}
+                    onClose={handleEditDialogClose}
+                    onCancel={handleEditDialogCancel}
+                    eventId={Number(eventIdStr)}
+                />
             </Container>}
         </>
     );
