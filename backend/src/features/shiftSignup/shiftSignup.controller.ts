@@ -19,7 +19,7 @@ export class ShiftSignupController {
       const shiftDetails = await this.volunteerShiftsService.getShiftById(signupData.shift_id);
 
       if (!shiftDetails) {
-        res.status(404).json({ message: 'Shift not found' });
+        res.status(404).json({ error: 'Shift not found' });
         return;
       }
 
@@ -67,7 +67,7 @@ export class ShiftSignupController {
       const signup = await this.shiftSignupService.getSignupById(signupId);
 
       if (!signup) {
-        res.status(404).json({ message: 'Shift signup not found' });
+        res.status(404).json({ error: 'Shift signup not found' });
       } else {
         res.json(signup);
       }
@@ -100,7 +100,7 @@ export class ShiftSignupController {
       const signupData: ShiftSignupUpdate = req.body as ShiftSignupUpdate;
 
       if (signupData.user_id === undefined || signupData.shift_id === undefined) {
-        res.status(400).json({ message: 'user_id and shift_id are required' });
+        res.status(400).json({ error: 'user_id and shift_id are required' });
         return;
       }
 
@@ -108,7 +108,7 @@ export class ShiftSignupController {
         await this.shiftSignupService.updateSignup(signupId, signupData as { user_id: number; shift_id: number });
         res.status(200).json({ message: 'Shift signup updated successfully' });
       } else {
-        res.status(400).json({ message: 'user_id and shift_id are required' });
+        res.status(400).json({ error: 'user_id and shift_id are required' });
       }
     } catch (error) {
       next(error);
@@ -125,7 +125,7 @@ export class ShiftSignupController {
       const { checkin_time } = req.body;
 
       if (!checkin_time) {
-        res.status(400).json({ message: 'Check-in time is required' });
+        res.status(400).json({ error: 'Check-in time is required' });
         return;
       }
 
