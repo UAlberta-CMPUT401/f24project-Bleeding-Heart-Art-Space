@@ -38,11 +38,11 @@ const Notifications: React.FC = () => {
       {notifications.length === 0 ? (
         <p className="no-notifications">No notifications at this time.</p>
       ) : (
-        <div className="notifications-grid">
+        <ul className="notifications-list">
           {notifications.map((notification) => (
-            <div 
+            <li 
               key={notification.id} 
-              className={`notification-card ${notification.read ? 'read' : 'unread'}`}
+              className={`notification-item ${notification.read ? 'read' : 'unread'}`}
             >
               <div className="notification-content">
                 <p className="notification-message">{notification.message}</p>
@@ -56,12 +56,13 @@ const Notifications: React.FC = () => {
                   Mark as Read
                 </button>
               )}
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
+  
 }
 
 export default Notifications;
