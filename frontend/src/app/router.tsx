@@ -15,6 +15,7 @@ import TopBar from "@components/layout/TopBar";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import CompleteSignup from "@pages/CompleteSignup/CompleteSignup";
 import Account from "@pages/Account/Account";
+import Notifications from "@pages/Notifications/Notifications";
 import EventDetails from "@pages/EventDetails/EventDetails";
 import VolunteerShifts from "@pages/VolunteerShifts/VolunteerShifts";
 import EventRequests from "@pages/EventRequests/EventRequests";
@@ -63,6 +64,7 @@ const Router: React.FC = () => {
           <Route path="/calendar" element={<BasicCalendar />} />
           <Route path="/volunteer-management" element={<VolunteerManagement />} /> */
           <Route path="/account" element={<Account />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
       </Route>
     </Routes>

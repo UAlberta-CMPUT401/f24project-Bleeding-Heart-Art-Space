@@ -145,7 +145,7 @@ const Dashboard: React.FC = () => {
           <Box sx={{ flexGrow: 1 }} />
           <IconButton
             component={Link}
-            to={'/account'}
+            to={'/notifications'}
           >
             <NotificationsIcon />
           </IconButton>
