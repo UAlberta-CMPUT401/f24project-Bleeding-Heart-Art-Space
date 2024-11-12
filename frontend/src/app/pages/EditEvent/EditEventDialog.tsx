@@ -9,6 +9,8 @@ import { useTheme } from '@mui/material/styles';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationDialog from '@components/ConfirmationDialog';
+import SnackbarAlert from '@components/SnackbarAlert';
+
 
 interface EditEventDialogProps {
     open: boolean;
@@ -42,6 +44,9 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
     const [openDeleteConfirmationDialog, setOpenDeleteConfirmationDialog] = useState(false);
     const [deleteConfirmationMessage, setDeleteConfirmationMessage] = useState('');
     const [onDeleteConfirmAction, setOnDeleteConfirmAction] = useState<(() => void) | null>(null);
+
+    const [editEventFailSnackbarOpen, setEditEventFailSnackbarOpen] = useState(false);
+    const [editEventFailSnackbarMessage, setEditEventFailSnackbarMessage] = useState('');
 
     const dialogClose = () => {
         onClose();
@@ -88,9 +93,15 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
         setOnConfirmAction(() => async () => {
             setLoading(true);
             if (backendUser.is_admin) {
-                await updateEvent(eventId, updatedEvent, user);
+                try {
+                    await updateEvent(eventId, updatedEvent, user);
+                    dialogClose();
+                } catch (error) {
+                    setOpenConfirmationDialog(false);
+                    setEditEventFailSnackbarMessage('End time must be after start time');
+                    setEditEventFailSnackbarOpen(true);
+                }
             }
-            dialogClose();
             setLoading(false);
         });
         setOpenConfirmationDialog(true);
@@ -258,7 +269,12 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
                 confirmButtonText="Delete"
                 cancelButtonText="Cancel"
             />
-
+            <SnackbarAlert
+            open={editEventFailSnackbarOpen}
+            onClose={() => setEditEventFailSnackbarOpen(false)}
+            message={editEventFailSnackbarMessage}
+            severity="error"
+            />
         </Dialog>
     );
 };

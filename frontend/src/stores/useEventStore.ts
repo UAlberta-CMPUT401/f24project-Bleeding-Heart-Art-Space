@@ -31,8 +31,7 @@ export const useEventStore = create<EventStore>((set) => ({
     
         if (startDateTime >= endDateTime) {
             console.error("Start time cannot be after end time.");
-            alert("End time must be after start time.");
-            return;
+            return Promise.reject("Invalid time range");
         }
     
         const eventToUpdate: NewEvent = {
