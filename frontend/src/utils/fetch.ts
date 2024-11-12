@@ -183,6 +183,21 @@ export async function getEvents(user: User): Promise<ApiResponse<Event[]>> {
   }
   return formattedResponse;
 }
+
+export async function getUpcomingEvents(user: User): Promise<ApiResponse<Event[]>> {
+  const response = await getData<EventData[]>('/events/upcoming', user);
+  const formattedResponse: ApiResponse<Event[]> = {
+    ...response,
+    data: response.data.map((eventData) => ({
+      ...eventData,
+      start: new Date(eventData.start),
+      end: new Date(eventData.end),
+    })),
+  }
+  return formattedResponse;
+}
+
+
 export async function postEvent(newEvent: NewEvent, user: User): Promise<ApiResponse<Event>> {
   const response = await postData<EventData, NewEvent>('/events', newEvent, user);
   return {
@@ -385,6 +400,7 @@ export type ShiftSignupUser = {
 export type NewShiftSignup = {
   user_id: number;
   shift_id: number;
+  volunteer_role: number | null | undefined;
   checkin_time: string | null | undefined;
   checkout_time: string | null | undefined;
   notes: string | null | undefined;
@@ -413,6 +429,20 @@ export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): 
   }
   return formattedResponse;
 }
+
+export async function getUserSignups(user: User): Promise<ApiResponse<ShiftSignupUser[]>> {
+  const response = await getData<ShiftSignupUser[]>('/shift-signups/user', user);
+  const formattedResponse: ApiResponse<ShiftSignupUser[]> = {
+    ...response,
+    data: response.data.map((shiftData) => ({
+      ...shiftData,
+      checkin_time: shiftData.checkin_time ? new Date(shiftData.checkin_time) : undefined,
+      checkout_time: shiftData.checkout_time ? new Date(shiftData.checkout_time) : undefined,
+    })),
+  }
+  return formattedResponse;
+}
+
 export type CheckIn = {
   checkin_time: string
 }

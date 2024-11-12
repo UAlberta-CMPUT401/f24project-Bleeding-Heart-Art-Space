@@ -74,9 +74,12 @@ const EventDetails: React.FC = () => {
         if (!user) return;
         if (!backendUser) return;
 
+        console.log('Selected shift:', selectedShift);
+
         const newShiftSignup: NewShiftSignup = {
             user_id: backendUser.id,
             shift_id: selectedShift.id,
+            volunteer_role: selectedShift.volunteer_role,
             checkin_time: null,
             checkout_time: null,
             notes: null,
@@ -85,8 +88,12 @@ const EventDetails: React.FC = () => {
             if (isOk(response.status)) {
                 setUserSignups(prev => [...prev, response.data]);
                 setEventSignups(prev => [...prev, response.data]);
+            } else {
+                console.error('Error signing up for shift:', response); // Log the response in case of an error
             }
-        })
+        }).catch((error) => {
+            console.error('Error occurred while posting shift signup:', error);
+        });
     };
 
     // Function to handle check-in

@@ -20,6 +20,9 @@ export class EventsRoute implements Routes {
     // Route to get all events
     this.router.get(`${this.path}`, authMiddleware, this.eventsController.getAllEvents);
 
+    // Route to get upcoming events
+    this.router.get(`${this.path}/upcoming`, authMiddleware, this.eventsController.getUpcomingEvents);
+
     // Route to get a specific event by ID
     this.router.get(`${this.path}/:id`, authMiddleware, this.eventsController.getEventById);
 
