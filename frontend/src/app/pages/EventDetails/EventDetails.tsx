@@ -113,7 +113,7 @@ const EventDetails: React.FC = () => {
             }
             else {
                 if (response.error) {
-                    setSignupFailSnackbarMessage("This shift conflicts with another shift you have already signed up for.");
+                    setSignupFailSnackbarMessage(response.error);
                 }
                 setSignupFailSnackbarOpen(true);
                 setSelectedShift(null);  // Close confirmation dialog
@@ -128,9 +128,9 @@ const EventDetails: React.FC = () => {
 
         checkin(signupId, { checkin_time }, user).then(response => {
             if (isOk(response.status)) {
-                //alert('Checked in successfully!'); //CHANGE THIS TO SNACKBAR ALERT!
+                alert('Checked in successfully!'); //DELETE THIS AFTER ADDING CHECK-IN
                 setCheckinSnackbarMessage('Checked in successfully!');
-                setCheckinSnackbarOpen(true); // Open check-out Snackbar
+                setCheckinSnackbarOpen(true);
                 setCheckinDialogOpen(false);
             }
         })
@@ -143,9 +143,9 @@ const EventDetails: React.FC = () => {
 
         checkout(signupId, { checkout_time }, user).then(response => {
             if (isOk(response.status)) {
-                //alert('Checked out successfully!');  //CHANGE THIS TO SNACKBAR ALERT!
+                alert('Checked out successfully!'); //DELETE THIS AFTER ADDING CHECK-IN
                 setCheckoutSnackbarMessage('Checked out successfully!');
-                setCheckoutSnackbarOpen(true); // Open check-in Snackbar
+                setCheckoutSnackbarOpen(true);
                 setCheckoutDialogOpen(false);
             }
         })
