@@ -49,6 +49,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
     const [editEventFailSnackbarMessage, setEditEventFailSnackbarMessage] = useState('');
 
     const dialogClose = () => {
+        setOpenConfirmationDialog(false);
         onClose();
     }
     const deleteDialogClose = () => {

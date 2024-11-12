@@ -1,9 +1,10 @@
 import { create } from 'zustand';
-import { getEvents, Event, postEvent, NewEvent, isOk, putEvent, deleteEvent } from '@utils/fetch';
+import { getEvents, Event, postEvent, NewEvent, isOk, putEvent, deleteEvent, getEvent } from '@utils/fetch';
 import { User } from 'firebase/auth';
 
 interface EventStore {
     events: Event[];
+    fetchEvent: (eventId: number, user: User) => void;
     fetchEvents: (user: User) => void;
     addEvent: (newEvent: NewEvent, user: User) => void;
     updateEvent: (eventId: number, updatedEventData: NewEvent, user: User) => void;
@@ -13,6 +14,12 @@ interface EventStore {
 
 export const useEventStore = create<EventStore>((set) => ({
     events: [],
+    fetchEvent: async (eventId: number, user: User) => {
+        const response = await getEvent(eventId, user)
+        if (isOk(response.status)) {
+            set(prev => ({ events: [...prev.events.filter(event => event.id !== eventId), response.data] }))
+        }
+    },
     fetchEvents: async (user: User) => {
         const response = await getEvents(user);
         if (isOk(response.status)) {
@@ -53,7 +60,6 @@ export const useEventStore = create<EventStore>((set) => ({
                     event.id === eventId ? { ...event, ...updatedEventWithDateObjects } : event
                 )
             }));
-            alert("Event updated successfully!");
         } else {
             console.error("Failed to update event:", response);
             alert('Failed to update event. Please try again.');
