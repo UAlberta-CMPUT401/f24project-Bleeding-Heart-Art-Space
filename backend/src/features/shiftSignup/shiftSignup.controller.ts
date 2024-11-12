@@ -37,7 +37,7 @@ export class ShiftSignupController {
   public getUserSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!isAuthenticated(req)) {
-        res.status(401);
+        res.status(401).json({ error: 'Unauthorized' });
         return;
       }
       const shifts = await this.shiftSignupService.getShiftsSignupByUser(req.auth.uid);
