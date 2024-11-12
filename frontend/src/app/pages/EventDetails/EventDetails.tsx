@@ -7,17 +7,18 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import styles from './EventDetails.module.css';
-import { getEvent, getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup, checkin, checkout } from '@utils/fetch';
+import { getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup, checkin, checkout } from '@utils/fetch';
 import { isBefore, isAfter } from 'date-fns';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import EditEventDialog from '@pages/EditEvent/EditEventDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
+import { useEventStore } from '@stores/useEventStore';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [event, setEvent] = useState<Event | null>(null);
+    const [event, setEvent] = useState<Event | undefined>(undefined);
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
@@ -41,6 +42,12 @@ const EventDetails: React.FC = () => {
     const [checkinSnackbarMessage, setCheckinSnackbarMessage] = useState('');
     const [checkoutSnackbarOpen, setCheckoutSnackbarOpen] = useState(false);
     const [checkoutSnackbarMessage, setCheckoutSnackbarMessage] = useState('');
+    const { events, fetchEvent } = useEventStore();
+
+    useEffect(() => {
+        const eventId = Number(eventIdStr);
+        setEvent(events.find(event => event.id === eventId));
+    }, [eventIdStr, events]);
 
     useEffect(() => {
         if (eventIdStr && user) {
@@ -50,11 +57,7 @@ const EventDetails: React.FC = () => {
                     setRoles(response.data)
                 }
             });
-            getEvent(eventId, user).then(response => {
-                if (isOk(response.status)) {
-                    setEvent(response.data)
-                }
-            });
+            fetchEvent(eventId, user);
             getEventShifts(eventId, user).then(response => {
                 if (isOk(response.status)) {
                     setShifts(response.data)
@@ -75,7 +78,6 @@ const EventDetails: React.FC = () => {
 
     const handleEditDialogClose = () => {
         setEditDialogOpen(false);
-        navigate('/calendar');
     };
 
     const handleEditDialogCancel = () => {

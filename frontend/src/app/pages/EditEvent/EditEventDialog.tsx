@@ -44,6 +44,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
     const [onDeleteConfirmAction, setOnDeleteConfirmAction] = useState<(() => void) | null>(null);
 
     const dialogClose = () => {
+        setOpenConfirmationDialog(false);
         onClose();
     }
     const deleteDialogClose = () => {
