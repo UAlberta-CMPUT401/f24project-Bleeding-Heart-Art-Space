@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@mui/material';
+import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions, Box, Snackbar, Alert } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -12,6 +12,7 @@ import { isBefore, isAfter } from 'date-fns';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import EditEventDialog from '@pages/EditEvent/EditEventDialog';
+import SnackbarAlert from '@components/SnackbarAlert';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -30,6 +31,16 @@ const EventDetails: React.FC = () => {
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
     const [editDialogOpen, setEditDialogOpen] = useState(false);
+
+    //Snackbar alert states
+    const [signupFailSnackbarOpen, setSignupFailSnackbarOpen] = useState(false);
+    const [signupFailSnackbarMessage, setSignupFailSnackbarMessage] = useState('');
+    const [signupSuccessSnackbarOpen, setSignupSuccessSnackbarOpen] = useState(false);
+    const [signupSuccessSnackbarMessage, setSignupSuccessSnackbarMessage] = useState('');
+    const [checkinSnackbarOpen, setCheckinSnackbarOpen] = useState(false);
+    const [checkinSnackbarMessage, setCheckinSnackbarMessage] = useState('');
+    const [checkoutSnackbarOpen, setCheckoutSnackbarOpen] = useState(false);
+    const [checkoutSnackbarMessage, setCheckoutSnackbarMessage] = useState('');
 
     useEffect(() => {
         if (eventIdStr && user) {
@@ -96,6 +107,15 @@ const EventDetails: React.FC = () => {
             if (isOk(response.status)) {
                 setUserSignups(prev => [...prev, response.data]);
                 setEventSignups(prev => [...prev, response.data]);
+                setSignupSuccessSnackbarMessage('Successfully Signed Up to Shift!');
+                setSignupSuccessSnackbarOpen(true);
+                setSelectedShift(null);  // Close confirmation dialog
+            }
+            else {
+                if (response.error) {
+                    setSignupFailSnackbarMessage("This shift conflicts with another shift you have already signed up for.");
+                }
+                setSignupFailSnackbarOpen(true);
                 setSelectedShift(null);  // Close confirmation dialog
             }
         })
@@ -108,7 +128,9 @@ const EventDetails: React.FC = () => {
 
         checkin(signupId, { checkin_time }, user).then(response => {
             if (isOk(response.status)) {
-                alert('Checked in successfully!');
+                //alert('Checked in successfully!'); //CHANGE THIS TO SNACKBAR ALERT!
+                setCheckinSnackbarMessage('Checked in successfully!');
+                setCheckinSnackbarOpen(true); // Open check-out Snackbar
                 setCheckinDialogOpen(false);
             }
         })
@@ -121,8 +143,10 @@ const EventDetails: React.FC = () => {
 
         checkout(signupId, { checkout_time }, user).then(response => {
             if (isOk(response.status)) {
-                alert('Checked out successfully!');
-                setCheckinDialogOpen(false);
+                //alert('Checked out successfully!');  //CHANGE THIS TO SNACKBAR ALERT!
+                setCheckoutSnackbarMessage('Checked out successfully!');
+                setCheckoutSnackbarOpen(true); // Open check-in Snackbar
+                setCheckoutDialogOpen(false);
             }
         })
     };
@@ -291,6 +315,43 @@ const EventDetails: React.FC = () => {
                         </Grid>
                     </Grid>
                 </Card>
+
+                <SnackbarAlert
+                open={signupFailSnackbarOpen}
+                onClose={() => setSignupFailSnackbarOpen(false)}
+                message={signupFailSnackbarMessage}
+                severity="error"
+                />
+                <SnackbarAlert
+                open={signupSuccessSnackbarOpen}
+                onClose={() => setSignupSuccessSnackbarOpen(false)}
+                message={signupSuccessSnackbarMessage}
+                severity="success"
+                />
+
+                {/* Snackbar for Check-in Success. CHANGE THIS INTO SNACKBAR COMPONENT */}
+                <Snackbar
+                    open={checkinSnackbarOpen}
+                    autoHideDuration={3000}
+                    onClose={() => setCheckinSnackbarOpen(false)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert onClose={() => setCheckinSnackbarOpen(false)} severity="success" variant="filled">
+                        {checkinSnackbarMessage}
+                    </Alert>
+                </Snackbar>
+
+                {/* Snackbar for Check-out Success. CHANGE THIS INTO SNACKBAR COMPONENT */}
+                <Snackbar
+                    open={checkoutSnackbarOpen}
+                    autoHideDuration={3000}
+                    onClose={() => setCheckoutSnackbarOpen(false)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert onClose={() => setCheckoutSnackbarOpen(false)} severity="success" variant="filled">
+                        {checkoutSnackbarMessage}
+                    </Alert>
+                </Snackbar>
                 <EditEventDialog
                     open={editDialogOpen}
                     onClose={handleEditDialogClose}

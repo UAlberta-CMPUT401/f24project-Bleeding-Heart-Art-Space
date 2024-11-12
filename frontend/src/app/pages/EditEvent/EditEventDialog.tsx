@@ -8,6 +8,7 @@ import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { useNavigate } from 'react-router-dom';
+import ConfirmationDialog from '@components/ConfirmationDialog';
 
 interface EditEventDialogProps {
     open: boolean;
@@ -31,6 +32,16 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
     const [endTime, setEndTime] = useState('');
     const [address, setAddress] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // States to handle save changes confirmation dialog
+    const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+    const [confirmationMessage, setConfirmationMessage] = useState('');
+    const [onConfirmAction, setOnConfirmAction] = useState<(() => void) | null>(null);
+
+    // States to handle delete event confirmation dialog
+    const [openDeleteConfirmationDialog, setOpenDeleteConfirmationDialog] = useState(false);
+    const [deleteConfirmationMessage, setDeleteConfirmationMessage] = useState('');
+    const [onDeleteConfirmAction, setOnDeleteConfirmAction] = useState<(() => void) | null>(null);
 
     const dialogClose = () => {
         onClose();
@@ -73,21 +84,28 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
             end: `${endDate}T${endTime}`,
             address,
         };
-
-        setLoading(true);
-        if (backendUser.is_admin) {
-            updateEvent(eventId, updatedEvent, user);
-        }
-        dialogClose();
-        setLoading(false);
+        setConfirmationMessage('Are you sure you want to save these changes?');
+        setOnConfirmAction(() => async () => {
+            setLoading(true);
+            if (backendUser.is_admin) {
+                await updateEvent(eventId, updatedEvent, user);
+            }
+            dialogClose();
+            setLoading(false);
+        });
+        setOpenConfirmationDialog(true);
     };
 
     const handleDelete = () => {
-        if (!user || !eventId || !backendUser) return;
-        if (backendUser.is_admin) {
-            deleteEvent(eventId, user);
-        }
-        deleteDialogClose();
+        setDeleteConfirmationMessage('Are you sure you want to delete this event?');
+        setOnDeleteConfirmAction(() => async () => {
+            if (!user || !eventId || !backendUser) return;
+            if (backendUser.is_admin) {
+                await deleteEvent(eventId, user);
+            }
+            deleteDialogClose();
+        });
+        setOpenDeleteConfirmationDialog(true);
     };
 
     return (
@@ -223,6 +241,24 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
                     </Grid>
                 </Grid>
             </DialogActions>
+
+            <ConfirmationDialog
+                open={openConfirmationDialog}
+                message={confirmationMessage}
+                onConfirm={onConfirmAction ?? (() => {})}
+                onCancel={() => setOpenConfirmationDialog(false)}
+            />
+            
+            <ConfirmationDialog
+                open={openDeleteConfirmationDialog}
+                message={deleteConfirmationMessage}
+                onConfirm={onDeleteConfirmAction ?? (() => {})}
+                onCancel={() => setOpenDeleteConfirmationDialog(false)}
+                title="Confirm Delete"
+                confirmButtonText="Delete"
+                cancelButtonText="Cancel"
+            />
+
         </Dialog>
     );
 };
