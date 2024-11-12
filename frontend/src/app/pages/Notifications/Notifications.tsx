@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './Notifications.css'; // Make sure to create this CSS file
+import { styled } from '@mui/material/styles';
+import { Box, Typography, Button } from '@mui/material';
 
 interface Notification {
   id: number;
@@ -7,6 +8,47 @@ interface Notification {
   date: string;
   read: boolean;
 }
+
+// Styled components
+const NotificationsContainer = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2.5),
+  maxWidth: '800px',
+  margin: '0 auto',
+}));
+
+const NotificationsList = styled('ul')({
+  listStyle: 'none',
+  padding: 0,
+  margin: 0,
+});
+
+const NotificationItem = styled('li')<{ read: boolean }>(({ theme, read }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: theme.spacing(2),
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  marginBottom: theme.spacing(1),
+  backgroundColor: read 
+    ? theme.palette.notification.read 
+    : theme.palette.notification.unread,
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const NotificationContent = styled(Box)({
+  flexGrow: 1,
+});
+
+const MarkReadButton = styled(Button)(({ theme }) => ({
+  marginLeft: theme.spacing(2),
+  whiteSpace: 'nowrap',
+}));
+
+
+const NotificationDate = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  fontSize: '0.875rem',
+}));
 
 const Notifications: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -27,42 +69,53 @@ const Notifications: React.FC = () => {
   }, []);
 
   const markAsRead = (id: number) => {
-    setNotifications(notifications.map(notif => 
+    setNotifications(notifications.map(notif =>
       notif.id === id ? { ...notif, read: true } : notif
     ));
   };
 
   return (
-    <div className="notifications-container">
-      <h2 className="notifications-title">Notifications</h2>
+    <NotificationsContainer>
+      <Typography variant="h5" gutterBottom>
+        Notifications
+      </Typography>
+      
       {notifications.length === 0 ? (
-        <p className="no-notifications">No notifications at this time.</p>
+        <p>
+          No notifications at this time.
+        </p>
       ) : (
-        <ul className="notifications-list">
+        <NotificationsList>
           {notifications.map((notification) => (
-            <li 
-              key={notification.id} 
-              className={`notification-item ${notification.read ? 'read' : 'unread'}`}
+            <NotificationItem
+              key={notification.id}
+              read={notification.read}
             >
-              <div className="notification-content">
-                <p className="notification-message">{notification.message}</p>
-                <small className="notification-date">{notification.date}</small>
-              </div>
+              <NotificationContent>
+                <Typography variant="body1">
+                  {notification.message}
+                </Typography>
+                <NotificationDate variant="body2">
+                  {notification.date}
+                </NotificationDate>
+              </NotificationContent>
+              
               {!notification.read && (
-                <button 
-                  className="mark-read-btn"
+                <MarkReadButton
+                  variant="contained"
+                  color="primary"
+                  size="small"
                   onClick={() => markAsRead(notification.id)}
                 >
                   Mark as Read
-                </button>
+                </MarkReadButton>
               )}
-            </li>
+            </NotificationItem>
           ))}
-        </ul>
+        </NotificationsList>
       )}
-    </div>
+    </NotificationsContainer>
   );
-  
-}
+};
 
 export default Notifications;
