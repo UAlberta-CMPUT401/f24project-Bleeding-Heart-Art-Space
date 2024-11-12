@@ -3,6 +3,7 @@ import { NewShiftSignup, ShiftSignup } from './shiftSignup.model';
 import { db } from '@database/database';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
 import { singleton } from 'tsyringe';
+import { ErrorResponse } from '@/common/utils/error';
 
 type ShiftSignupUser = ShiftSignup & {
   uid: string;
@@ -72,15 +73,17 @@ export class ShiftSignupService {
    * @param signupData - The data for the new signup
    * @returns The ID of the newly created signup
    */
-  public async create(signupData: NewShiftSignup): Promise<ShiftSignupUser | undefined> {
+  public async create(signupData: NewShiftSignup): Promise<ShiftSignupUser | ErrorResponse> {
     const existingSignup = await this.checkExistingSignup(signupData.user_id, signupData.shift_id);
     if (existingSignup) {
-      throw new Error('You have already signed up for this shift.');
+      const err: ErrorResponse = { error: 'You have already signed up for this shift.'};
+      return err;
     }
 
     const hasConflict = await this.checkForShiftConflicts(signupData.user_id, signupData.shift_id);
     if (hasConflict) {
-      throw new Error('This shift conflicts with another shift you have already signed up for.');
+      const err: ErrorResponse = { error: 'This shift conflicts with another shift you have already signed up for.'};
+      return err;
     }
 
     const insertedSignupRes = await db
@@ -93,7 +96,7 @@ export class ShiftSignupService {
       .executeTakeFirst();
 
     if (insertedSignupRes === undefined) {
-      return undefined;
+      throw new Error('Failed to sign up user');
     }
 
     const insertedSignupUser = await db
@@ -119,6 +122,10 @@ export class ShiftSignupService {
         'users.last_name',
       ])
       .executeTakeFirst();
+
+    if (insertedSignupUser === undefined) {
+      throw new Error('Failed to get created shift signup');
+    }
 
     return insertedSignupUser;
   }

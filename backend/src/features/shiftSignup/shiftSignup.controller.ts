@@ -3,7 +3,7 @@ import { ShiftSignupService } from './shiftSignup.service';
 import { NewShiftSignup, ShiftSignupUpdate } from './shiftSignup.model';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
 import { isAuthenticated } from '@/common/utils/auth';
-import { logger } from '@/common/utils/logger';
+import { hasError } from '@/common/utils/error';
 
 export class ShiftSignupController {
   private shiftSignupService = new ShiftSignupService();
@@ -24,6 +24,10 @@ export class ShiftSignupController {
       }
 
       const insertedSignupUser = await this.shiftSignupService.create(signupData);
+      if (hasError(insertedSignupUser)) {
+        res.status(400).json(insertedSignupUser);
+        return;
+      }
       res.status(201).json(insertedSignupUser);
     } catch (error) {
       next(error);
