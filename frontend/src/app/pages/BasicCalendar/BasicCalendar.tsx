@@ -7,6 +7,7 @@ import CreateEventDialog from '../CreateEvent/CreateEventDialog';
 import './BasicCalendar.css';
 import { useEventStore } from '@stores/useEventStore';
 import { useAuth } from '@lib/context/AuthContext';
+import { useBackendUserStore } from '@stores/useBackendUserStore';
 
 const BasicCalendar: React.FC = () => {
     const { fetchEvents } = useEventStore(); //---> Fetch events function from EventStore!
@@ -17,6 +18,7 @@ const BasicCalendar: React.FC = () => {
     const [endTime, setEndTime] = useState("");
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { backendUser } = useBackendUserStore();
     
     useEffect(() => {
         if (user) {
@@ -26,6 +28,10 @@ const BasicCalendar: React.FC = () => {
 
     // Function to handle slot selection
     const handleSlotSelect = (slotInfo: { start: Date; end: Date }) => {
+        // can't create event if not admin and can't request event if not artist
+        if (!backendUser) return;
+        if (!backendUser.is_admin || !backendUser.can_request_event) return;
+
         // Set initial start and end dates
         setStartDate(slotInfo.start.toISOString().split('T')[0]);
         setEndDate(slotInfo.end.toISOString().split('T')[0]);
@@ -44,17 +50,14 @@ const BasicCalendar: React.FC = () => {
         navigate(`/events/details/${eventId}`);
     };
 
-    const handleReqClick = () => {
-        navigate('/create-event-request'); // Navigates to RequestEvent page
-    };
-
     return (
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
             <EventCalendar 
                 onEventClick={handleEventClick} 
                 onSlotSelect={handleSlotSelect} 
             />
-            <Fab 
+            {(backendUser?.is_admin || backendUser?.can_request_event) && <Fab 
+                variant='extended'
                 color="primary" 
                 aria-label="add" 
                 className="floating-button"
@@ -63,11 +66,12 @@ const BasicCalendar: React.FC = () => {
                     position: 'fixed', 
                     bottom: 16, 
                     right: 16, 
-                    zIndex: 1000 
+                    zIndex: 1000, 
+                    fontWeight: 'bold',
                 }}
             >
-                <AddIcon />
-            </Fab>
+                {backendUser?.is_admin ? <AddIcon /> : "Request Event"}
+            </Fab>}
             <CreateEventDialog 
                 open={dialogOpen} 
                 onClose={handleDialogClose} 
@@ -76,28 +80,6 @@ const BasicCalendar: React.FC = () => {
                 startTime={startTime}
                 endTime={endTime}
             />
-            <Fab 
-                color="primary" 
-                aria-label="add" 
-                className="floating-button"
-                onClick={handleReqClick}
-                style={{
-                    position: 'fixed', 
-                    bottom: 16, 
-                    right: 96, 
-                    zIndex: 1000,
-                    borderRadius: '8px',
-                    padding: '10px 60px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    fontWeight: 'bold',
-                    textTransform: 'none',
-                    // alignItems: 'center',
-                    // justifyContent: 'center',
-                }}
-            >
-                Request Event
-            </Fab>
         </div>
     );
 };

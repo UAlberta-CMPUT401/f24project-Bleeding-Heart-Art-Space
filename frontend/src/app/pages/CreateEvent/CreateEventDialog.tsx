@@ -5,6 +5,8 @@ import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useEventStore } from '@stores/useEventStore';
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from '@lib/context/AuthContext';
+import { useBackendUserStore } from '@stores/useBackendUserStore';
+import { postEventRequest } from '@utils/fetch';
 
 interface CreateEventDialogProps {
     open: boolean;
@@ -27,6 +29,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
     const { addEvent } = useEventStore(); //---> Add event function from EventStore!
     const theme = useTheme();
     const { user } = useAuth();
+    const { backendUser } = useBackendUserStore();
 
 
     const handleClear = () => {
@@ -46,9 +49,8 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user) {
-            return;
-        }
+        if (!user) return;
+        if (!backendUser) return;
         const startDateTime = new Date(`${startDateLocal}T${startTimeLocal}`);
         const endDateTime = new Date(`${endDateLocal}T${endTimeLocal}`);
 
@@ -71,7 +73,11 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
         };
 
         setLoading(true);
-        addEvent(eventData, user);
+        if (backendUser.is_admin) {
+            addEvent(eventData, user);
+        } else {
+            postEventRequest(eventData, user);
+        }
         dialogClose();
         setLoading(false);
     };
@@ -87,7 +93,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                 </IconButton>
                 <div>
                     <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
-                        Create Event
+                        {backendUser?.is_admin ? "Create Event" : "Request Event"}
                     </Typography>
                 </div>
             </DialogTitle>

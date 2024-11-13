@@ -1,7 +1,7 @@
-import { logger } from '@utils/logger';
 import { Request, Response, NextFunction } from 'express';
 import { container } from 'tsyringe';
 import { UsersService } from './users.service';
+import { isAuthenticated } from '@/common/utils/auth';
 
 export class UsersController {
   public usersService = container.resolve(UsersService);
@@ -77,6 +77,23 @@ export class UsersController {
       } else {
         res.status(401).json({ error: 'Missing Role' });
       }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public getUserAndRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401);
+        return;
+      }
+      const userAndRole = await this.usersService.getUserAndRole(req.auth.uid);
+      if (userAndRole === undefined) {
+        res.status(400).json({ error: "Missing user and role" });
+        return;
+      }
+      res.status(200).json(userAndRole);
     } catch (error) {
       next(error);
     }

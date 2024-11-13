@@ -6,6 +6,7 @@ import { addAuthorizationHeader } from './authHelper';
 export interface ApiResponse<T> {
   data: T;
   status: number;
+  error: string | undefined;
 }
 
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -25,12 +26,14 @@ export async function getData<T>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
@@ -55,12 +58,14 @@ export async function postData<T, D>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
@@ -85,12 +90,14 @@ export async function putData<T, D>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
@@ -113,12 +120,14 @@ export async function deleteData<T>(
     return {
       data: response.data,
       status: response.status,
+      error: undefined,
     };
   } catch (error) {
     const axiosError = error as AxiosError;
     return {
       data: {} as T,
       status: axiosError.response?.status || 500,
+      error: (axiosError.response?.data as any)?.error,
     };
   }
 }
@@ -192,6 +201,96 @@ export async function deleteEvent(eventId: number, user: User): Promise<ApiRespo
   return await deleteData<void>(`/events/${eventId}`, user);
 }
 
+export type EventRequest = {
+  id: number;
+  start: Date;
+  end: Date;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+}
+export type EventRequestData = {
+  id: number;
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+}
+export type EventRequestUser = {
+  id: number;
+  start: Date;
+  end: Date;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+  uid: string;
+  first_name: string;
+  last_name: string;
+}
+export type EventRequestUserData = {
+  id: number;
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+  requester: number;
+  uid: string;
+  first_name: string;
+  last_name: string;
+}
+export type NewEventRequest = {
+  start: string;
+  end: string;
+  venue: string;
+  address: string;
+  title: string;
+}
+export async function getEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<EventRequest>> {
+  const response = await getData<EventRequestData>(`/event_requests/${eventRequestId}`, user);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      start: new Date(response.data.start),
+      end: new Date(response.data.end),
+    }
+  }
+}
+export async function getEventRequests(user: User): Promise<ApiResponse<EventRequestUser[]>> {
+  const response = await getData<EventRequestUserData[]>('/event_requests', user);
+  const formattedResponse: ApiResponse<EventRequestUser[]> = {
+    ...response,
+    data: response.data.map((eventData) => ({
+      ...eventData,
+      start: new Date(eventData.start),
+      end: new Date(eventData.end),
+    })),
+  }
+  return formattedResponse;
+}
+export async function postEventRequest(newEventRequest: NewEventRequest, user: User): Promise<ApiResponse<EventRequest>> {
+  const response = await postData<EventRequestData, NewEventRequest>('/event_requests', newEventRequest, user);
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      start: new Date(response.data.start),
+      end: new Date(response.data.end),
+    }
+  }
+}
+export async function deleteEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/event_requests/${eventRequestId}`, user);
+}
+export async function confirmEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<Event>> {
+  return await postData<Event, void>(`/event_requests/${eventRequestId}/confirm`, undefined, user);
+}
+
 export type VolunteerRole = {
   id: number;
   name: string;
@@ -243,8 +342,25 @@ export type BackendUser = {
   phone: string | null | undefined;
   role: number | null | undefined;
 }
+export type BackendUserAndRole = {
+  uid: string;
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  role: number | null;
+  title: string | null;
+  can_take_shift: boolean | null;
+  can_request_event: boolean | null;
+  is_admin: boolean | null;
+  is_blocked: boolean | null;
+}
 export async function getBackendUser(user: User): Promise<ApiResponse<BackendUser>> {
   return await getData<BackendUser>(`/users/user`, user);
+}
+export async function getBackendUserAndRole(user: User): Promise<ApiResponse<BackendUserAndRole>> {
+  return await getData<BackendUserAndRole>(`/users/user-role`, user);
 }
 export type NewBackendUser = {
   first_name: string;
@@ -307,5 +423,5 @@ export type CheckOut = {
   checkout_time: string
 }
 export async function checkout(signupId: number, time: CheckOut, user: User): Promise<ApiResponse<void>> {
-  return await postData<void, CheckOut>(`/shift-signups/${signupId}/checkin`, time, user);
+  return await postData<void, CheckOut>(`/shift-signups/${signupId}/checkout`, time, user);
 }
