@@ -56,8 +56,8 @@ const VolunteerShifts: React.FC = () => {
             ...shift,
             event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: `${event.data.start.toLocaleDateString()}T${shift.start}`, // Combine event date with shift start time
-            end: `${event.data.start.toLocaleDateString()}T${shift.end}`,     // Combine event date with shift end time
+            start: new Date(`${event.data.start.toLocaleDateString()}T${shift.start}`).toISOString(), // Combine event date with shift start time
+            end: new Date(`${event.data.start.toLocaleDateString()}T${shift.end}`).toISOString(),     // Combine event date with shift end time
         }));
 
         postEventShifts(Number(eventId), formattedShifts, user)
