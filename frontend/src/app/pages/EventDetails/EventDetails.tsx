@@ -122,12 +122,8 @@ const EventDetails: React.FC = () => {
                 }
                 setSignupFailSnackbarOpen(true);
                 setSelectedShift(null);  // Close confirmation dialog
-            } else {
-                console.error('Error signing up for shift:', response); // Log the response in case of an error
             }
-        }).catch((error) => {
-            console.error('Error occurred while posting shift signup:', error);
-        });
+        })
     };
 
     // Function to handle check-in
