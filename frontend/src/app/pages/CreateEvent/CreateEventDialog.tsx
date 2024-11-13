@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Grid, Typography } from '@mui/material';
 import styles from "./CreateEventDialog.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
@@ -31,6 +31,12 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
 
+    useEffect(() => {
+        setStartDateLocal(startDate);
+        setEndDateLocal(endDate);
+        setStartTimeLocal(startTime);
+        setEndTimeLocal(endTime);
+    }, [startDate, endDate, startTime, endTime]);
 
     const handleClear = () => {
         setTitle("");
