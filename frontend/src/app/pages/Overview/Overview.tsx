@@ -4,17 +4,25 @@ import EventIcon from '@mui/icons-material/Event';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { useAuth } from '@lib/context/AuthContext';
-import { getUpcomingEvents, getUserSignups, Event, ShiftSignupUser, isOk } from '@utils/fetch';
+import { getUpcomingEvents, getUserSignups, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles } from '@utils/fetch';
 import { isBefore, addWeeks } from 'date-fns';
 import styles from './Overview.module.css';
 
 const OverviewPage: React.FC = () => {
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
+    const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const { user } = useAuth();
 
     useEffect(() => {
+
         if (!user) return;
+
+        getVolunteerRoles(user).then(response => {
+            if (isOk(response.status)) {
+                setRoles(response.data)
+            }
+        });
 
         const twoWeeksFromNow = addWeeks(new Date(), 2);
 
@@ -68,18 +76,17 @@ const OverviewPage: React.FC = () => {
 
         <div className={styles.rightColumn}>
           <h2>Your Signed-up Shifts</h2>
-          <ul>      
+          <ul>
+            
               {userSignups.length > 0 ? (
                 userSignups.map((signup) => (
                     <Card key={signup.id} className={styles.card}>
-                        <Typography variant="h6">
-                            <AssignmentIndIcon /> 
+                        <Typography variant="h6"> 
+                            <AssignmentIndIcon /> Role: {roles.find(item => item.id === Number(signup.volunteer_role))?.name}
                         </Typography>
-                        <Typography variant="body1">
-                            <AccessTimeIcon /> 
+                        <Typography variant="body1"> <AccessTimeIcon />  {new Date(signup.start).toLocaleString()}
                         </Typography>
-                        <Typography variant="body1">
-                            <AccessTimeIcon /> 
+                        <Typography variant="body1"> <AccessTimeIcon />  {new Date(signup.end).toLocaleString()}
                         </Typography>
                     </Card>
                 ))
