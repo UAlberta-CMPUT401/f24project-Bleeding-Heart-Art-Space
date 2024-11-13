@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Grid, Typography, Button, Card, Container, Dialog, DialogTitle, DialogContent, DialogActions, Box, Snackbar, Alert } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import styles from './EventDetails.module.css';
-import { getEvent, getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup, checkin, checkout } from '@utils/fetch';
+import { getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup, checkin, checkout } from '@utils/fetch';
 import { isBefore, isAfter } from 'date-fns';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
+import EditEventDialog from '@pages/EditEvent/EditEventDialog';
+import SnackbarAlert from '@components/SnackbarAlert';
+import { useEventStore } from '@stores/useEventStore';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [event, setEvent] = useState<Event | null>(null);
+    const [event, setEvent] = useState<Event | undefined>(undefined);
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
@@ -28,7 +31,24 @@ const EventDetails: React.FC = () => {
     const [checkoutSignupId, setCheckoutSignupId] = useState<number | null>(null);
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
-    
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+
+    //Snackbar alert states
+    const [signupFailSnackbarOpen, setSignupFailSnackbarOpen] = useState(false);
+    const [signupFailSnackbarMessage, setSignupFailSnackbarMessage] = useState('');
+    const [signupSuccessSnackbarOpen, setSignupSuccessSnackbarOpen] = useState(false);
+    const [signupSuccessSnackbarMessage, setSignupSuccessSnackbarMessage] = useState('');
+    const [checkinSnackbarOpen, setCheckinSnackbarOpen] = useState(false);
+    const [checkinSnackbarMessage, setCheckinSnackbarMessage] = useState('');
+    const [checkoutSnackbarOpen, setCheckoutSnackbarOpen] = useState(false);
+    const [checkoutSnackbarMessage, setCheckoutSnackbarMessage] = useState('');
+    const { events, fetchEvent } = useEventStore();
+
+    useEffect(() => {
+        const eventId = Number(eventIdStr);
+        setEvent(events.find(event => event.id === eventId));
+    }, [eventIdStr, events]);
+
     useEffect(() => {
         if (eventIdStr && user) {
             const eventId = Number(eventIdStr);
@@ -37,11 +57,7 @@ const EventDetails: React.FC = () => {
                     setRoles(response.data)
                 }
             });
-            getEvent(eventId, user).then(response => {
-                if (isOk(response.status)) {
-                    setEvent(response.data)
-                }
-            });
+            fetchEvent(eventId, user);
             getEventShifts(eventId, user).then(response => {
                 if (isOk(response.status)) {
                     setShifts(response.data)
@@ -57,7 +73,15 @@ const EventDetails: React.FC = () => {
     }, [eventIdStr, user]);
 
     const handleEdit = () => {
-        navigate(`/edit-event/${eventIdStr}`);
+        setEditDialogOpen(true);
+    };
+
+    const handleEditDialogClose = () => {
+        setEditDialogOpen(false);
+    };
+
+    const handleEditDialogCancel = () => {
+        setEditDialogOpen(false);
     };
 
     const handleGoToShifts = () => {
@@ -88,6 +112,16 @@ const EventDetails: React.FC = () => {
             if (isOk(response.status)) {
                 setUserSignups(prev => [...prev, response.data]);
                 setEventSignups(prev => [...prev, response.data]);
+                setSignupSuccessSnackbarMessage('Successfully Signed Up to Shift!');
+                setSignupSuccessSnackbarOpen(true);
+                setSelectedShift(null);  // Close confirmation dialog
+            }
+            else {
+                if (response.error) {
+                    setSignupFailSnackbarMessage(response.error);
+                }
+                setSignupFailSnackbarOpen(true);
+                setSelectedShift(null);  // Close confirmation dialog
             } else {
                 console.error('Error signing up for shift:', response); // Log the response in case of an error
             }
@@ -103,7 +137,9 @@ const EventDetails: React.FC = () => {
 
         checkin(signupId, { checkin_time }, user).then(response => {
             if (isOk(response.status)) {
-                alert('Checked in successfully!');
+                alert('Checked in successfully!'); //DELETE THIS AFTER ADDING CHECK-IN
+                setCheckinSnackbarMessage('Checked in successfully!');
+                setCheckinSnackbarOpen(true);
                 setCheckinDialogOpen(false);
             }
         })
@@ -116,8 +152,10 @@ const EventDetails: React.FC = () => {
 
         checkout(signupId, { checkout_time }, user).then(response => {
             if (isOk(response.status)) {
-                alert('Checked out successfully!');
-                setCheckinDialogOpen(false);
+                alert('Checked out successfully!'); //DELETE THIS AFTER ADDING CHECK-IN
+                setCheckoutSnackbarMessage('Checked out successfully!');
+                setCheckoutSnackbarOpen(true);
+                setCheckoutDialogOpen(false);
             }
         })
     };
@@ -162,7 +200,7 @@ const EventDetails: React.FC = () => {
 
                     {/* Created Shifts Section */}
                     <Typography variant="h5" gutterBottom style={{ marginTop: '30px' }}>
-                        Created Shifts
+                        CLICK ON A SHIFT TO SIGN UP
                     </Typography>
                     <Grid container spacing={2}>
                         {shifts.map((shift, index) => {
@@ -187,7 +225,12 @@ const EventDetails: React.FC = () => {
                                         </Typography>
                                         {userSignups.find(s => s.shift_id === shift.id) && (  // Show green tick if shift is signed up
                                             <>
-                                                <CheckCircleIcon className={styles.signedUpIcon} />
+                                                <Box className={styles.signedUpBox}>
+                                                    <CheckCircleIcon className={styles.signedUpIcon} />
+                                                    <Typography variant="body2" color="green" style={{ marginLeft: '5px' }}>
+                                                        Signed up!
+                                                    </Typography>
+                                                </Box>
                                                 {/* Check In / Check Out Buttons only show if current time is within shift's duration */}
                                                 {isAfter(currentTime, shiftStartTime) && isBefore(currentTime, shiftEndTime) && (
                                                     <Grid container spacing={1} justifyContent="center" style={{ marginTop: '10px' }}>
@@ -281,6 +324,49 @@ const EventDetails: React.FC = () => {
                         </Grid>
                     </Grid>
                 </Card>
+
+                <SnackbarAlert
+                open={signupFailSnackbarOpen}
+                onClose={() => setSignupFailSnackbarOpen(false)}
+                message={signupFailSnackbarMessage}
+                severity="error"
+                />
+                <SnackbarAlert
+                open={signupSuccessSnackbarOpen}
+                onClose={() => setSignupSuccessSnackbarOpen(false)}
+                message={signupSuccessSnackbarMessage}
+                severity="success"
+                />
+
+                {/* Snackbar for Check-in Success. CHANGE THIS INTO SNACKBAR COMPONENT */}
+                <Snackbar
+                    open={checkinSnackbarOpen}
+                    autoHideDuration={3000}
+                    onClose={() => setCheckinSnackbarOpen(false)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert onClose={() => setCheckinSnackbarOpen(false)} severity="success" variant="filled">
+                        {checkinSnackbarMessage}
+                    </Alert>
+                </Snackbar>
+
+                {/* Snackbar for Check-out Success. CHANGE THIS INTO SNACKBAR COMPONENT */}
+                <Snackbar
+                    open={checkoutSnackbarOpen}
+                    autoHideDuration={3000}
+                    onClose={() => setCheckoutSnackbarOpen(false)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert onClose={() => setCheckoutSnackbarOpen(false)} severity="success" variant="filled">
+                        {checkoutSnackbarMessage}
+                    </Alert>
+                </Snackbar>
+                <EditEventDialog
+                    open={editDialogOpen}
+                    onClose={handleEditDialogClose}
+                    onCancel={handleEditDialogCancel}
+                    eventId={Number(eventIdStr)}
+                />
             </Container>}
         </>
     );
