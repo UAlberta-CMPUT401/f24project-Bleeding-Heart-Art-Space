@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useAuth } from '@lib/context/AuthContext';
-import { getVolunteerRoles, isOk, postVolunteerRole, VolunteerRole } from '@utils/fetch';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { useVolunteerRoleStore } from '@stores/useVolunteerRoleStore';
 
 const cols: GridColDef[] = [
     { field: 'name', headerName: 'Volunteer Role', flex: 1 },
 ];
 
-const paginationModel = { page: 0, pageSize: 20 };
+const paginationModel = { page: 0, pageSize: 10 };
 
 const VolunteerRoles: React.FC = () => {
-    const [roles, setRoles] = useState<VolunteerRole[]>([]); // State for existing roles
     const { user } = useAuth();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [roleName, setRoleName] = useState('');
-
-    useEffect(() => {
-        if (user) {
-            getVolunteerRoles(user).then(response => {
-                if (isOk(response.status)) {
-                    setRoles(response.data);
-                }
-            });
-        }
-    }, [user]);
+    const { volunteerRoles, addVolunteerRole } = useVolunteerRoleStore();
 
     const openDialog = () => {
         setDialogOpen(true);
@@ -42,22 +32,14 @@ const VolunteerRoles: React.FC = () => {
             return;
         }
 
-        postVolunteerRole({ name: roleName }, user).then(response => {
-            if (isOk(response.status)) {
-                alert('Volunteer role created successfully!');
-                setRoles(prev => [...prev, response.data]);
-                closeDialog();
-            } else {
-                console.error('Error creating volunteer role:', roleName);
-                alert('Failed to create volunteer role. Please try again.');
-            }
-        });
+        addVolunteerRole({ name: roleName }, user);
+        closeDialog();
     };
 
     return (
         <>
             <DataGrid
-                rows={roles}
+                rows={volunteerRoles}
                 columns={cols}
                 initialState={{ pagination: { paginationModel } }}
                 checkboxSelection

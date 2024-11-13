@@ -1,6 +1,8 @@
-import React, { useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { Box, Tab, Tabs } from '@mui/material';
 import VolunteerRoles from './VolunteerRoles';
+import { useAuth } from '@lib/context/AuthContext';
+import { useVolunteerRoleStore } from '@stores/useVolunteerRoleStore';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -23,6 +25,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
 
 const VolunteerManagement: React.FC = () => {
     const [tabValue, setTabValue] = useState(0);
+    const { user } = useAuth();
+    const { fetchVolunteerRoles } = useVolunteerRoleStore();
     // const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null); // State for selected role ID
 
     // const handleDeleteRole = async () => {
@@ -43,6 +47,12 @@ const VolunteerManagement: React.FC = () => {
     //         }
     //     })
     // };
+    //
+    useEffect(() => {
+        if (user) {
+            fetchVolunteerRoles(user);
+        }
+    }, [user]);
 
     const handleTabChange = (_event: React.SyntheticEvent, newTabValue: number) => {
         setTabValue(newTabValue);
