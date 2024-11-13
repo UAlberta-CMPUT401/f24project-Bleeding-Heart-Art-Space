@@ -9,22 +9,28 @@ import cors from 'cors';
 import * as path from 'path';
 import * as swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import cron from 'node-cron';
+import { ShiftSignupService } from '@features/shiftSignup/shiftSignup.service'
 
 export class App {
   public app: express.Application;
   public env: string;
   public port: string | number;
   public apiSpecPath = path.join(__dirname, 'docs', 'api-spec.yaml');
+  private shiftSignupService: ShiftSignupService;
 
   constructor(routes: Routes[]) {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
 
+    this.shiftSignupService = new ShiftSignupService(); 
+
     this.initializeFirebaseSDK();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeErrorHandling(); // Add error-handling middleware
+    this.initializeCronJobs();
   }
 
   public listen() {
@@ -55,6 +61,18 @@ export class App {
     });
   }
 
+  private initializeCronJobs() {
+    console.log('Starting cron job for aut-checkout every 5 minutes');
+    cron.schedule('*/1 * * * *', async () => {
+      console.log('Running auto-checkout cron job...');
+      try{
+        await this.shiftSignupService.autoCheckOut();
+        console.log('Auto-checkout cron job completed');
+      } catch (error){
+        console.error('Error running auto-checkout cron job', error);
+      }
+    })
+  }
   private initializeFirebaseSDK() {
     initializeApp({
       credential: applicationDefault(),
