@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { EventsService } from './event.service';
 import { NewEvent } from './events.model';
 import { container } from 'tsyringe';
+import { isWithinInterval, addWeeks, startOfToday } from 'date-fns';
 
 export class EventsController {
   private eventsService = container.resolve(EventsService);
@@ -36,6 +37,27 @@ export class EventsController {
       res.json(events); // Respond with the array of events
     } catch (error) {
       next(error);
+    }
+  };
+
+  public getUpcomingEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // Get the current date and calculate the two-week interval
+      const currentDate = startOfToday(); // Get today's date at midnight
+      const twoWeeksFromNow = addWeeks(currentDate, 2); // Date two weeks from now
+
+      // Fetch all events
+      const events = await this.eventsService.getAllEvents();
+
+      // Filter events that start within the next two weeks
+      const upcomingEvents = events.filter(event => {
+        const eventStartDate = new Date(event.start);
+        return isWithinInterval(eventStartDate, { start: currentDate, end: twoWeeksFromNow });
+      });
+
+      res.json(upcomingEvents); // Respond with the upcoming events
+    } catch (error) {
+      next(error); // Pass error to global error handler middleware
     }
   };
 

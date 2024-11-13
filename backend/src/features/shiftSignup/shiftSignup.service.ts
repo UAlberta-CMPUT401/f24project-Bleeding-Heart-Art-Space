@@ -52,6 +52,7 @@ export class ShiftSignupService {
     const result = await db
       .selectFrom('shift_signup')
       .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .innerJoin('volunteer_shifts', 'volunteer_shifts.id', 'shift_signup.shift_id')
       .select([
         'shift_signup.id',
         'shift_signup.user_id',
@@ -62,6 +63,9 @@ export class ShiftSignupService {
         'users.uid',
         'users.first_name',
         'users.last_name',
+        'volunteer_shifts.volunteer_role',
+        'volunteer_shifts.start',
+        'volunteer_shifts.end',
       ])
       .where('users.uid', '=', uid)
       .execute();
