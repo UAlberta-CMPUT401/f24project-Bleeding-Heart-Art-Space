@@ -1,6 +1,6 @@
 import ConfirmationDialog from '@components/ConfirmationDialog';
 import { useAuth } from '@lib/context/AuthContext';
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useManageUserStore } from '@stores/useManageUserStore';
 import { BackendUserAndRole, BatchAssignRole } from '@utils/fetch';
@@ -88,6 +88,9 @@ const ManageUsers: React.FC = () => {
             />
             {(selectedUsers.length > 0) && 
                 <form onSubmit={handleSubmit}>
+                    <Typography variant='h5' sx={{ mb: '1rem' }}>
+                        Edit Selected
+                    </Typography>
                     <FormControl
                         sx={{ 
                             display: 'flex',
