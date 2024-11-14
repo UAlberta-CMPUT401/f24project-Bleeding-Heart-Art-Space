@@ -3,6 +3,8 @@ import { Box, Tab, Tabs } from '@mui/material';
 import VolunteerRoles from './VolunteerRoles';
 import { useAuth } from '@lib/context/AuthContext';
 import { useVolunteerRoleStore } from '@stores/useVolunteerRoleStore';
+import { useManageUserStore } from '@stores/useManageUserStore';
+import ManageUsers from './ManageUsers';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -27,30 +29,12 @@ const VolunteerManagement: React.FC = () => {
     const [tabValue, setTabValue] = useState(0);
     const { user } = useAuth();
     const { fetchVolunteerRoles } = useVolunteerRoleStore();
-    // const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null); // State for selected role ID
+    const { fetchInit } = useManageUserStore();
 
-    // const handleDeleteRole = async () => {
-    //     if (!user) return;
-    //     if (selectedRoleId === null || !window.confirm('Are you sure you want to delete this role?')) {
-    //         return;
-    //     }
-
-    //     deleteVolunteerRole(selectedRoleId, user).then(response => {
-    //         if (isOk(response.status)) {
-    //             alert('Volunteer role deleted successfully!');
-    //             const updatedRoles = roles.filter(role => role.id !== selectedRoleId);
-    //             setRoles(updatedRoles);
-    //             setSelectedRoleId(null);
-    //         } else {
-    //             console.error('Error deleting volunteer role:', selectedRoleId);
-    //             alert('Failed to delete volunteer role. Please try again.');
-    //         }
-    //     })
-    // };
-    //
     useEffect(() => {
         if (user) {
             fetchVolunteerRoles(user);
+            fetchInit(user);
         }
     }, [user]);
 
@@ -69,7 +53,7 @@ const VolunteerManagement: React.FC = () => {
                 <Tab label="Volunteer Roles" />
             </Tabs>
             <TabPanel value={tabValue} index={0}>
-                Manage Users Tab
+                <ManageUsers />
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
                 <VolunteerRoles />

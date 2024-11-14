@@ -87,4 +87,46 @@ export class UsersService {
 
     return userAndRole;
   }
+
+  public async getUsersAndRole(): Promise<UserAndRole[]> {
+    const userAndRole = await db
+      .selectFrom('users')
+      .leftJoin('roles', 'roles.id', 'users.role')
+      .select([
+        'users.id',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+        'users.email',
+        'users.phone',
+        'users.role',
+        'roles.title',
+        'roles.can_take_shift',
+        'roles.can_request_event',
+        'roles.is_admin',
+        'roles.is_blocked',
+      ])
+      .execute();
+
+    return userAndRole;
+  }
+
+  public async batchAssignRole(users: number[], role: number): Promise<number[]> {
+    const updatedIds = await db
+      .updateTable('users')
+      .set({
+        role: role,
+      })
+      .where('id', 'in', users)
+      .returning('id')
+      .execute();
+    return updatedIds.map(id => id.id);
+  }
+
+  public async getRoles(): Promise<Role[]> {
+    return await db
+      .selectFrom('roles')
+      .selectAll()
+      .execute();
+  }
 }
