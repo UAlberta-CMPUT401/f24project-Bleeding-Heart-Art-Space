@@ -6,6 +6,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
 import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEvent, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
+import { format } from 'date-fns';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -56,8 +57,8 @@ const VolunteerShifts: React.FC = () => {
             ...shift,
             event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: new Date(`${event.data.start.toLocaleDateString()}T${shift.start}`).toISOString(), // Combine event date with shift start time
-            end: new Date(`${event.data.start.toLocaleDateString()}T${shift.end}`).toISOString(),     // Combine event date with shift end time
+            start: new Date(`${format(event.data.start, 'yyyy-MM-dd')}T${shift.start}`).toISOString(), // Combine event date with shift start time
+            end: new Date(`${format(event.data.start, 'yyyy-MM-dd')}T${shift.end}`).toISOString(),     // Combine event date with shift end time
         }));
 
         postEventShifts(Number(eventId), formattedShifts, user)
