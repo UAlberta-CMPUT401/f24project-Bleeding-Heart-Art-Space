@@ -1,108 +1,102 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import styles from "./Overview.module.css";
+import React, { useState, useEffect } from 'react';
+import { Grid, Typography, Card, Button, Container } from '@mui/material';
+import EventIcon from '@mui/icons-material/Event';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { useAuth } from '@lib/context/AuthContext';
+import { getUpcomingEvents, getUserSignups, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles } from '@utils/fetch';
+import { isBefore, addWeeks } from 'date-fns';
+import styles from './Overview.module.css';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const OverviewPage: React.FC = () => {
+    const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+    const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
+    const [roles, setRoles] = useState<VolunteerRole[]>([]);
+    const { user } = useAuth();
 
-interface Event {
-  id: number;
-  name: string;
-  date: string; // Consider using Date if parsing is needed
-}
+    useEffect(() => {
 
-interface Shift {
-  id: number;
-  event_name: string;
-  role: string;
-  start: string; // Consider using Date if parsing is needed
-  end: string; // Consider using Date if parsing is needed
-}
+        if (!user) return;
 
-const Overview: React.FC = () => {
-  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
-  const [userShifts, setUserShifts] = useState<Shift[]>([]);
+        getVolunteerRoles(user).then(response => {
+            if (isOk(response.status)) {
+                setRoles(response.data)
+            }
+        });
 
-  useEffect(() => {
-    fetchUpcomingEvents();
-    fetchUserShifts()
-  }, []);
+        const twoWeeksFromNow = addWeeks(new Date(), 2);
 
+        // Fetch events for the next 2 weeks
+        getUpcomingEvents(user).then(response => {
+            if (isOk(response.status)) {
+                setUpcomingEvents(response.data.filter((event: Event) => 
+                    isBefore(new Date(event.start), twoWeeksFromNow)
+                ));
+            }
+        });
 
-  const fetchUpcomingEvents = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/events`);
-      const events = response.data;
+        // Fetch shifts the user has signed up for
+        getUserSignups(user).then(response => {
+            if (isOk(response.status)) {
+                setUserSignups(response.data)
+            }
+        });
+    }, [user]);
 
-      // Filter events to those in the next two weeks
-      const now = new Date();
-      const twoWeeksLater = new Date();
-      twoWeeksLater.setDate(now.getDate() + 14);
-      const upcoming = events.filter((event: any) => {
-        const eventDate = new Date(event.date); // Assuming `date` holds the event date
-        return eventDate >= now && eventDate <= twoWeeksLater;
-      });
+    return (
+      <div className= {styles.container}>
+        <div className={styles.leftColumn}>
+          <h2>Upcoming Events</h2>
+          <ul>
+              {upcomingEvents.length > 0 ? (
+                  upcomingEvents.map((event) => (
+                      <Card key={event.id} className={styles.card}>
+                          <Typography variant="h6">{event.title}</Typography>
+                          <Typography variant="body1">
+                              <EventIcon /> {new Date(event.start).toLocaleString()}
+                          </Typography>
+                          <Button 
+                              variant="contained" 
+                              color="primary" 
+                              href={`/events/details/${event.id}`}
+                          >
+                              View Details
+                          </Button>
+                      </Card>
+                  ))
+              ) : (
+                  <Typography>No upcoming events in the next two weeks.</Typography>
+              )}
+          </ul>
+        </div>
 
-      setUpcomingEvents(upcoming);
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    }
-  };
+        <div className = {styles.middleColumn}>
 
-  // Update fetchUserShifts to use query parameters to filter by user_id
-  const fetchUserShifts = async () => {
-    try {
-      const userId = localStorage.getItem("user.id"); // Get the user ID from local storage
-      if (!userId) return; // Exit if user ID isn't found
-  
-      const response = await axios.get(`${apiUrl}/shift-signups`, {
-        params: { user_id: userId }, // Pass user_id as a query parameter
-      });
-      setUserShifts(response.data);
-    } catch (error) {
-      console.error("Error fetching user shifts:", error);
-    }
-  };
+        </div>
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.leftColumn}>
-        <h2>Upcoming Events (Next 2 Weeks)</h2>
-        <ul>
-          {upcomingEvents.length > 0 ? (
-            upcomingEvents.map((event) => (
-              <li key={event.id}>
-                {event.name} - {new Date(event.date).toLocaleDateString()}
-              </li>
-            ))
-          ) : (
-            <p>No events in the next two weeks.</p>
-          )}
-        </ul>
+        <div className={styles.rightColumn}>
+          <h2>Your Signed-up Shifts</h2>
+          <ul>
+            
+              {userSignups.length > 0 ? (
+                userSignups.map((signup) => (
+                    <Card key={signup.id} className={styles.card}>
+                        <Typography variant="h6"> 
+                            <AssignmentIndIcon /> Role: {roles.find(item => item.id === Number(signup.volunteer_role))?.name}
+                        </Typography>
+                        <Typography variant="body1"> <AccessTimeIcon />  {new Date(signup.start).toLocaleString()}
+                        </Typography>
+                        <Typography variant="body1"> <AccessTimeIcon />  {new Date(signup.end).toLocaleString()}
+                        </Typography>
+                    </Card>
+                ))
+            ) : (
+                <Typography>You haven't signed up for any shifts yet.</Typography>
+            )}
+          </ul>
+        </div>
       </div>
-
-      <div className={styles.middleColumn}>
-        {/* Placeholder for future content */}
-      </div>
-
-      <div className={styles.rightColumn}>
-        <h2>Your Shifts</h2>
-        <ul>
-          {userShifts.length > 0 ? (
-            userShifts.map((shift) => (
-              <li key={shift.id}>
-                {shift.event_name}: {shift.role} on{" "}
-                {new Date(shift.start).toLocaleDateString()} from{" "}
-                {new Date(shift.start).toLocaleTimeString()} to{" "}
-                {new Date(shift.end).toLocaleTimeString()}
-              </li>
-            ))
-          ) : (
-            <p>You have no shifts scheduled.</p>
-          )}
-        </ul>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default Overview;
+export default OverviewPage;
