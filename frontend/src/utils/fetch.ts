@@ -322,6 +322,9 @@ export async function postVolunteerRole(newVolunteerRole: NewVolunteerRole, user
 export async function deleteVolunteerRole(volunteerRoleId: number, user: User): Promise<ApiResponse<void>> {
   return await deleteData<void>(`/volunteer_roles/${volunteerRoleId}`, user);
 }
+export async function deleteVolunteerRoles(volunteerRoles: VolunteerRole[], user: User): Promise<ApiResponse<number[]>> {
+  return await postData<number[], number[]>(`/volunteer_roles/batch_delete`, volunteerRoles.map(volunteerRole => volunteerRole.id), user);
+}
 
 export type Shift = {
   id: number;
