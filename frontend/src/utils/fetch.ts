@@ -425,3 +425,32 @@ export type CheckOut = {
 export async function checkout(signupId: number, time: CheckOut, user: User): Promise<ApiResponse<void>> {
   return await postData<void, CheckOut>(`/shift-signups/${signupId}/checkout`, time, user);
 }
+
+// Notifications
+export type Notification = {
+  id: number;
+  user_id: number;
+  title: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+};
+export type NewNotification = {
+  title: string;
+  message: string;
+};
+export async function getNotifications(user: User): Promise<ApiResponse<Notification[]>> {
+  return await getData<Notification[]>('/notifications', user);
+}
+export async function postNotification(newNotification: NewNotification, user: User): Promise<ApiResponse<Notification>> {
+  return await postData<Notification, NewNotification>('/notifications', newNotification, user);
+}
+export async function deleteNotification(notificationId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/notifications/${notificationId}`, user);
+}
+export async function markNotificationAsRead(notificationId: number, user: User): Promise<ApiResponse<void>> {
+  return await postData<void, void>(`/notifications/${notificationId}/read`, undefined, user);
+}
+export async function markAllNotificationsAsRead(user: User): Promise<ApiResponse<void>> {
+  return await postData<void, void>('/notifications/read', undefined, user);
+}

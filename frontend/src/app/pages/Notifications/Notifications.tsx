@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Typography, Button } from '@mui/material';
-
-interface Notification {
-  id: number;
-  message: string;
-  date: string;
-  read: boolean;
-}
+import { Notification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, isOk } from '@utils/fetch';
+import { useAuth } from '@lib/context/AuthContext';
 
 // Styled components
 const NotificationsContainer = styled(Box)(({ theme }) => ({
@@ -29,9 +24,7 @@ const NotificationItem = styled('li')<{ read: boolean }>(({ theme, read }) => ({
   padding: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.divider}`,
   marginBottom: theme.spacing(1),
-  backgroundColor: read 
-    ? theme.palette.notification.read 
-    : theme.palette.notification.unread,
+  backgroundColor: read ? theme.palette.notification.read : theme.palette.notification.unread,
   borderRadius: theme.shape.borderRadius,
 }));
 
@@ -44,34 +37,57 @@ const MarkReadButton = styled(Button)(({ theme }) => ({
   whiteSpace: 'nowrap',
 }));
 
-
 const NotificationDate = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontSize: '0.875rem',
 }));
 
 const Notifications: React.FC = () => {
+  
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { user } = useAuth();
 
   useEffect(() => {
-    // Simulating fetching notifications from an API
     const fetchNotifications = async () => {
-      // Replace this with actual API call when you have one
-      const mockNotifications: Notification[] = [
-        { id: 1, message: "New comment on your post", date: "2023-11-15", read: false },
-        { id: 2, message: "You have a new follower", date: "2023-11-14", read: true },
-        { id: 3, message: "Your account was logged in from a new device", date: "2023-11-13", read: false },
-      ];
-      setNotifications(mockNotifications);
+      if (user) {
+        try {
+          const response = await getNotifications(user);
+          if (isOk(response.status)) {
+            setNotifications(response.data);
+          } else {
+            console.error("Failed to fetch notifications:", response.error);
+          }
+        } catch (error) {
+          console.error("Error fetching notifications:", error);
+        }
+      } else {
+        console.warn("No user provided for fetching notifications.");
+      }
     };
-
     fetchNotifications();
-  }, []);
+    console.log(user)
+  }, [user]);
 
-  const markAsRead = (id: number) => {
-    setNotifications(notifications.map(notif =>
-      notif.id === id ? { ...notif, read: true } : notif
-    ));
+  const markAsRead = async (id: number) => {
+    if (user) {
+      const response = await markNotificationAsRead(id, user);
+      if (isOk(response.status)) {
+        setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+      } else {
+        console.error("Failed to mark notification as read:", response.error);
+      }
+    }
+  };
+
+  const markAllAsRead = async () => {
+    if (user) {
+      const response = await markAllNotificationsAsRead(user);
+      if (isOk(response.status)) {
+        setNotifications(notifications.map(n => ({ ...n, is_read: true })));
+      } else {
+        console.error("Failed to mark all notifications as read:", response.error);
+      }
+    }
   };
 
   return (
@@ -81,38 +97,36 @@ const Notifications: React.FC = () => {
       </Typography>
       
       {notifications.length === 0 ? (
-        <p>
-          No notifications at this time.
-        </p>
+        <p>No notifications at this time.</p>
       ) : (
-        <NotificationsList>
-          {notifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              read={notification.read}
-            >
-              <NotificationContent>
-                <Typography variant="body1">
-                  {notification.message}
-                </Typography>
-                <NotificationDate variant="body2">
-                  {notification.date}
-                </NotificationDate>
-              </NotificationContent>
-              
-              {!notification.read && (
-                <MarkReadButton
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => markAsRead(notification.id)}
-                >
-                  Mark as Read
-                </MarkReadButton>
-              )}
-            </NotificationItem>
-          ))}
-        </NotificationsList>
+        <>
+          <Button variant="outlined" onClick={markAllAsRead}>
+            Mark All as Read
+          </Button>
+          <NotificationsList>
+            {notifications.map((notification) => (
+              <NotificationItem key={notification.id} read={notification.is_read}>
+                <NotificationContent>
+                  <Typography variant="body1">{notification.title}</Typography>
+                  <Typography variant="body2">{notification.message}</Typography>
+                  <NotificationDate variant="body2">
+                    {new Date(notification.created_at).toLocaleDateString()}
+                  </NotificationDate>
+                </NotificationContent>
+                {!notification.is_read && (
+                  <MarkReadButton
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => markAsRead(notification.id)}
+                  >
+                    Mark as Read
+                  </MarkReadButton>
+                )}
+              </NotificationItem>
+            ))}
+          </NotificationsList>
+        </>
       )}
     </NotificationsContainer>
   );

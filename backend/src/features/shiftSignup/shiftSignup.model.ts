@@ -1,5 +1,5 @@
 // Import necessary Kysely types
-import { Generated, Insertable, Selectable, Updateable, ColumnType } from 'kysely';
+import { Generated, Insertable, Selectable, Updateable } from 'kysely';
 
 // Define the table structure for shift signup
 export interface ShiftSignupTable {
