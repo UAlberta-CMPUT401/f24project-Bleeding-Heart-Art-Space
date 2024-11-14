@@ -1,3 +1,4 @@
+import ConfirmationDialog from '@components/ConfirmationDialog';
 import { useAuth } from '@lib/context/AuthContext';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
@@ -19,6 +20,7 @@ const ManageUsers: React.FC = () => {
     const [selectedRole, setSelectedRole] = useState<number | undefined>(undefined);
     const { user } = useAuth();
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>([]);
+    const [confirmAssignOpen, setConfirmAssignOpen] = useState(false);
 
     const handleUserSelect = (ids: GridRowSelectionModel) => {
         setSelectionModel(ids);
@@ -39,6 +41,12 @@ const ManageUsers: React.FC = () => {
         e.preventDefault();
         if (!user) return;
         if (selectedRole === undefined) return;
+        setConfirmAssignOpen(true);
+    };
+
+    const confirmAssignRoles = () => {
+        if (!user) return;
+        if (selectedRole === undefined) return;
         const payload: BatchAssignRole = {
             users: selectedUsers.map(user => user.id),
             role: selectedRole,
@@ -47,7 +55,8 @@ const ManageUsers: React.FC = () => {
         setSelectionModel([]);
         setSelectedUsers([]);
         setSelectedRole(undefined);
-    };
+        setConfirmAssignOpen(false);
+    }
 
     return (
         <Box
@@ -103,6 +112,13 @@ const ManageUsers: React.FC = () => {
                         </Button>
                     </FormControl>
                 </form>}
+            <ConfirmationDialog
+                open={confirmAssignOpen}
+                message={`Are you sure you want to assign ${roles.find(role => role.id === selectedRole)?.title} to ${selectedUsers.length} selected user(s)`}
+                onConfirm={confirmAssignRoles}
+                onCancel={() => setConfirmAssignOpen(false)}
+                title='Confirm Assign'
+            />
         </Box>
     );
 };
