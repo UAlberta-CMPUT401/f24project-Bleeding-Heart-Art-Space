@@ -78,7 +78,7 @@ const ManageUsers: React.FC = () => {
                         }
                     },
                     sorting: {
-                        sortModel: [{ field: 'name', sort: 'asc' }],
+                        sortModel: [{ field: 'last_name', sort: 'asc' }],
                     }
                 }}
                 rowSelectionModel={selectionModel}
