@@ -98,7 +98,7 @@ const VolunteerRoles: React.FC = () => {
                     <Button onClick={closeDialog} color="error">
                         Cancel
                     </Button>
-                    <Button onClick={createRole} color="success">
+                    <Button variant='contained' onClick={createRole} color="secondary">
                         Create
                     </Button>
                 </DialogActions>
