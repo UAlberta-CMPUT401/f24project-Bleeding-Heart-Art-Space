@@ -68,6 +68,7 @@ export class ShiftSignupService {
         'volunteer_shifts.end',
       ])
       .where('users.uid', '=', uid)
+      .orderBy('volunteer_shifts.start', 'asc')
       .execute();
     return result;
   }

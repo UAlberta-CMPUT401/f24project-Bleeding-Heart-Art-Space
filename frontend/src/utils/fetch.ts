@@ -192,7 +192,7 @@ export async function getUpcomingEvents(user: User): Promise<ApiResponse<Event[]
       ...eventData,
       start: new Date(eventData.start),
       end: new Date(eventData.end),
-    })),
+    })).sort((a, b) => a.start.getTime() - b.start.getTime()),
   }
   return formattedResponse;
 }
