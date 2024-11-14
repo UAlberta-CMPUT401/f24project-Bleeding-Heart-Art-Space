@@ -110,10 +110,14 @@ export class UsersController {
 
   public batchAssignRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
       const body: any = req.body;
       const users: number[] = body.users.map((user: any) => Number(user));
       const role: number = Number(body.role);
-      const updatedIds = await this.usersService.batchAssignRole(users, role);
+      const updatedIds = await this.usersService.batchAssignRole(users, role, req.auth.uid);
       res.status(200).json(updatedIds);
     } catch (error) {
       next(error);

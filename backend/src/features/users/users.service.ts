@@ -111,15 +111,32 @@ export class UsersService {
     return userAndRole;
   }
 
-  public async batchAssignRole(users: number[], role: number): Promise<number[]> {
+  public async batchAssignRole(users: number[], role: number, uid: string): Promise<number[]> {
+    // modify list of users to remove admins (but including caller so caller can demote themselves from admin)
+    const notAdmins = await db
+      .selectFrom('users')
+      .leftJoin('roles', 'roles.id', 'users.role')
+      .select('users.id')
+      .where(eb => eb.and([
+        eb('users.id', 'in', users),
+        eb.or([
+          eb('is_admin', '=', false),
+          eb('uid', '=', uid),
+        ]),
+      ]))
+      .execute();
+
+    if (notAdmins.length === 0) return [];
+
     const updatedIds = await db
       .updateTable('users')
       .set({
         role: role,
       })
-      .where('id', 'in', users)
+      .where('id', 'in', notAdmins.map(user => user.id))
       .returning('id')
       .execute();
+
     return updatedIds.map(id => id.id);
   }
 
