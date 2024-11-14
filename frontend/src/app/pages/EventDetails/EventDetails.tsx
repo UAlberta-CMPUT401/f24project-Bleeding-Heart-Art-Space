@@ -98,9 +98,12 @@ const EventDetails: React.FC = () => {
         if (!user) return;
         if (!backendUser) return;
 
+        console.log('Selected shift:', selectedShift);
+
         const newShiftSignup: NewShiftSignup = {
             user_id: backendUser.id,
             shift_id: selectedShift.id,
+            volunteer_role: selectedShift.volunteer_role,
             checkin_time: null,
             checkout_time: null,
             notes: null,

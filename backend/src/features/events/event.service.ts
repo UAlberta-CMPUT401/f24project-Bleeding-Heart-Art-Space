@@ -40,6 +40,21 @@ export class EventsService {
       })));
   }
 
+  public async getUpcomingEvents(): Promise<Event[]> {
+    const currentDate = new Date();
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(currentDate.getDate() + 14);
+
+    const events = await db
+      .selectFrom('events')
+      .selectAll()
+      .where('start', '>=', currentDate)
+      .where('start', '<=', twoWeeksFromNow)
+      .execute();
+
+    return events;
+  }
+
   /**
    * Retrieve a specific event by its ID
    * @param eventId - The ID of the event to retrieve
