@@ -399,6 +399,8 @@ export type ShiftSignupUser = {
   volunteer_role: string | null | undefined;
   start: Date;
   end: Date;
+  event_id: number;
+  event_title: string;
 }
 export type NewShiftSignup = {
   user_id: number;

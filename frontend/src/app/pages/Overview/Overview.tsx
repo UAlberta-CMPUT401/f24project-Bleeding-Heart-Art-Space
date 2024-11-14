@@ -109,8 +109,8 @@ const OverviewPage: React.FC = () => {
                     <Stack spacing={2}>
                         {upcomingEvents.map((event) => (
                             <Card key={event.id} className={styles.card}>
-                                <Typography variant="h6" className={styles.centeredFlex}>{event.title}</Typography>
-                                <Typography variant="body1" className={styles.centeredFlex}>
+                                <Typography variant="h6" className={styles.centeredFlex} >{event.title}</Typography>
+                                <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
                                     <EventIcon className={styles.iconSpacing}/> {new Date(event.start).toLocaleString()}
                                 </Typography>
                                 <Button
@@ -137,9 +137,12 @@ const OverviewPage: React.FC = () => {
                         {userSignups.map((signup) => (
                             <Card key={signup.id} className={styles.card}>
                                 <Typography variant="h6" className={styles.centeredFlex}>
+                                    <EventIcon className={styles.iconSpacing} /> Event: {signup.event_title}
+                                </Typography>
+                                <Typography variant="h6" className={styles.centeredFlex}>
                                     <AssignmentIndIcon className={styles.iconSpacing}/> Role: {roles.find(item => item.id === Number(signup.volunteer_role))?.name}
                                 </Typography>
-                                <Typography variant="body1" className={styles.centeredFlex}>
+                                <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
                                     <AccessTimeIcon className={styles.iconSpacing}/> {new Date(signup.start).toLocaleString()}
                                 </Typography>
                                 <Typography variant="body1" className={styles.centeredFlex}>
