@@ -22,6 +22,7 @@ export class NotificationsRoute implements Routes {
     this.router.post(
       this.path,
       authMiddleware,
+      isAdminMiddleware,
       this.asyncHandler(this.notificationsController.createNotification)
     );
 

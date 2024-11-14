@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Typography, Button } from '@mui/material';
-import { Notification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, isOk } from '@utils/fetch';
+import { Box, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { NewNotification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, createNotification, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
+import { useBackendUserStore } from '@stores/useBackendUserStore';
 
 // Styled components
 const NotificationsContainer = styled(Box)(({ theme }) => ({
@@ -44,35 +45,35 @@ const NotificationDate = styled(Typography)(({ theme }) => ({
 
 const Notifications: React.FC = () => {
   
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NewNotification[]>([]);
   const { user } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const { backendUser } = useBackendUserStore();
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      if (user) {
-        try {
-          const response = await getNotifications(user);
-          if (isOk(response.status)) {
-            setNotifications(response.data);
-          } else {
-            console.error("Failed to fetch notifications:", response.error);
-          }
-        } catch (error) {
-          console.error("Error fetching notifications:", error);
+    if (user) {
+      getNotifications(user).then(response => {
+        if (isOk(response.status)) {
+          console.log(response.data);
+          setNotifications(response.data);
+        } else {
+          console.error("Failed to fetch notifications:", response.error);
         }
-      } else {
-        console.warn("No user provided for fetching notifications.");
-      }
-    };
-    fetchNotifications();
-    console.log(user)
+      });
+    }
   }, [user]);
 
   const markAsRead = async (id: number) => {
     if (user) {
       const response = await markNotificationAsRead(id, user);
       if (isOk(response.status)) {
-        setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+        setNotifications(prevNotifications => 
+          Array.isArray(prevNotifications) ? prevNotifications.map(n => 
+            n.id === id ? { ...n, is_read: true } : n) 
+          : [] // Fallback to empty array if prevNotifications is not iterable
+        );
       } else {
         console.error("Failed to mark notification as read:", response.error);
       }
@@ -90,6 +91,43 @@ const Notifications: React.FC = () => {
     }
   };
 
+  const handleCreateNotification = async () => {
+
+    if (!user) {
+      console.error("User not found.");
+      return;
+    }
+
+    if (!backendUser) {
+      console.error("Backend user not found.");
+      return;
+    }
+
+    if (!title || !message) {
+      alert("Title and message are required.");
+      return;
+    }
+
+    const notifData: NewNotification = {
+      id: 0, // Temporary id, will be replaced by the backend
+      title,
+      message,
+      is_read: false,
+      created_at: new Date().toISOString(),
+    };
+
+    createNotification(notifData, user).then(response => {
+      if (isOk(response.status)) {
+        setNotifications([...notifications, response.data]);
+        setOpen(false);
+      } else {
+        console.error("Failed to create notification:", response.error);
+      }
+    }
+    );
+
+  };
+
   return (
     <NotificationsContainer>
       <Typography variant="h5" gutterBottom>
@@ -103,31 +141,72 @@ const Notifications: React.FC = () => {
           <Button variant="outlined" onClick={markAllAsRead}>
             Mark All as Read
           </Button>
-          <NotificationsList>
-            {notifications.map((notification) => (
-              <NotificationItem key={notification.id} read={notification.is_read}>
-                <NotificationContent>
-                  <Typography variant="body1">{notification.title}</Typography>
-                  <Typography variant="body2">{notification.message}</Typography>
-                  <NotificationDate variant="body2">
-                    {new Date(notification.created_at).toLocaleDateString()}
-                  </NotificationDate>
-                </NotificationContent>
-                {!notification.is_read && (
-                  <MarkReadButton
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={() => markAsRead(notification.id)}
-                  >
-                    Mark as Read
-                  </MarkReadButton>
-                )}
-              </NotificationItem>
-            ))}
-          </NotificationsList>
+          <Button variant="contained" color="primary" onClick={() => setOpen(true)} style={{ marginLeft: '16px' }}>
+            Create Notification
+          </Button>
+          {Array.isArray(notifications) && notifications.length > 0 ? (
+            <NotificationsList>
+              {notifications.map((notification) => (
+                <NotificationItem key={notification?.id} read={notification?.is_read}>
+                  <NotificationContent>
+                    <Typography variant="body1">{notification?.title || "Untitled Notification"}</Typography>
+                    <Typography variant="body2">{notification?.message || "No message available"}</Typography>
+                    <NotificationDate variant="body2">
+                      {notification?.created_at ? new Date(notification.created_at).toLocaleDateString() : "Date unavailable"}
+                    </NotificationDate>
+                  </NotificationContent>
+                  {!notification?.is_read && (
+                    <MarkReadButton
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={() => markAsRead(notification.id)}
+                    >
+                      Mark as Read
+                    </MarkReadButton>
+                  )}
+                </NotificationItem>
+              ))}
+            </NotificationsList>
+          ) : (
+            <p>No notifications at this time.</p>
+          )}
         </>
       )}
+
+      {/* Modal for creating notification */}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Create Notification</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Title"
+            fullWidth
+            variant="outlined"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Message"
+            fullWidth
+            variant="outlined"
+            multiline
+            rows={4}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleCreateNotification} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     </NotificationsContainer>
   );
 };

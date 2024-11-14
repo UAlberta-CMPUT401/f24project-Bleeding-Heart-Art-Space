@@ -469,13 +469,16 @@ export type Notification = {
   created_at: string;
 };
 export type NewNotification = {
+  id: number;
   title: string;
   message: string;
+  is_read: boolean;
+  created_at: string;
 };
 export async function getNotifications(user: User): Promise<ApiResponse<Notification[]>> {
   return await getData<Notification[]>('/notifications', user);
 }
-export async function postNotification(newNotification: NewNotification, user: User): Promise<ApiResponse<Notification>> {
+export async function createNotification(newNotification: NewNotification, user: User): Promise<ApiResponse<Notification>> {
   return await postData<Notification, NewNotification>('/notifications', newNotification, user);
 }
 export async function deleteNotification(notificationId: number, user: User): Promise<ApiResponse<void>> {

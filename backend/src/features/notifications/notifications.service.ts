@@ -13,10 +13,16 @@ export class NotificationsService {
       .execute();
   }
 
-  public async createNotification(newNotification: NewNotification): Promise<Notification | undefined> {
+  public async createNotification(notificationData: NewNotification): Promise<Notification | undefined> {
     const insertedNotification = await db
       .insertInto('notifications')
-      .values(newNotification)
+      .values({
+        user_id: notificationData.user_id,
+        title: notificationData.title,
+        message: notificationData.message,
+        is_read: notificationData.is_read,
+        created_at: notificationData.created_at,
+      })
       .returningAll()
       .executeTakeFirst();
 

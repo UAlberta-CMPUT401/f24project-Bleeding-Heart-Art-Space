@@ -18,8 +18,12 @@ export class NotificationsController {
   public createNotification = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newNotification: NewNotification = req.body;
-      const createdNotification = await this.notificationsService.createNotification(newNotification);
-      res.status(201).json({ data: createdNotification, message: 'Notification created successfully' });
+      const insertedNotification = await this.notificationsService.createNotification(newNotification);
+      if (insertedNotification === undefined) {
+        res.status(400).json({ message: 'Failed to create notification' });
+      } else {
+        res.status(201).json(insertedNotification);
+      }
     } catch (error) {
       next(error);
     }
