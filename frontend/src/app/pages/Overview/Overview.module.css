@@ -66,6 +66,7 @@ h2 {
 
 .iconSpacing {
   margin-right: 8px;
+  vertical-align: middle;
 }
 
 @media (min-width: 768px) {

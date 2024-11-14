@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Card, Button } from '@mui/material';
+import { Typography, Card, Button, Stack } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { useAuth } from '@lib/context/AuthContext';
-import { getUpcomingEvents, getUserSignups, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles } from '@utils/fetch';
+import { getUpcomingEvents, getUserSignups, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout,} from '@utils/fetch';
 import { isBefore, addWeeks } from 'date-fns';
 import styles from './Overview.module.css';
-import { Stack } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import SnackbarAlert from '@components/SnackbarAlert';
 
 const OverviewPage: React.FC = () => {
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const { user } = useAuth();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+    const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
 
@@ -44,6 +49,58 @@ const OverviewPage: React.FC = () => {
         });
     }, [user]);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrentTime(new Date());
+        }, 30000);
+    
+        return () => clearInterval(interval);
+      }, []);
+
+    const handleCheckIn = async (signupId: number) => {
+        if (!user) return;
+        
+        const checkInTime = new Date().toISOString();
+        
+        const response = await checkin(signupId, { checkin_time: checkInTime }, user);
+        if (isOk(response.status)) {
+            setUserSignups(prevSignups =>
+            prevSignups.map(signup =>
+                signup.id === signupId ? { ...signup, checkin_time: new Date(checkInTime) } : signup
+            )
+            );
+            setSnackbarMessage('Check-in successful!');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
+        } else {
+            setSnackbarMessage(response.error || 'Check-in failed!');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
+        }
+    };
+      
+    const handleCheckOut = async (signupId: number) => {
+        if (!user) return;
+        
+        const checkOutTime = new Date().toISOString();
+        
+        const response = await checkout(signupId, { checkout_time: checkOutTime }, user);
+        if (isOk(response.status)) {
+            setUserSignups(prevSignups =>
+            prevSignups.map(signup =>
+                signup.id === signupId ? { ...signup, checkout_time: new Date(checkOutTime) } : signup
+            )
+            );
+            setSnackbarMessage('Check-out successful!');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
+        } else {
+            setSnackbarMessage(response.error || 'Check-out failed!');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
+        }
+    };
+      
     return (
         <div className= {styles.container}>
             <div className={styles.leftColumn}>
@@ -88,6 +145,35 @@ const OverviewPage: React.FC = () => {
                                 <Typography variant="body1" className={styles.centeredFlex}>
                                     <AccessTimeIcon className={styles.iconSpacing}/> {new Date(signup.end).toLocaleString()}
                                 </Typography>
+                                <Stack direction="row" spacing={2} justifyContent="center" marginTop={2}>
+                                    <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleCheckIn(signup.id)}
+                                    disabled={
+                                        signup.checkin_time != null ||
+                                        currentTime < new Date(signup.start) ||
+                                        currentTime > new Date(signup.end)
+                                    }
+                                    startIcon={signup.checkin_time != null ? <CheckIcon /> : null}
+                                    >
+                                    {signup.checkin_time != null ? 'Checked In' : 'Check In'}
+                                    </Button>
+                                    <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={() => handleCheckOut(signup.id)}
+                                    disabled={
+                                        signup.checkin_time == null ||
+                                        signup.checkout_time != null ||
+                                        currentTime < new Date(signup.start) ||
+                                        currentTime > new Date(signup.end)
+                                    }
+                                    startIcon={signup.checkout_time != null ? <CheckIcon /> : null}
+                                    >
+                                    {signup.checkout_time != null ? 'Checked Out' : 'Check Out'}
+                                    </Button>
+                                </Stack>
                             </Card>
                         ))}
                     </Stack>
@@ -95,6 +181,13 @@ const OverviewPage: React.FC = () => {
                     <Typography>You haven't signed up for any shifts yet.</Typography>
                 )}
             </div>
+            <SnackbarAlert
+            open={snackbarOpen}
+            onClose={() => setSnackbarOpen(false)}
+            message={snackbarMessage}
+            severity={snackbarSeverity}
+            />
+
         </div>
     );
 };
