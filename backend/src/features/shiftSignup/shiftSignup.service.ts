@@ -53,6 +53,7 @@ export class ShiftSignupService {
       .selectFrom('shift_signup')
       .innerJoin('users', 'users.id', 'shift_signup.user_id')
       .innerJoin('volunteer_shifts', 'volunteer_shifts.id', 'shift_signup.shift_id')
+      .innerJoin('events', 'events.id', 'volunteer_shifts.event_id')
       .select([
         'shift_signup.id',
         'shift_signup.user_id',
@@ -66,8 +67,11 @@ export class ShiftSignupService {
         'volunteer_shifts.volunteer_role',
         'volunteer_shifts.start',
         'volunteer_shifts.end',
+        'events.id as event_id',
+        'events.title as event_title',
       ])
       .where('users.uid', '=', uid)
+      .orderBy('volunteer_shifts.start', 'asc')
       .execute();
     return result;
   }
