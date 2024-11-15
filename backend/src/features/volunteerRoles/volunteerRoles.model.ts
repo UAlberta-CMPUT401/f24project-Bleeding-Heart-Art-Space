@@ -1,5 +1,4 @@
 import {
-    ColumnType,
     Generated,
     Insertable,
     Selectable,

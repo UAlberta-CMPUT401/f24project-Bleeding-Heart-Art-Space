@@ -1,4 +1,3 @@
-import { singleton } from "tsyringe";
 import * as pg from 'pg'
 import { Pool, PoolConfig } from 'pg'
 import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from 'kysely'
@@ -12,6 +11,7 @@ import { EventsTable } from "@/features/events/events.model";
 import { VolunteerShiftsTable } from "@/features/volunteerShifts/volunteerShifts.model";
 import { ShiftSignupTable } from "@/features/shiftSignup/shiftSignup.model";
 import { EventRequestsTable } from "@/features/eventRequests/eventRequests.model";
+import { NotificationsTable } from "@/features/notifications/notifications.model";
 
 export interface Database {
   users: UsersTable
@@ -21,6 +21,8 @@ export interface Database {
   volunteer_shifts: VolunteerShiftsTable
   shift_signup: ShiftSignupTable
   event_requests: EventRequestsTable
+  notifications: NotificationsTable
+  
 }
 
 // make sure that postgres 'numeric' types are numbers, not strings

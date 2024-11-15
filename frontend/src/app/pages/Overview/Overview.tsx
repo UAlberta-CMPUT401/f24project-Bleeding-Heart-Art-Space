@@ -53,7 +53,7 @@ const OverviewPage: React.FC = () => {
     useEffect(() => {
         const interval = setInterval(() => {
           setCurrentTime(new Date());
-        }, 30000);
+        }, 1000);
     
         return () => clearInterval(interval);
       }, []);
@@ -147,7 +147,7 @@ const OverviewPage: React.FC = () => {
                                     <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.start), 'MM/dd/yyyy, hh:mm a')}
                                 </Typography>
                                 <Typography variant="body1" className={styles.centeredFlex}>
-                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.start), 'MM/dd/yyyy, hh:mm a')}
+                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.end), 'MM/dd/yyyy, hh:mm a')}
                                 </Typography>
                                 <Stack direction="row" spacing={2} justifyContent="center" marginTop={2}>
                                     <Button
