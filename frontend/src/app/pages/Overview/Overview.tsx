@@ -9,6 +9,7 @@ import { isBefore, addWeeks } from 'date-fns';
 import styles from './Overview.module.css';
 import CheckIcon from '@mui/icons-material/Check';
 import SnackbarAlert from '@components/SnackbarAlert';
+import { format } from 'date-fns';
 
 const OverviewPage: React.FC = () => {
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
@@ -111,7 +112,7 @@ const OverviewPage: React.FC = () => {
                             <Card key={event.id} className={styles.card}>
                                 <Typography variant="h6" className={styles.centeredFlex} >{event.title}</Typography>
                                 <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
-                                    <EventIcon className={styles.iconSpacing}/> {new Date(event.start).toLocaleString()}
+                                    <EventIcon className={styles.iconSpacing}/> {format(new Date(event.start), 'MM/dd/yyyy, hh:mm a')}
                                 </Typography>
                                 <Button
                                     variant="contained"
@@ -143,10 +144,10 @@ const OverviewPage: React.FC = () => {
                                     <AssignmentIndIcon className={styles.iconSpacing}/> Role: {roles.find(item => item.id === Number(signup.volunteer_role))?.name}
                                 </Typography>
                                 <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
-                                    <AccessTimeIcon className={styles.iconSpacing}/> {new Date(signup.start).toLocaleString()}
+                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.start), 'MM/dd/yyyy, hh:mm a')}
                                 </Typography>
                                 <Typography variant="body1" className={styles.centeredFlex}>
-                                    <AccessTimeIcon className={styles.iconSpacing}/> {new Date(signup.end).toLocaleString()}
+                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.start), 'MM/dd/yyyy, hh:mm a')}
                                 </Typography>
                                 <Stack direction="row" spacing={2} justifyContent="center" marginTop={2}>
                                     <Button
