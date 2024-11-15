@@ -85,7 +85,7 @@ export class UsersController {
   public getUserAndRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!isAuthenticated(req)) {
-        res.status(401);
+        res.status(401).json({ error: 'Unauthorized' });
         return;
       }
       const userAndRole = await this.usersService.getUserAndRole(req.auth.uid);
@@ -94,6 +94,40 @@ export class UsersController {
         return;
       }
       res.status(200).json(userAndRole);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public getUsersAndRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const usersAndRole = await this.usersService.getUsersAndRole();
+      res.status(200).json(usersAndRole);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public batchAssignRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const body: any = req.body;
+      const users: number[] = body.users.map((user: any) => Number(user));
+      const role: number = Number(body.role);
+      const updatedIds = await this.usersService.batchAssignRole(users, role, req.auth.uid);
+      res.status(200).json(updatedIds);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public getRoles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const roles = await this.usersService.getRoles();
+      res.status(200).json(roles);
     } catch (error) {
       next(error);
     }

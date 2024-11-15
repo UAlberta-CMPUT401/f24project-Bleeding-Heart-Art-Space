@@ -26,6 +26,13 @@ export class VolunteerRolesRoute implements Routes {
       this.asyncHandler(this.volunteerRolesController.createVolunteerRole)
     );
 
+    this.router.post(
+      `${this.path}/batch_delete`,
+      authMiddleware,
+      isAdminMiddleware,
+      this.asyncHandler(this.volunteerRolesController.deleteVolunteerRoles)
+    );
+
     this.router.delete(
       `${this.path}/:id`,
       authMiddleware,
