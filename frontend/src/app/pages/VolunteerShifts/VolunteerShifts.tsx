@@ -7,6 +7,7 @@ import styles from './VolunteerShifts.module.css';
 import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEvent, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 import { format } from 'date-fns';
+import SnackbarAlert from '@components/SnackbarAlert';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -23,6 +24,9 @@ const VolunteerShifts: React.FC = () => {
     const [shifts, setShifts] = useState<NewShift[]>([]);
     const [savedShifts, setSavedShifts] = useState<Shift[]>([]);
     const { user } = useAuth();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
     useEffect(() => {
         if (eventId && user) {
@@ -33,7 +37,9 @@ const VolunteerShifts: React.FC = () => {
 
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
-            alert('Please fill in all shift details.');
+            setSnackbarMessage('Please fill in all shift details.');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
             return;
         }
         setShifts([...shifts, newShift]);
@@ -197,6 +203,12 @@ const VolunteerShifts: React.FC = () => {
                     </Grid>
                 ))}
             </Grid>
+            <SnackbarAlert
+                open={snackbarOpen}
+                onClose={() => setSnackbarOpen(false)}
+                message={snackbarMessage}
+                severity={snackbarSeverity}
+            />
         </Container>
     );
 };
