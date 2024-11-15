@@ -50,7 +50,6 @@ const Notifications: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [role_name, setRoleName] = useState("");
   const [roleId, setRoleId] = useState("");
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
 
