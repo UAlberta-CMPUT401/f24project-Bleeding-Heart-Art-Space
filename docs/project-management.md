@@ -60,7 +60,6 @@ Estimated Sprint Velocity: **39**
 
 | User story                                 | Story points |
 | ------------------------------------------ | ------------ |
-| US 1.04 - Admin assign permissions         | 3            |
 | US 1.05 - Create volunteer schedules       | 8            |
 | US 1.08 - Admin signs up to volunteer      | 3            |
 | US 2.04 - Sign up for events               | 3            |
