@@ -63,7 +63,7 @@ export class NotificationsRoute implements Routes {
    * @param fn - Controller function to wrap with error handling.
    */
   private asyncHandler(
-    fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
+    fn: (req: Request, res: Response, next: NextFunction) => Promise<Response<any, Record<string, any>> | void>
   ) {
     return (req: Request, res: Response, next: NextFunction) => {
       Promise.resolve(fn(req, res, next)).catch(next);

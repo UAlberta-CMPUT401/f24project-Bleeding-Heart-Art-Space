@@ -16,16 +16,18 @@ export class NotificationsController {
   };
 
   public createNotification = async (req: Request, res: Response, next: NextFunction) => {
+    
+    const {title, message, role_name} = req.body;
+    if (!title || !message || !role_name) {
+      res.status(400).json({ message: 'All fields are required' });
+      return;
+    }
     try {
-      const newNotification: NewNotification = req.body;
-      const insertedNotification = await this.notificationsService.createNotification(newNotification);
-      if (insertedNotification === undefined) {
-        res.status(400).json({ message: 'Failed to create notification' });
-      } else {
-        res.status(201).json(insertedNotification);
-      }
+      const notification = await this.notificationsService.createNotification({ title, message, role_name, is_read: false });
+      return res.status(201).json(notification);
     } catch (error) {
-      next(error);
+      console.error('Error creating notification:', error);
+      return res.status(500).send({ message: 'Failed to create notification' });
     }
   };
 

@@ -472,12 +472,23 @@ export type NewNotification = {
   title: string;
   message: string;
   role_name: string;
+  is_read?: boolean;
+  created_at?: string;
 };
 export async function getNotifications(user: User): Promise<ApiResponse<Notification[]>> {
   return await getData<Notification[]>('/notifications', user);
 }
 export async function createNotification(newNotification: NewNotification, user: User): Promise<ApiResponse<Notification>> {
-  return await postData<Notification, NewNotification>('/notifications', newNotification, user);
+  try {
+    const response = await postData<Notification, NewNotification>('/notifications', newNotification, user);
+    if (!response || !response.data) {
+      throw new Error('No response data received');
+    }
+    return response;
+  } catch (error) {
+    console.error('Error creating notification:', error);
+    throw error;
+  }
 }
 export async function deleteNotification(notificationId: number, user: User): Promise<ApiResponse<void>> {
   return await deleteData<void>(`/notifications/${notificationId}`, user);

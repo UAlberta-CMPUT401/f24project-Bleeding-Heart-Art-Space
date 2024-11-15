@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import { NewNotification, Notification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, createNotification, isOk } from '@utils/fetch';
+import { Box, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { NewNotification, Notification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, createNotification, getVolunteerRoles, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 
@@ -51,14 +51,26 @@ const Notifications: React.FC = () => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [role_name, setRoleName] = useState("");
+  const [roleId, setRoleId] = useState("");
+  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     if (user) {
       getNotifications(user).then(response => {
+        console.log("Notifications response:", response);
         if (isOk(response.status)) {
-          setNotifications(response.data);
+          console.log("Notifications data:", response.data);
+          setNotifications(response.data.data);
         } else {
           console.error("Failed to fetch notifications:", response.error);
+        }
+      });
+
+      getVolunteerRoles(user).then(response => {
+        if (isOk(response.status)) {
+          setRoles(response.data.map((role: any) => ({ id: role.id, name: role.name })));
+        } else {
+          console.error("Failed to fetch roles:", response.error);
         }
       });
     }
@@ -68,9 +80,7 @@ const Notifications: React.FC = () => {
     if (user) {
       const response = await markNotificationAsRead(id, user);
       if (isOk(response.status)) {
-        setNotifications(prevNotifications => 
-          prevNotifications.map(n => n.id === id ? { ...n, is_read: true } : n)
-        );
+        setNotifications(notifications.map(n => (n.id === id ? { ...n, is_read: true } : n)));
       } else {
         console.error("Failed to mark notification as read:", response.error);
       }
@@ -89,23 +99,31 @@ const Notifications: React.FC = () => {
   };
 
   const handleCreateNotification = async () => {
-    if (!user || !backendUser || !title || !message) {
+    if (!user || !backendUser || !title || !message || !roleId) {
       alert("All fields are required.");
       return;
     }
 
-    const notifData: NewNotification = {
-      title,
-      message,
-      role_name,
+
+    const notificationData: NewNotification = {
+      title: title,
+      message: message,
+      role_name: roles.find(role => role.id === roleId)?.name ?? "",
+      is_read: false,
     };
 
-    const response = await createNotification(notifData, user);
-    if (isOk(response.status)) {
-      setNotifications([...notifications, response.data]);
-      setOpen(false);
-    } else {
-      console.error("Failed to create notification:", response.error);
+    try {
+      const response = await createNotification(notificationData, user);
+      if (isOk(response.status)) {
+        console.log('Notification created successfully:', response.data);
+        setNotifications((prevNotifications) => Array.isArray(prevNotifications) 
+        ? [...prevNotifications, response.data] 
+        : [response.data]  // If not an array, initialize with the new notification
+      );
+        setOpen(false);
+      }
+    } catch (error) {
+      console.error('Failed to create notification:', error);
     }
   };
 
@@ -120,19 +138,16 @@ const Notifications: React.FC = () => {
       <Button variant="contained" color="primary" onClick={() => setOpen(true)} style={{ marginLeft: '16px' }}>
         Create Notification
       </Button>
-      
-      {notifications.length === 0 ? (
-        <Typography>No notifications at this time.</Typography>
-      ) : (
+      {Array.isArray(notifications) && notifications.length > 0 ? (
         <NotificationsList>
           {notifications.map(notification => (
-            <NotificationItem key={notification?.id ?? Math.random()} read={notification.is_read}>
+            <NotificationItem key={notification.id} read={notification.is_read}>
               <NotificationContent>
-                <Typography variant="body1">{notification?.title}</Typography>
-                <Typography variant="body2">{notification?.message}</Typography>
+                <Typography variant="body1">{notification.title}</Typography>
+                <Typography variant="body2">{notification.message}</Typography>
                 {notification.created_at && (
                   <NotificationDate variant="body2">
-                    {new Date(notification?.created_at).toLocaleDateString()}
+                    {new Date(notification.created_at).toLocaleDateString()}
                   </NotificationDate>
                 )}
               </NotificationContent>
@@ -149,6 +164,8 @@ const Notifications: React.FC = () => {
             </NotificationItem>
           ))}
         </NotificationsList>
+      ) : (
+        <Typography variant="body1">No notifications found.</Typography>
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -162,6 +179,7 @@ const Notifications: React.FC = () => {
             variant="outlined"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            inputProps={{ "data-gramm": "false" }}
           />
           <TextField
             margin="dense"
@@ -172,7 +190,22 @@ const Notifications: React.FC = () => {
             rows={4}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            inputProps={{ "data-gramm": "false" }}
           />
+          <FormControl fullWidth variant="outlined" margin="dense">
+            <InputLabel>Role</InputLabel>
+            <Select
+              value={roleId}
+              onChange={(e) => setRoleId(e.target.value as string)}
+              label="Role"
+            >
+              {roles.map(role => (
+                <MenuItem key={role.id} value={role.id}>
+                  {role.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="primary">
