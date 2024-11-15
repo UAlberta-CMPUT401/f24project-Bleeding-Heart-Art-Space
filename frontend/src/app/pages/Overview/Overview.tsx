@@ -53,7 +53,7 @@ const OverviewPage: React.FC = () => {
     useEffect(() => {
         const interval = setInterval(() => {
           setCurrentTime(new Date());
-        }, 30000);
+        }, 1000);
     
         return () => clearInterval(interval);
       }, []);
