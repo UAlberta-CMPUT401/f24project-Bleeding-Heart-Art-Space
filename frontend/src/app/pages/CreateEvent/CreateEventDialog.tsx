@@ -65,7 +65,15 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
         const startDateTime = new Date(`${startDateLocal}T${startTimeLocal}`);
         const endDateTime = new Date(`${endDateLocal}T${endTimeLocal}`);
 
-        if (!title || !venue || !address || !startDateLocal || !endDateLocal || !startTimeLocal || !endTimeLocal) {
+        if (
+            !title.trim() || 
+            !venue.trim() || 
+            !address.trim() || 
+            !startDateLocal.trim() || 
+            !endDateLocal.trim() || 
+            !startTimeLocal.trim() || 
+            !endTimeLocal.trim()
+        ) {
             setValidSnackbarMessage("All fields are required.");
             setSnackbarSeverity('error');
             setValidSnackbarOpen(true);
