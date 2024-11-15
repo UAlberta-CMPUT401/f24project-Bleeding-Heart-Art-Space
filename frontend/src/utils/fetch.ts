@@ -462,18 +462,16 @@ export async function checkout(signupId: number, time: CheckOut, user: User): Pr
 // Notifications
 export type Notification = {
   id: number;
-  user_id: number;
+  role_name: string;
   title: string;
   message: string;
   is_read: boolean;
   created_at: string;
 };
 export type NewNotification = {
-  id: number;
   title: string;
   message: string;
-  is_read: boolean;
-  created_at: string;
+  role_name: string;
 };
 export async function getNotifications(user: User): Promise<ApiResponse<Notification[]>> {
   return await getData<Notification[]>('/notifications', user);

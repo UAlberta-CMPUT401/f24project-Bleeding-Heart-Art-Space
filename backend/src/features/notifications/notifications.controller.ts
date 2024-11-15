@@ -29,6 +29,16 @@ export class NotificationsController {
     }
   };
 
+  public getNotificationsByRole = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { roleName } = req.params;
+      const notifications = await this.notificationsService.getNotificationsByRole(roleName);
+      res.status(200).json({ data: notifications, message: `Notifications for role ${roleName} retrieved successfully` });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public deleteNotification = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = Number(req.params.id);

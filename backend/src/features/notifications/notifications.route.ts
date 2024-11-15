@@ -13,12 +13,14 @@ export class NotificationsRoute implements Routes {
   }
 
   private initializeRoutes() {
+    // Get all notifications
     this.router.get(
       this.path,
       authMiddleware,
       this.asyncHandler(this.notificationsController.getAllNotifications)
     );
 
+    // Create a new notification (Admin only)
     this.router.post(
       this.path,
       authMiddleware,
@@ -26,6 +28,14 @@ export class NotificationsRoute implements Routes {
       this.asyncHandler(this.notificationsController.createNotification)
     );
 
+    // Get notifications by role
+    this.router.get(
+      `${this.path}/role/:roleName`,
+      authMiddleware,
+      this.asyncHandler(this.notificationsController.getNotificationsByRole)
+    );
+
+    // Delete a notification by ID (Admin only)
     this.router.delete(
       `${this.path}/:id`,
       authMiddleware,
@@ -33,12 +43,14 @@ export class NotificationsRoute implements Routes {
       this.asyncHandler(this.notificationsController.deleteNotification)
     );
 
+    // Mark a specific notification as read
     this.router.patch(
       `${this.path}/:id/read`,
       authMiddleware,
       this.asyncHandler(this.notificationsController.markNotificationAsRead)
     );
 
+    // Mark all notifications as read
     this.router.patch(
       `${this.path}/read`,
       authMiddleware,

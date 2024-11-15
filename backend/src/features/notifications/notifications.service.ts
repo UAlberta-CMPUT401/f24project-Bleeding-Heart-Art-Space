@@ -7,37 +7,37 @@ import { Notification, NewNotification } from './notifications.model';
 export class NotificationsService {
   
   public async getAllNotifications(): Promise<Notification[]> {
-    return await db
+    return db
       .selectFrom('notifications')
       .selectAll()
       .execute();
   }
 
+  public async getNotificationsByRole(roleName: string): Promise<Notification[]> {
+    return db
+      .selectFrom('notifications')
+      .selectAll()
+      .where('role_name', '=', roleName)
+      .execute();
+  }
+
   public async createNotification(notificationData: NewNotification): Promise<Notification | undefined> {
-    const insertedNotification = await db
+    return db
       .insertInto('notifications')
-      .values({
-        user_id: notificationData.user_id,
-        title: notificationData.title,
-        message: notificationData.message,
-        is_read: notificationData.is_read,
-        created_at: notificationData.created_at,
-      })
+      .values(notificationData)
       .returningAll()
       .executeTakeFirst();
-
-    return insertedNotification;
   }
 
   public async deleteNotification(id: number): Promise<DeleteResult> {
-    return await db
+    return db
       .deleteFrom('notifications')
       .where('id', '=', id)
       .executeTakeFirst();
   }
 
   public async markNotificationAsRead(id: number): Promise<UpdateResult> {
-    return await db
+    return db
       .updateTable('notifications')
       .set({ is_read: true })
       .where('id', '=', id)
@@ -45,7 +45,7 @@ export class NotificationsService {
   }
 
   public async markAllNotificationsAsRead(): Promise<UpdateResult[]> {
-    return await db
+    return db
       .updateTable('notifications')
       .set({ is_read: true })
       .execute();
