@@ -30,11 +30,13 @@ export class VolunteerRolesService {
       .executeTakeFirst();
   }
 
-  public async deleteShiftsByRoleId(id: number): Promise<DeleteResult> {
-    return await db
-      .deleteFrom('volunteer_shifts' as any)
-      .where('volunteer_role', '=', id)
-      .executeTakeFirst();
+  public async deleteVolunteerRoles(ids: number[]): Promise<number[]> {
+    const deletedIds = await db
+      .deleteFrom('volunteer_roles')
+      .where('id', 'in', ids)
+      .returning('id')
+      .execute();
+    return deletedIds.map(id => id.id);
   }
 
 }
