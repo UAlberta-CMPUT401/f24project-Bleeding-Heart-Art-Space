@@ -27,8 +27,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         <Typography>{message}</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel} color="primary">{cancelButtonText}</Button>
-        <Button onClick={onConfirm} color="secondary">{confirmButtonText}</Button>
+        <Button onClick={onCancel} color="error">{cancelButtonText}</Button>
+        <Button variant='contained' onClick={onConfirm} color="secondary">{confirmButtonText}</Button>
       </DialogActions>
     </Dialog>
   );

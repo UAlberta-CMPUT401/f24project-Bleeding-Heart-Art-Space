@@ -192,7 +192,7 @@ export async function getUpcomingEvents(user: User): Promise<ApiResponse<Event[]
       ...eventData,
       start: new Date(eventData.start),
       end: new Date(eventData.end),
-    })),
+    })).sort((a, b) => a.start.getTime() - b.start.getTime()),
   }
   return formattedResponse;
 }
@@ -322,6 +322,9 @@ export async function postVolunteerRole(newVolunteerRole: NewVolunteerRole, user
 export async function deleteVolunteerRole(volunteerRoleId: number, user: User): Promise<ApiResponse<void>> {
   return await deleteData<void>(`/volunteer_roles/${volunteerRoleId}`, user);
 }
+export async function deleteVolunteerRoles(volunteerRoles: VolunteerRole[], user: User): Promise<ApiResponse<number[]>> {
+  return await postData<number[], number[]>(`/volunteer_roles/batch_delete`, volunteerRoles.map(volunteerRole => volunteerRole.id), user);
+}
 
 export type Shift = {
   id: number;
@@ -377,6 +380,9 @@ export async function getBackendUser(user: User): Promise<ApiResponse<BackendUse
 export async function getBackendUserAndRole(user: User): Promise<ApiResponse<BackendUserAndRole>> {
   return await getData<BackendUserAndRole>(`/users/user-role`, user);
 }
+export async function getBackendUsersAndRole(user: User): Promise<ApiResponse<BackendUserAndRole[]>> {
+  return await getData<BackendUserAndRole[]>(`/users`, user);
+}
 export type NewBackendUser = {
   first_name: string;
   last_name: string;
@@ -384,6 +390,24 @@ export type NewBackendUser = {
 }
 export async function postBackendUser(user: User, newBackendUser: NewBackendUser): Promise<ApiResponse<void>> {
   return await postData<void, NewBackendUser>('/users/user', newBackendUser, user);
+}
+export type BatchAssignRole = {
+  users: number[],
+  role: number,
+};
+export async function postAssignRoles(payload: BatchAssignRole, user: User): Promise<ApiResponse<number[]>> {
+  return await postData<number[], BatchAssignRole>('/users/batch-assign-role', payload, user);
+}
+export interface Role {
+  id: number
+  title: string
+  can_take_shift: boolean
+  can_request_event: boolean
+  is_admin: boolean
+  is_blocked: boolean
+}
+export async function getRoles(user: User): Promise<ApiResponse<Role[]>> {
+  return await getData<Role[]>('/users/roles', user);
 }
 
 export type ShiftSignupUser = {
@@ -399,6 +423,8 @@ export type ShiftSignupUser = {
   volunteer_role: string | null | undefined;
   start: Date;
   end: Date;
+  event_id: number;
+  event_title: string;
 }
 export type NewShiftSignup = {
   user_id: number;
