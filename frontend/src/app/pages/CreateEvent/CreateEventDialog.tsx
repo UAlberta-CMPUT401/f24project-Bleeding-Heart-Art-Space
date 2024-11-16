@@ -155,7 +155,13 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                                     variant="outlined"
                                     fullWidth
                                     value={startDateLocal}
-                                    onChange={(e) => setStartDateLocal(e.target.value)}
+                                    onChange={(e) => {
+                                        const newStartDate = e.target.value;
+                                        setStartDateLocal(newStartDate);
+                                        if (!endDateLocal) {
+                                            setEndDateLocal(newStartDate);
+                                        }
+                                    }}
                                     required
                                     InputLabelProps={{ shrink: true }}
                                 />

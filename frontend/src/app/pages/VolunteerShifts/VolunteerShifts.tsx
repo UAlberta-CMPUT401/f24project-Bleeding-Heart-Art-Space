@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Select, MenuItem, TextField } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -27,6 +27,8 @@ const VolunteerShifts: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+    const location = useLocation();
+    const { eventStart, eventEnd } = location.state || {};    
 
     useEffect(() => {
         if (eventId && user) {
@@ -34,6 +36,19 @@ const VolunteerShifts: React.FC = () => {
             getEventShifts(Number(eventId), user).then(response => setSavedShifts(response.data));
         }
     }, [eventId, user]);
+
+    useEffect(() => {
+        if (eventStart && eventEnd) {
+            const localStartTime = new Date(eventStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+            const localEndTime = new Date(eventEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    
+            setNewShift((prev) => ({
+                ...prev,
+                start: localStartTime,
+                end: localEndTime,
+            }));
+        }
+    }, [eventStart, eventEnd]);    
 
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
@@ -111,6 +126,7 @@ const VolunteerShifts: React.FC = () => {
                         fullWidth
                         value={newShift.start}
                         onChange={(e) => setNewShift({ ...newShift, start: e.target.value })}
+                        InputLabelProps={{ shrink: true }}
                     />
                 </Grid>
 
@@ -121,6 +137,7 @@ const VolunteerShifts: React.FC = () => {
                         fullWidth
                         value={newShift.end}
                         onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
+                        InputLabelProps={{ shrink: true }}
                     />
                 </Grid>
 
