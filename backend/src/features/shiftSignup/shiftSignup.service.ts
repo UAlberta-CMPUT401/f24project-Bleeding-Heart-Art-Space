@@ -60,6 +60,7 @@ export class ShiftSignupService {
         'shift_signup.shift_id',
         'shift_signup.checkin_time',
         'shift_signup.checkout_time',
+        'shift_signup.hours_worked',
         'shift_signup.notes',
         'users.uid',
         'users.first_name',
@@ -124,6 +125,7 @@ export class ShiftSignupService {
         'shift_signup.shift_id',
         'shift_signup.checkin_time',
         'shift_signup.checkout_time',
+        'shift_signup.hours_worked',
         'shift_signup.notes',
         'users.uid',
         'users.first_name',
@@ -180,7 +182,7 @@ export class ShiftSignupService {
     const shiftSignup = await db
       .selectFrom('shift_signup')
       .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
-      .select(['volunteer_shifts.start as shift_start', 'volunteer_shifts.end as shift_end'])
+      .select(['volunteer_shifts.start as shift_start', 'volunteer_shifts.end as shift_end', 'shift_signup.checkin_time as checkin_time',])
       .where('shift_signup.id', '=', signupId)
       .executeTakeFirst();
   
@@ -190,16 +192,26 @@ export class ShiftSignupService {
   
     const shiftStart = new Date(shiftSignup.shift_start);
     const shiftEnd = new Date(shiftSignup.shift_end);
+    if (!shiftSignup.checkin_time) {
+      throw new Error('Check-in time not found');
+    }
+    const checkinTime = new Date(shiftSignup.checkin_time);
+
   
     // Check if the checkout time is within the allowed shift period
     if (checkoutTime < shiftStart || checkoutTime > shiftEnd) {
       throw new BadRequestException('Check-out time must be within the shift period');
     }
-  
+
+    const hoursWorked = parseFloat(((checkoutTime.getTime() - checkinTime.getTime()) / (1000 * 60 * 60)).toFixed(2));
+    
+    if (hoursWorked < 0.0167) { // Less than 1 minute
+      throw new BadRequestException('Check-out time must be at least 1 minute after check-in time');
+    }
     // Proceed with the check-out if the time is valid
     await db
       .updateTable('shift_signup')
-      .set({ checkout_time: checkoutTime })
+      .set({ checkout_time: checkoutTime, hours_worked: hoursWorked })
       .where('id', '=', signupId)
       .execute();
   }
@@ -207,9 +219,39 @@ export class ShiftSignupService {
   /**
    * Automatically check out users who forgot to check out by the shift end time.
    */
+  // public async autoCheckOut(): Promise<void> {
+  //   const now = new Date();
+
+  //   const overdueSignups = await db
+  //     .selectFrom('shift_signup')
+  //     .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+  //     .select([
+  //       'shift_signup.id',
+  //       'shift_signup.shift_id',
+  //       'shift_signup.checkin_time',
+  //       'shift_signup.checkout_time',
+  //       'volunteer_shifts.end as shift_end',
+  //       'shift_signup.checkin_time as checkin_time'
+  //     ])
+  //     .where('shift_signup.checkin_time', 'is not', null)
+  //     .where('shift_signup.checkout_time', 'is', null)
+  //     .where('volunteer_shifts.end', '<', now)
+  //     .execute();
+
+      
+
+  //   for (const signup of overdueSignups) {
+  //     await db
+  //       .updateTable('shift_signup')
+  //       .set({ checkout_time: signup.shift_end }) // Use shift_end as checkout time
+  //       .where('id', '=', signup.id)
+  //       .execute();
+  //   }
+  // }
+
   public async autoCheckOut(): Promise<void> {
     const now = new Date();
-
+  
     const overdueSignups = await db
       .selectFrom('shift_signup')
       .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
@@ -219,20 +261,41 @@ export class ShiftSignupService {
         'shift_signup.checkin_time',
         'shift_signup.checkout_time',
         'volunteer_shifts.end as shift_end',
+        'shift_signup.checkin_time as checkin_time'
       ])
       .where('shift_signup.checkin_time', 'is not', null)
       .where('shift_signup.checkout_time', 'is', null)
       .where('volunteer_shifts.end', '<', now)
       .execute();
-
+  
     for (const signup of overdueSignups) {
+      if (!signup.checkin_time) {
+        console.error(`Check-in time not found for signup ID: ${signup.id}`);
+        continue;
+      }
+  
+      const checkinTime = new Date(signup.checkin_time);
+      const checkoutTime = new Date(signup.shift_end);
+  
+      // Calculate hours worked (rounded to two decimal places)
+      const hoursWorked = parseFloat(((checkoutTime.getTime() - checkinTime.getTime()) / (1000 * 60 * 60)).toFixed(2));
+  
+      if (hoursWorked < 0.0167) {
+        console.error(`Auto-checkout skipped for signup ID: ${signup.id} because the duration is less than 1 minute`);
+        continue;
+      }
+  
+      // Proceed with the auto-checkout if the time is valid
       await db
         .updateTable('shift_signup')
-        .set({ checkout_time: signup.shift_end }) // Use shift_end as checkout time
+        .set({ checkout_time: checkoutTime, hours_worked: hoursWorked })
         .where('id', '=', signup.id)
         .execute();
+  
+      console.log(`Auto-checkout completed for signup ID: ${signup.id} with hours worked: ${hoursWorked}`);
     }
   }
+  
 
   /**
    * Auto-checkout a specific shift signup by ID using the shift’s end time.
