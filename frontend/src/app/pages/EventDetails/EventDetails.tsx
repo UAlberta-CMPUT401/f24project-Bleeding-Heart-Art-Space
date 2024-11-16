@@ -81,7 +81,12 @@ const EventDetails: React.FC = () => {
     };
     
     const handleGoToShifts = () => {
-        navigate(`/volunteer-shifts/${eventIdStr}`);
+        navigate(`/volunteer-shifts/${eventIdStr}`, {
+            state: {
+                eventStart: event?.start,
+                eventEnd: event?.end,
+            },
+        });
     };
 
     const handleShiftClick = (shift: Shift) => {
