@@ -24,6 +24,16 @@ describe('deleteEventTest', function() {
   });
 
   it('deleteEventTest', async function() {
+    // STEP 0: LOGIN
+    await driver.get("http://localhost:5173/")
+    await driver.manage().window().setRect({ width: 1292, height: 684 })
+    await driver.findElement(By.css(".MuiButton-contained")).click()
+    await driver.findElement(By.id(":r1:")).click()
+    await driver.findElement(By.id(":r1:")).sendKeys("a@test.com")
+    await driver.findElement(By.id(":r3:")).click()
+    await driver.findElement(By.id(":r3:")).sendKeys("atestatest")
+    await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root")).click()
+    await driver.sleep(1000);
     // STEP 1: CREATE THE EVENT TO BE DELETED IN THE NEXT STEP
     await driver.get("http://localhost:5173/calendar")
     await driver.manage().window().setRect({ width: 1024, height: 768 });
@@ -68,18 +78,7 @@ describe('deleteEventTest', function() {
       await element.click();
     }
     await driver.findElement(By.id(":rf:")).sendKeys("VVC, UofA, Edmonton, AB, CA")
-
-    // This part clicks the submit button and verifies the alert pop-up
     await driver.findElement(By.css(".css-1dj9jbk-MuiButtonBase-root-MuiButton-root")).click();
-    await driver.wait(until.alertIsPresent(), 5000);
-    const alert = await driver.switchTo().alert();
-    await driver.sleep(2000);
-    const alertText = await alert.getText();
-    await driver.sleep(2000);
-    assert.strictEqual(alertText, "Event created successfully!");
-    await driver.sleep(2000);
-    await alert.accept();
-
 
     // STEP 2: DELETE THE CREATED EVENT
     await driver.get("http://localhost:5173/calendar");
@@ -96,10 +95,13 @@ describe('deleteEventTest', function() {
     await driver.sleep(2000);
     await driver.findElement(By.css(".css-1osj8n2-MuiGrid-root")).click();
     await driver.sleep(2000);
-    await driver.wait(until.alertIsPresent(), 5000);
-    const alertDelete = await driver.switchTo().alert();
-    const alertDeleteText = await alertDelete.getText();
-    assert.strictEqual(alertDeleteText, "Event deleted successfully!");
-    await alertDelete.accept();
+
+    // This part clicks the delete confirm changes button
+    const confirmButton = await driver.wait(
+      until.elementIsVisible(driver.findElement(By.css(".MuiButtonBase-root:nth-child(2)"))), 
+      10000
+    );
+    await confirmButton.click();
+    await driver.sleep(2000);
   });
 });

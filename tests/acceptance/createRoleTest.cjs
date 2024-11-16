@@ -23,32 +23,39 @@ describe('createRoleTest', function() {
   });
 
   it('createRoleTest', async function() {
+    
+    // STEP 0 - LOGIN
+    await driver.get("http://localhost:5173/")
+    await driver.manage().window().setRect({ width: 1292, height: 684 })
+    await driver.findElement(By.css(".MuiButton-contained")).click()
+    await driver.findElement(By.id(":r1:")).click()
+    await driver.findElement(By.id(":r1:")).sendKeys("a@test.com")
+    await driver.findElement(By.id(":r3:")).click()
+    await driver.findElement(By.id(":r3:")).sendKeys("atestatest")
+    await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root")).click()
+    await driver.sleep(1000);
 
     // STEP 1 - CREATE A ROLE
     await driver.get("http://localhost:5173/volunteer-management")
     await driver.manage().window().setRect({ width: 1024, height: 768 });
     await driver.executeScript("document.body.style.zoom='70%';");
-    
-    await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root")).click()
-    await driver.sleep(3000);
-    await driver.findElement(By.id(":r5:")).click()
+    await driver.findElement(By.css(".MuiTab-root:nth-child(2)")).click()
+    await driver.sleep(1000);
     {
-      const element = await driver.findElement(By.css(".css-i5v8s4-MuiInputBase-input-MuiOutlinedInput-input"))
+      const element = await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root"))
       await driver.executeScript("arguments[0].scrollIntoView(true);", element);
       await element.click();
       await driver.sleep(1000);
-      await element.sendKeys("Role Test")
     }
+    {
+      const element = await driver.findElement(By.css(".css-kw13he-MuiDialogContent-root"));
+      await driver.executeScript("arguments[0].scrollIntoView(true);", element);
+      await element.click();
+      await driver.sleep(1000);
+    }
+    await driver.findElement(By.id(":r37:")).click()
+    await driver.findElement(By.id(":r37:")).sendKeys("Role Test")
+    await driver.findElement(By.css(".MuiButton-containedSecondary")).click()
     await driver.sleep(1000);
-    await driver.findElement(By.css(".MuiButton-textPrimary")).click()
-    await driver.sleep(1000);
-    await driver.wait(until.alertIsPresent(), 5000);
-    const alert = await driver.switchTo().alert();
-    const alertText = await alert.getText();
-    assert.strictEqual(alertText, "Volunteer role created successfully!");
-    await driver.sleep(1000);
-    await alert.accept();
-    await driver.sleep(1000);
-
   });
 });

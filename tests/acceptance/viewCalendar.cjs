@@ -19,6 +19,15 @@ describe('Default Suite', function() {
   })
   it('ViewCalendar', async function() {
     // Test name: ViewCalendar
+    await driver.get("http://localhost:5173/")
+    await driver.manage().window().setRect({ width: 1292, height: 684 })
+    await driver.findElement(By.css(".MuiButton-contained")).click()
+    await driver.findElement(By.id(":r1:")).click()
+    await driver.findElement(By.id(":r1:")).sendKeys("a@test.com")
+    await driver.findElement(By.id(":r3:")).click()
+    await driver.findElement(By.id(":r3:")).sendKeys("atestatest")
+    await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root")).click()
+    await driver.sleep(1000);
     // Step # | name | target | value
     // 1 | open | http://localhost:5173/calendar | 
     await driver.get("http://localhost:5173/calendar")
