@@ -373,6 +373,23 @@ export class ShiftSignupService {
   }
 
   /**
+ * Get the total number of hours worked by a specific user.
+ * @param userId - The user ID to calculate total hours worked for
+ * @returns Total hours worked by the user
+ */
+public async getTotalHoursWorked(userId: number): Promise<number> {
+  const result = await db
+    .selectFrom('shift_signup')
+    .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+    .where('user_id', '=', userId)
+    .executeTakeFirst();
+
+  // If result is null or undefined, return 0 as the total hours worked
+  return Number(result?.total_hours ?? 0);
+}
+
+
+  /**
    * Get a specific shift signup by ID.
    */
   async getSignupById(id: number): Promise<ShiftSignup | undefined> {
@@ -405,3 +422,5 @@ export class ShiftSignupService {
       .execute();
   }
 }
+
+
