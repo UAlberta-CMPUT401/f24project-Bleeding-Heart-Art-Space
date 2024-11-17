@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Typography, Paper, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { Button, Typography, Paper, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Alert } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { auth } from '@utils/firebase';
 import { signOut } from 'firebase/auth';
@@ -16,6 +16,7 @@ const Account: React.FC = () => {
   const [lastName, setLastName] = useState(backendUser?.last_name || '');
   const [phone, setPhone] = useState(backendUser?.phone || '');
   const [email, setEmail] = useState(backendUser?.email || '');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (backendUser) {
@@ -32,22 +33,60 @@ const Account: React.FC = () => {
     });
   };
 
-  const handleEdit = () => setOpen(true);
+  const handleEdit = () => {
+    if (backendUser) {
+      setFirstName(backendUser.first_name ?? '');
+      setLastName(backendUser.last_name ?? '');
+      setPhone(backendUser.phone ?? '');
+      setEmail(backendUser.email ?? '');
+    }
+    setError(null);
+    setOpen(true);
+  };
+
   const handleClose = () => setOpen(false);
 
   const handleSave = () => {
+    setError(null);
+    
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedEmail = email.trim();
+  
+    if (!trimmedFirstName) {
+      setError('Missing First Name');
+      return;
+    }
+  
+    if (!trimmedLastName) {
+      setError('Missing Last Name');
+      return;
+    }
+
+    const phoneRegex = /^[\+]?[0-9]{0,3}\W?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+    if (trimmedPhone && !phoneRegex.test(trimmedPhone)) {
+      setError('Invalid Phone Format');
+      return;
+    }
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+      setError('Missing or Invalid Email');
+      return;
+    }
+  
     if (backendUser) {
       setBackendUser({
         ...backendUser,
-        first_name: firstName,
-        last_name: lastName,
-        phone,
-        email,
+        first_name: trimmedFirstName,
+        last_name: trimmedLastName,
+        phone: trimmedPhone,
+        email: trimmedEmail,
       });
-
       setOpen(false);
     }
-  };
+  };  
 
   return (
     <Paper
@@ -117,6 +156,13 @@ const Account: React.FC = () => {
         <DialogTitle>Edit Account Information</DialogTitle>
         <DialogContent>
           <Box sx={{ mb: 2 }}>
+
+            {error && (
+              <Alert severity="error" style={{ marginBottom: "1rem" }}>
+                {error}
+              </Alert>
+            )}
+
             <TextField
               fullWidth
               label="First Name (Preferred)"
