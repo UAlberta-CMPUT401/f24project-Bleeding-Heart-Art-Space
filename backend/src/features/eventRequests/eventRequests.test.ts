@@ -69,4 +69,54 @@ describe('UsersController', () => {
     });
   });
 
+  it('should get event requests', async () => {
+    app.get('/event_requests', erController.getAllEventRequests)
+
+    const response = await request(app)
+      .get('/event_requests')
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    expect(response.body).toEqual([{
+      id: 1,
+      start: new Date('2024-10-15T09:00:00.000Z').toISOString(),
+      end: new Date('2024-10-15T17:00:00.000Z').toISOString(),
+      venue: 'Test Venue',
+      address: 'Test Addr',
+      title: 'Test Title',
+      requester_id: 1,
+      uid: 'test_uid',
+      first_name: 'first',
+      last_name: 'last',
+    }]);
+  });
+
+  it('should get event requests by id', async () => {
+    app.get('/event_requests/:id', erController.getEventRequestById)
+
+    const response = await request(app)
+      .get('/event_requests/1')
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    expect(response.body).toEqual({
+      id: 1,
+      start: new Date('2024-10-15T09:00:00.000Z').toISOString(),
+      end: new Date('2024-10-15T17:00:00.000Z').toISOString(),
+      venue: 'Test Venue',
+      address: 'Test Addr',
+      title: 'Test Title',
+      requester_id: 1,
+    });
+  });
+
+  it('should fail to get event requests by id', async () => {
+    app.get('/event_requests/:id', erController.getEventRequestById)
+
+    const response = await request(app)
+      .get('/event_requests/2')
+      .expect('Content-Type', /json/)
+      .expect(404);
+  });
+
 });

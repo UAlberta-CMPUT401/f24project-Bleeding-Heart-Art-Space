@@ -22,4 +22,35 @@ export const EventRequestsService = jest.fn().mockImplementation(() => ({
       }
       return ret;
   }),
+  getAllEventRequests: jest.fn().mockResolvedValue([
+    {
+      id: 1,
+      start: new Date('2024-10-15T09:00:00.000Z'),
+      end: new Date('2024-10-15T17:00:00.000Z'),
+      venue: 'Test Venue',
+      address: 'Test Addr',
+      title: 'Test Title',
+      requester_id: 1,
+      uid: 'test_uid',
+      first_name: 'first',
+      last_name: 'last',
+    },
+  ]),
+  getEventRequestById: jest.fn().mockImplementation(async (
+    eventRequestId: number,
+  ): Promise<EventRequest | undefined> => {
+      if (eventRequestId !== 1) {
+        return undefined;
+      }
+      const ret: EventRequest = {
+        id: 1,
+        start: new Date('2024-10-15T09:00:00.000Z'),
+        end: new Date('2024-10-15T17:00:00.000Z'),
+        venue: 'Test Venue',
+        address: 'Test Addr',
+        title: 'Test Title',
+        requester_id: 1,
+      }
+      return ret;
+  }),
 }));
