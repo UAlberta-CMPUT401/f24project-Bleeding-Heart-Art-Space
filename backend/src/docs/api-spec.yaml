@@ -82,6 +82,89 @@ paths:
                 $ref: '#/components/schemas/Role'
         default:
           $ref: '#/components/responses/DefaultError'
+  /api/users/user-role:
+    get:
+      tags:
+        - Users
+      summary: Get user and role of signed in user
+      responses:
+        '200':
+          description: User and Role object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAndRole'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Get all users with roles
+      responses:
+        '200':
+          description: User and Role object array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAndRoleList'
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/users/batch-assign-role:
+    post:
+      tags:
+        - Users
+      summary: Assigns a batch of users a role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - users
+                - role
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: Array of user IDs to assign the role to
+                  example: [1, 2, 3, 4, 5]
+                role:
+                  type: integer
+                  format: int64
+                  description: Role ID to be assigned
+                  example: 2
+      responses:
+        '200':
+          description: Successfully assigned role to users
+          content:
+            application/json:
+              schema:
+                type: array
+                item:
+                  type: integer
+                  format: int64
+                description: Array of user IDs that were successfully updated
+                example: [1, 2, 3, 5]
+        default:
+          $ref: '#/components/responses/DefaultError'
+  /api/roles:
+    get:
+      tags:
+        - Users
+      summary: Get all avaliable roles
+      responses:
+        '200':
+          description: Role object array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleList'
+        default:
+          $ref: '#/components/responses/DefaultError'
 
   # Event Paths
   /api/events:
@@ -541,6 +624,88 @@ components:
         can_request_event: true
         is_admin: false
         is_blocked: false
+    RoleList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Role'
+      example:
+        - id: 1
+          title: "Volunteer"
+          can_take_shift: true
+          can_request_event: false
+          is_admin: false
+          is_blocked: false
+        - id: 2
+          title: "Artist"
+          can_take_shift: true
+          can_request_event: true
+          is_admin: false
+          is_blocked: false
+        - id: 3
+          title: "Admin"
+          can_take_shift: true
+          can_request_event: true
+          is_admin: true
+          is_blocked: false
+    UserAndRole:
+      type: object
+      properties:
+        id:
+          type: integer
+        uid:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        title:
+          type: string
+        can_take_shift:
+          type: boolean
+        can_request_event:
+          type: boolean
+        is_admin:
+          type: boolean
+        is_blocked:
+          type: boolean
+      example:
+        id: 1
+        uid: "xajKSAjajfksLIWKXJajwoxK"
+        first_name: "John"
+        last_name: "Doe"
+        email: "john@example.com"
+        title: "Volunteer"
+        can_take_shift: true
+        can_request_event: true
+        is_admin: false
+        is_blocked: false
+    UserAndRoleList:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserAndRole'
+      example:
+        - id: 1
+          uid: "xajKSAjajfksLIWKXJajwoxK"
+          first_name: "John"
+          last_name: "Doe"
+          email: "john@example.com"
+          title: "Volunteer"
+          can_take_shift: true
+          can_request_event: true
+          is_admin: false
+          is_blocked: false
+        - id: 2
+          uid: "ajDiXkkaifoZOSLWjqmxKaIs"
+          first_name: "Test"
+          last_name: "User"
+          email: "test@example.com"
+          title: "Volunteer"
+          can_take_shift: true
+          can_request_event: true
+          is_admin: false
+          is_blocked: false
 
     # Events
     Event:
