@@ -5,6 +5,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextFie
 import { useVolunteerRoleStore } from '@stores/useVolunteerRoleStore';
 import { VolunteerRole } from '@utils/fetch';
 import ConfirmationDialog from '@components/ConfirmationDialog';
+import SnackbarAlert from '@components/SnackbarAlert';
 
 const cols: GridColDef[] = [
     { field: 'name', headerName: 'Volunteer Role', flex: 1 },
@@ -17,6 +18,9 @@ const VolunteerRoles: React.FC = () => {
     const [roleName, setRoleName] = useState('');
     const { volunteerRoles, addVolunteerRole, deleteVolunteerRoles } = useVolunteerRoleStore();
     const [selectedRoles, setSelectedRoles] = useState<VolunteerRole[]>([]);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
     const openDialog = () => {
         setCreateDialogOpen(true);
@@ -30,7 +34,9 @@ const VolunteerRoles: React.FC = () => {
     const createRole = async () => {
         if (!user) return;
         if (roleName.trim() === '') {
-            alert('Please enter a role name');
+            setSnackbarMessage('Please enter a role name');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
             return;
         }
 
@@ -109,6 +115,12 @@ const VolunteerRoles: React.FC = () => {
                 onConfirm={deleteSelectedRoles}
                 onCancel={() => setConfirmDeleteOpen(false)}
                 title='Confirm Delete'
+            />
+            <SnackbarAlert
+                open={snackbarOpen}
+                onClose={() => setSnackbarOpen(false)}
+                message={snackbarMessage}
+                severity={snackbarSeverity}
             />
         </Box>
     );

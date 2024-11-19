@@ -1,5 +1,5 @@
 // Import necessary Kysely types
-import { Generated, Insertable, Selectable, Updateable, ColumnType } from 'kysely';
+import { Generated, Insertable, Selectable, Updateable } from 'kysely';
 
 // Define the table structure for shift signup
 export interface ShiftSignupTable {
@@ -8,6 +8,7 @@ export interface ShiftSignupTable {
   shift_id: number;  // Shift ID for the signup
   checkin_time?: Date | string | undefined;  // Nullable Date for check-in time
   checkout_time?: Date | string | undefined; // Nullable Date for check-out time
+  hours_worked?: number | null;  // Nullable number for hours worked
   notes?: string;  // Optional field for additional signup notes
 }
 

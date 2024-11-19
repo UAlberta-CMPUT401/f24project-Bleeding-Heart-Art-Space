@@ -9,11 +9,11 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.references('users.id').onDelete('cascade').notNull())  // Foreign key referencing users table
     .addColumn('shift_id', 'integer', (col) => 
       col.references('volunteer_shifts.id').onDelete('cascade').notNull())  // Foreign key referencing volunteer_shifts table
-    //.addColumn('volunteer_role', 'integer', (col) => 
-    //  col.notNull().references('volunteer_roles.id').onDelete('cascade'))  // Foreign key referencing volunteer_roles table
     
     .addColumn('checkin_time', 'timestamptz', (col) => col.defaultTo(null))  // Timestamp for check-in time
     .addColumn('checkout_time', 'timestamptz', (col) => col.defaultTo(null))  // Timestamp for check-out time
+
+    .addColumn('hours_worked', 'numeric', (col) => col.defaultTo(0))  // New column for hours worked
     .addColumn('notes', 'text', (col) => col.defaultTo(null))  // Optional notes field
     .execute();
 

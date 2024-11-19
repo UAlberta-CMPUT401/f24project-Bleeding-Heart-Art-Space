@@ -7,6 +7,7 @@ import { VolunteerShiftsRoute } from '@features/volunteerShifts/volunteerShifts.
 import { ShiftSignupRoute } from './features/shiftSignup/shiftSignup.route';
 import 'reflect-metadata';
 import { EventRequestsRoute } from './features/eventRequests/eventRequests.route';
+import { NotificationsRoute } from './features/notifications/notifications.route';
 
 
 async function startServer() {
@@ -21,6 +22,7 @@ async function startServer() {
     new VolunteerShiftsRoute(), 
     new ShiftSignupRoute(),
     new EventRequestsRoute(),
+    new NotificationsRoute(),
   ]);
 
   // Start the server

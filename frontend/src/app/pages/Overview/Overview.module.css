@@ -7,17 +7,6 @@
   --box-shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #2a2a2a;
-    --left-bg-color: #4e2c2c; /* Darker pink */
-    --middle-bg-color: #3a3a3a;
-    --right-bg-color: #2c3e50; /* Darker blue */
-    --text-color: #ffffff;
-    --box-shadow-color: rgba(0, 0, 0, 0.3);
-  }
-}
-
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -50,4 +39,52 @@
 h2 {
   margin-top: 0;
   color: var(--text-color);
+}
+
+.card {
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px var(--box-shadow-color);
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.centeredFlex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconSpacing {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: #424242;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #2a2a2a;
+    --left-bg-color: #4e2c2c;
+    --middle-bg-color: #3a3a3a;
+    --right-bg-color: #2c3e50;
+    --text-color: #ffffff;
+    --box-shadow-color: rgba(0, 0, 0, 0.3);
+  }
 }

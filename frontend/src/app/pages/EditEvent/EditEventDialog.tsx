@@ -17,9 +17,10 @@ interface EditEventDialogProps {
     onClose: () => void;
     onCancel: () => void;
     eventId: number | null;
+    onEditSuccess?: () => void;
 }
 
-const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCancel, eventId }) => {
+const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCancel, eventId, onEditSuccess }) => {
     const { events, updateEvent, deleteEvent } = useEventStore();
     const { user } = useAuth();
     const theme = useTheme();
@@ -45,6 +46,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
     const [deleteConfirmationMessage, setDeleteConfirmationMessage] = useState('');
     const [onDeleteConfirmAction, setOnDeleteConfirmAction] = useState<(() => void) | null>(null);
 
+    // States to handle error snackbar
     const [editEventFailSnackbarOpen, setEditEventFailSnackbarOpen] = useState(false);
     const [editEventFailSnackbarMessage, setEditEventFailSnackbarMessage] = useState('');
 
@@ -82,7 +84,20 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
         e.preventDefault();
         if (!user || !eventId) return;
         if (!backendUser) return;
-        
+        if (
+            !title.trim() ||
+            !venue.trim() ||
+            !startDate.trim() ||
+            !startTime.trim() ||
+            !endDate.trim() ||
+            !endTime.trim() ||
+            !address.trim()
+        ) {
+            setEditEventFailSnackbarMessage('All fields are required.');
+            setEditEventFailSnackbarOpen(true);
+            return;
+        }
+
         const updatedEvent: NewEvent = {
             title,
             venue,
@@ -96,6 +111,9 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
             if (backendUser.is_admin) {
                 try {
                     await updateEvent(eventId, updatedEvent, user);
+                    if (onEditSuccess) {
+                        onEditSuccess();
+                    }
                     dialogClose();
                 } catch (error) {
                     setOpenConfirmationDialog(false);
@@ -259,6 +277,8 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
                 message={confirmationMessage}
                 onConfirm={onConfirmAction ?? (() => {})}
                 onCancel={() => setOpenConfirmationDialog(false)}
+                title="Confirm Edit"
+                confirmButtonText="Save"
             />
             
             <ConfirmationDialog

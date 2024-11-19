@@ -8,7 +8,7 @@ import { hasError } from '@/common/utils/error';
 export class ShiftSignupController {
   private shiftSignupService = new ShiftSignupService();
   private volunteerShiftsService = new VolunteerShiftsService();
-
+  
   /**
    * Create a new shift signup
    * @route POST /api/shift-signups
@@ -181,4 +181,19 @@ export class ShiftSignupController {
       next(error);
     }
   };
+  public async getTotalHoursWorked(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = Number(req.params.userId);
+      if (isNaN(userId)) {
+        res.status(400).json({ error: 'Invalid user ID' });
+        return;
+      }
+
+      const totalHours = await this.shiftSignupService.getTotalHoursWorked(userId);
+      res.status(200).json({ userId, totalHours });
+    } catch (error) {
+      next(error);
+    }
+    
+  }
 }

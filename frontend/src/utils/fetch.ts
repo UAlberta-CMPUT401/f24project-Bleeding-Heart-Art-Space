@@ -192,7 +192,7 @@ export async function getUpcomingEvents(user: User): Promise<ApiResponse<Event[]
       ...eventData,
       start: new Date(eventData.start),
       end: new Date(eventData.end),
-    })),
+    })).sort((a, b) => a.start.getTime() - b.start.getTime()),
   }
   return formattedResponse;
 }
@@ -423,6 +423,8 @@ export type ShiftSignupUser = {
   volunteer_role: string | null | undefined;
   start: Date;
   end: Date;
+  event_id: number;
+  event_title: string;
 }
 export type NewShiftSignup = {
   user_id: number;
@@ -491,4 +493,45 @@ export type UpdatedUser = {
 
 export async function updateUser(user: User, updatedUser: UpdatedUser): Promise<ApiResponse<void>> {
   return await postData<void, UpdatedUser>('/users/update-user', updatedUser, user);
+}
+
+// Notifications
+export type Notification = {
+  id: number;
+  role_name: string;
+  title: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+};
+export type NewNotification = {
+  title: string;
+  message: string;
+  role_name: string;
+  is_read?: boolean;
+  created_at?: string;
+};
+export async function getNotifications(user: User): Promise<ApiResponse<Notification[]>> {
+  return await getData<Notification[]>('/notifications', user);
+}
+export async function createNotification(newNotification: NewNotification, user: User): Promise<ApiResponse<Notification>> {
+  try {
+    const response = await postData<Notification, NewNotification>('/notifications', newNotification, user);
+    if (!response || !response.data) {
+      throw new Error('No response data received');
+    }
+    return response;
+  } catch (error) {
+    console.error('Error creating notification:', error);
+    throw error;
+  }
+}
+export async function deleteNotification(notificationId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/notifications/${notificationId}`, user);
+}
+export async function markNotificationAsRead(notificationId: number, user: User): Promise<ApiResponse<void>> {
+  return await postData<void, void>(`/notifications/${notificationId}/read`, undefined, user);
+}
+export async function markAllNotificationsAsRead(user: User): Promise<ApiResponse<void>> {
+  return await postData<void, void>('/notifications/read', undefined, user);
 }

@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Typography, Paper, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Alert } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { auth } from '@utils/firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
-import { updateUser } from '@utils/fetch';
+import { updateUser, getData } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 
 const Account: React.FC = () => {
   const navigate = useNavigate();
   const { backendUser, setBackendUser } = useBackendUserStore();
+  const { user } = useAuth();
 
+  const [totalHours, setTotalHours] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [firstName, setFirstName] = useState(backendUser?.first_name || '');
   const [lastName, setLastName] = useState(backendUser?.last_name || '');
@@ -19,7 +21,6 @@ const Account: React.FC = () => {
   const [email, setEmail] = useState(backendUser?.email || '');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {user} = useAuth();
 
   const handleSignOut = async () => {
     try {
@@ -72,8 +73,41 @@ const Account: React.FC = () => {
     }
   };
 
+  const fetchTotalHoursWorked = async () => {
+    try {
+      if (!backendUser) return;
+      const response = await getData<{ totalHours: number }>(
+        `/shift-signups/user/${backendUser.id}/total-hours`
+      );
+      if (response.error) {
+        setError(response.error);
+        setTotalHours(null);
+      } else {
+        setTotalHours(response.data.totalHours);
+        setError(null);
+      }
+    } catch (err) {
+      setError('Failed to fetch total hours worked.');
+      setTotalHours(null);
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTotalHoursWorked();
+  }, [backendUser]);
+
   return (
-    <Paper sx={{ p: 4, maxWidth: 500, mx: 'auto', mt: 5, borderRadius: 2, position: 'relative' }}>
+    <Paper
+      sx={{
+        p: 4,
+        maxWidth: 500,
+        mx: 'auto',
+        mt: 5,
+        borderRadius: 2,
+        position: 'relative',
+      }}
+    >
       <IconButton onClick={handleEdit} sx={{ position: 'absolute', top: 16, right: 16 }}>
         <EditIcon />
       </IconButton>
@@ -104,6 +138,13 @@ const Account: React.FC = () => {
         </Typography>
         <Typography variant="body1">{backendUser?.email || 'Not provided'}</Typography>
       </Box>
+      <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+        {error
+          ? `Error: ${error}`
+          : totalHours !== null
+          ? `Total Hours Worked: ${totalHours} hours`
+          : 'Loading...'}
+      </Typography>
       <Button variant="contained" color="primary" fullWidth onClick={handleSignOut}>
         Sign Out
       </Button>

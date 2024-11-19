@@ -60,7 +60,6 @@ Estimated Sprint Velocity: **39**
 
 | User story                                 | Story points |
 | ------------------------------------------ | ------------ |
-| US 1.04 - Admin assign permissions         | 3            |
 | US 1.05 - Create volunteer schedules       | 8            |
 | US 1.08 - Admin signs up to volunteer      | 3            |
 | US 2.04 - Sign up for events               | 3            |
@@ -102,7 +101,6 @@ Estimated Sprint Velocity: **32**
 | User Story                                 | Story Points |
 | ------------------------------------------ | ------------ |
 | US 1.04 - Admin assign permissions         | 3            |
-| US 1.07 - Send communication emails        | 1            |
 | US 1.09 - Assign one-time volunteers       | 2            |
 | US 1.10 - Approve artist event requests    | 3            |
 | US 2.05 - Manage notification preferences  | 3            |
@@ -110,7 +108,7 @@ Estimated Sprint Velocity: **32**
 | US 3.04 - Artist assign one-time volunteers| 2            |
 | US 4.01 - Receive events notifications     | 5            |
 
-Estimated Sprint Velocity: **20**
+Estimated Sprint Velocity: **19**
 
 #### **Tasks**
 
@@ -140,10 +138,17 @@ Estimated Sprint Velocity: **20**
 | User Story                                 | Story Points |
 | ------------------------------------------ | ------------ |
 | US 1.06 - Manage volunteer attendance      | 3            |
+| US 1.07 - Send communication emails        | 1            |
 | US 2.09 - Receive summary of volunteer hours | 5            |
 
-Estimated Sprint Velocity: **8**
+Estimated Sprint Velocity: **9**
 
 #### **Tasks**
 
-Sprint 5 tasks will be added during Sprint 4.
+| Task | Related US | Assigned To                                       | Due Date  |
+|--------------------------------------------|---------------------------------|-------------------------------------|--------|
+| Allow admin to view all volunteers’ hours if the client wants           | US 2.09          | Anhadpreet Singh, Rushabh Shah       | Nov 23   |
+| Enforce max volunteers for shifts       | US 1.05, US 1.08                   | Anhadpreet Singh, Rushabh Shah                          | Nov 24   |
+| Add start and end dates in shift creation          | US 1.05, US 1.08                   | Anhadpreet Singh, Rushabh Shah                       | Nov 25   |
+| Update for better mobile view across the platform                          | Design                            | Everyone                          | Nov 25   |
+| Modify current UI tests if functionality changes                          | Tests                            | Rushabh Shah                          | Nov 25   |

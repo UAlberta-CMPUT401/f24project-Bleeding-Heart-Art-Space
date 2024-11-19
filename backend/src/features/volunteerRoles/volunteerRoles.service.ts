@@ -1,5 +1,5 @@
 import { singleton } from 'tsyringe';
-import { DeleteResult, InsertResult } from 'kysely';
+import { DeleteResult } from 'kysely';
 import { db } from '@database/database';
 import { NewVolunteerRole, VolunteerRole } from './volunteerRoles.model';
 
