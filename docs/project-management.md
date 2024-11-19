@@ -106,9 +106,8 @@ Estimated Sprint Velocity: **32**
 | US 2.05 - Manage notification preferences  | 3            |
 | US 2.11 - View other volunteer status      | 1            |
 | US 3.04 - Artist assign one-time volunteers| 2            |
-| US 4.01 - Receive events notifications     | 5            |
 
-Estimated Sprint Velocity: **19**
+Estimated Sprint Velocity: **14**
 
 #### **Tasks**
 
@@ -140,8 +139,9 @@ Estimated Sprint Velocity: **19**
 | US 1.06 - Manage volunteer attendance      | 3            |
 | US 1.07 - Send communication emails        | 1            |
 | US 2.09 - Receive summary of volunteer hours | 5            |
+| US 4.01 - Receive events notifications     | 5            |
 
-Estimated Sprint Velocity: **9**
+Estimated Sprint Velocity: **14**
 
 #### **Tasks**
 
