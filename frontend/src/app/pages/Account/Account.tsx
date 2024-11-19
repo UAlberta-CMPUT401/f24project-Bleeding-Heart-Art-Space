@@ -26,7 +26,6 @@ const Account: React.FC = () => {
       const response = await getData<{ totalHours: number }>(
         `/shift-signups/user/${backendUser.id}/total-hours`
       );
-
       if (response.error) {
         setError(response.error);
         setTotalHours(null);

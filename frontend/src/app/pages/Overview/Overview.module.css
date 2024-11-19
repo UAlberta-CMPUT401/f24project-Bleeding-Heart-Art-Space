@@ -49,15 +49,6 @@ h2 {
   border-radius: 8px;
 }
 
-.container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 20px;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
 .centeredFlex {
   display: flex;
   align-items: center;
