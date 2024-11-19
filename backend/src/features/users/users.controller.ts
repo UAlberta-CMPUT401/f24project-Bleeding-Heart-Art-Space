@@ -133,4 +133,31 @@ export class UsersController {
     }
   }
 
+  public updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+  
+      const { first_name, last_name, phone } = req.body;
+  
+      if (!first_name || !last_name) {
+        res.status(400).json({ error: 'Missing required fields: first_name or last_name' });
+        return;
+      }
+  
+      const updatedUser = await this.usersService.updateUser(req.auth.uid, { first_name, last_name, phone });
+  
+      if (updatedUser.numChangedRows === BigInt(0)) {
+        res.status(500).json({ error: 'Failed to update user' });
+        return;
+      }
+  
+      res.status(200).json({ message: 'User updated successfully'});
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }

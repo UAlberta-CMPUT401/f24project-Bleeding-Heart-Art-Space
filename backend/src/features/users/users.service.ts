@@ -146,4 +146,12 @@ export class UsersService {
       .selectAll()
       .execute();
   }
+
+  public async updateUser(uid: string, data: { first_name: string; last_name: string; phone: string | null }): Promise<UpdateResult> {
+    return await db
+      .updateTable('users')
+      .set(data)
+      .where('uid', '=', uid)
+      .executeTakeFirst();
+  }  
 }
