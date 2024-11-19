@@ -1,5 +1,5 @@
 import { singleton } from 'tsyringe';
-import { DeleteResult, InsertResult } from 'kysely';
+import { DeleteResult } from 'kysely';
 import { db } from '@database/database';
 import { NewVolunteerRole, VolunteerRole } from './volunteerRoles.model';
 
@@ -13,11 +13,14 @@ export class VolunteerRolesService {
       .execute();
   }
 
-  public async createVolunteerRole(newVolunteerRole: NewVolunteerRole): Promise<InsertResult> {
-    return await db
+  public async createVolunteerRole(newVolunteerRole: NewVolunteerRole): Promise<VolunteerRole | undefined> {
+    const insertedVolunteerRole = await db
       .insertInto('volunteer_roles')
       .values(newVolunteerRole)
+      .returningAll()
       .executeTakeFirst();
+
+    return insertedVolunteerRole;
   }
 
   public async deleteVolunteerRole(id: number): Promise<DeleteResult> {
@@ -27,11 +30,13 @@ export class VolunteerRolesService {
       .executeTakeFirst();
   }
 
-  public async deleteShiftsByRoleId(id: number): Promise<DeleteResult> {
-    return await db
-      .deleteFrom('volunteer_shifts' as any)
-      .where('volunteer_role', '=', id)
-      .executeTakeFirst();
+  public async deleteVolunteerRoles(ids: number[]): Promise<number[]> {
+    const deletedIds = await db
+      .deleteFrom('volunteer_roles')
+      .where('id', 'in', ids)
+      .returning('id')
+      .execute();
+    return deletedIds.map(id => id.id);
   }
 
 }

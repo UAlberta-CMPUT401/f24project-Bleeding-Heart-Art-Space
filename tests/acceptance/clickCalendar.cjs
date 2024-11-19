@@ -29,6 +29,15 @@ describe('clickCalendar', function() {
   });
 
   it('clickCalendar', async function() {
+    await driver.get("http://localhost:5173/")
+    await driver.manage().window().setRect({ width: 1292, height: 684 })
+    await driver.findElement(By.css(".MuiButton-contained")).click()
+    await driver.findElement(By.id(":r1:")).click()
+    await driver.findElement(By.id(":r1:")).sendKeys("a@test.com")
+    await driver.findElement(By.id(":r3:")).click()
+    await driver.findElement(By.id(":r3:")).sendKeys("atestatest")
+    await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root")).click()
+    await driver.sleep(1000);
     await driver.get("http://localhost:5173/calendar");
     await driver.manage().window().setRect({ width: 1292, height: 684 });
 
@@ -80,18 +89,8 @@ describe('clickCalendar', function() {
 
     // This part clicks the submit button and verifies the alert pop-up
     await driver.findElement(By.css(".css-1dj9jbk-MuiButtonBase-root-MuiButton-root")).click();
-    await driver.wait(until.alertIsPresent(), 5000);
-    const alert = await driver.switchTo().alert();
-    await driver.sleep(2000);
-    const alertText = await alert.getText();
-    await driver.sleep(2000);
-    assert.strictEqual(alertText, "Event created successfully!");
-    await driver.sleep(2000);
-    await alert.accept();
-
 
     // STEP 2: VERIFY THE EVENT EXISTS ON THE CALENDAR
-
     // Wait for the calendar to update (optional: adjust wait if needed)
     await driver.sleep(2000);
     // Search for the event by the title in the calendar view

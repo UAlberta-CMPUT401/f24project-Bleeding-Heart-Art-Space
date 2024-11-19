@@ -1,16 +1,9 @@
 .container {
     padding: 20px;
-    background-color: #202020;
     color: white;
     border-radius: 10px;
-}
-
-.card {
-    padding: 20px;
     margin: 20px 0;
     background-color: #333;
-    color: white;
-    border-radius: 10px;
 }
 
 .shiftCard {

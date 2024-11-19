@@ -2,11 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { ShiftSignupService } from './shiftSignup.service';
 import { NewShiftSignup, ShiftSignupUpdate } from './shiftSignup.model';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
+import { isAuthenticated } from '@/common/utils/auth';
+import { hasError } from '@/common/utils/error';
 
 export class ShiftSignupController {
   private shiftSignupService = new ShiftSignupService();
   private volunteerShiftsService = new VolunteerShiftsService();
-
+  
   /**
    * Create a new shift signup
    * @route POST /api/shift-signups
@@ -17,26 +19,28 @@ export class ShiftSignupController {
       const shiftDetails = await this.volunteerShiftsService.getShiftById(signupData.shift_id);
 
       if (!shiftDetails) {
-        res.status(404).json({ message: 'Shift not found' });
+        res.status(404).json({ error: 'Shift not found' });
         return;
       }
 
-      const signupId = await this.shiftSignupService.create(signupData);
-      res.status(201).json({ message: 'Shift signup created', signupId });
+      const insertedSignupUser = await this.shiftSignupService.create(signupData);
+      if (hasError(insertedSignupUser)) {
+        res.status(400).json(insertedSignupUser);
+        return;
+      }
+      res.status(201).json(insertedSignupUser);
     } catch (error) {
       next(error);
     }
   };
 
-  public getUserShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getUserSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = Number(req.query.user_id); // Extract user ID from query parameters
-      if (!userId) {
-        res.status(400).json({ error: "User ID is required." });
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
         return;
       }
-  
-      const shifts = await this.shiftSignupService.getShiftsByUserId(userId);
+      const shifts = await this.shiftSignupService.getShiftsSignupByUser(req.auth.uid);
       res.json(shifts);
     } catch (error) {
       next(error);
@@ -47,9 +51,10 @@ export class ShiftSignupController {
    * Get all shift signups
    * @route GET /api/shift-signups
    */
-  public getAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getEventShiftSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const signups = await this.shiftSignupService.getAllSignups();
+      const eventId = Number(req.query.eventId);
+      const signups = await this.shiftSignupService.getEventShiftSignups(eventId);
       res.json(signups);
     } catch (error) {
       next(error);
@@ -66,7 +71,7 @@ export class ShiftSignupController {
       const signup = await this.shiftSignupService.getSignupById(signupId);
 
       if (!signup) {
-        res.status(404).json({ message: 'Shift signup not found' });
+        res.status(404).json({ error: 'Shift signup not found' });
       } else {
         res.json(signup);
       }
@@ -99,7 +104,7 @@ export class ShiftSignupController {
       const signupData: ShiftSignupUpdate = req.body as ShiftSignupUpdate;
 
       if (signupData.user_id === undefined || signupData.shift_id === undefined) {
-        res.status(400).json({ message: 'user_id and shift_id are required' });
+        res.status(400).json({ error: 'user_id and shift_id are required' });
         return;
       }
 
@@ -107,7 +112,7 @@ export class ShiftSignupController {
         await this.shiftSignupService.updateSignup(signupId, signupData as { user_id: number; shift_id: number });
         res.status(200).json({ message: 'Shift signup updated successfully' });
       } else {
-        res.status(400).json({ message: 'user_id and shift_id are required' });
+        res.status(400).json({ error: 'user_id and shift_id are required' });
       }
     } catch (error) {
       next(error);
@@ -124,7 +129,7 @@ export class ShiftSignupController {
       const { checkin_time } = req.body;
 
       if (!checkin_time) {
-        res.status(400).json({ message: 'Check-in time is required' });
+        res.status(400).json({ error: 'Check-in time is required' });
         return;
       }
 
@@ -176,4 +181,19 @@ export class ShiftSignupController {
       next(error);
     }
   };
+  public async getTotalHoursWorked(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = Number(req.params.userId);
+      if (isNaN(userId)) {
+        res.status(400).json({ error: 'Invalid user ID' });
+        return;
+      }
+
+      const totalHours = await this.shiftSignupService.getTotalHoursWorked(userId);
+      res.status(200).json({ userId, totalHours });
+    } catch (error) {
+      next(error);
+    }
+    
+  }
 }

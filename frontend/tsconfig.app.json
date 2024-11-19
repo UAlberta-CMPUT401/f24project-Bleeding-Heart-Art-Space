@@ -27,6 +27,7 @@
       "@lib/*": ["lib/*"],
       "@theme/*": ["theme/*"],
       "@utils/*": ["utils/*"],
+      "@stores/*": ["stores/*"],
       "@pages/*": ["app/pages/*"]
     }
   },

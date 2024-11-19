@@ -14,14 +14,17 @@ import HomeIcon from '@mui/icons-material/Home';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import BHASLogo from '@assets/BHAS-Logo.png';
 import { Link, Outlet } from 'react-router-dom';
+import { useBackendUserStore } from '@stores/useBackendUserStore';
 
 type SideBarItem = {
   name: string;
   route: string;
   icon: React.ReactNode;
+  admin: boolean;
 }
 
 const sideBarItems: SideBarItem[] = [
@@ -29,23 +32,26 @@ const sideBarItems: SideBarItem[] = [
     name: 'Overview',
     route: '/overview',
     icon: <HomeIcon />,
+    admin: false,
   },
   {
     name: 'Calendar',
     route: '/calendar',
     icon: <CalendarIcon />,
+    admin: false,
   },
   {
     name: 'Volunteer\nManagement',
     route: '/volunteer-management',
     icon: <ManageAccountsIcon />,
+    admin: true,
   },
-
   {
     name: 'Event\nRequests',
     route: '/event-requests',
     icon: <QuestionAnswerIcon/>,
-  }
+    admin: true,
+  },
 ]
 
 const drawerWidth = 240;
@@ -53,6 +59,7 @@ const drawerWidth = 240;
 const Dashboard: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const { backendUser } = useBackendUserStore();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -74,35 +81,37 @@ const Dashboard: React.FC = () => {
       <Toolbar />
       <Divider />
       <List>
-        {sideBarItems.map((item, index) => (
-          <ListItem key={index} disablePadding>
-            <Button
-              component={Link}
-              variant='contained'
-              sx={{
-                margin: '0.5rem',
-                width: '100%',
-                height: '4rem',
-                fontWeight: 'bold',
-              }}
-              to={item.route}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '0.5rem',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {item.icon}
-                <div style={{ whiteSpace: 'pre-line' }} >
-                  {item.name}
-                </div>
-              </div>
-            </Button>
-          </ListItem>
-        ))}
+        {sideBarItems.map((item, index) => {
+          if (!item.admin || backendUser?.is_admin) {
+            return <ListItem key={index} disablePadding>
+                <Button
+                  component={Link}
+                  variant='contained'
+                  sx={{
+                    margin: '0.5rem',
+                    width: '100%',
+                    height: '4rem',
+                    fontWeight: 'bold',
+                  }}
+                  to={item.route}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '0.5rem',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {item.icon}
+                    <div style={{ whiteSpace: 'pre-line' }} >
+                      {item.name}
+                    </div>
+                  </div>
+                </Button>
+              </ListItem>;
+          }
+        })}
       </List>
     </div>
   );
@@ -142,6 +151,12 @@ const Dashboard: React.FC = () => {
             Bleeding Heart Art Space
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
+          <IconButton
+            component={Link}
+            to={'/notifications'}
+          >
+            <NotificationsIcon />
+          </IconButton>
           <IconButton
             component={Link}
             to={'/account'}

@@ -10,19 +10,11 @@ export class VolunteerShiftsService {
    * @returns The IDs of the created shifts
    */
   public async createShifts(shiftsData: NewVolunteerShift[]): Promise<VolunteerShift[]> {
-    const insertedShiftsRes = await db
+    const insertedShifts = await db
       .insertInto('volunteer_shifts')
       .values(shiftsData)
-      .returning('id')
+      .returningAll()
       .execute();
-
-    const insertedShiftIds = insertedShiftsRes.map(shift => shift.id);
-
-    const insertedShifts = await db
-      .selectFrom('volunteer_shifts')
-      .selectAll()
-      .where('id', 'in', insertedShiftIds)
-      .execute()
 
     return insertedShifts;
   }

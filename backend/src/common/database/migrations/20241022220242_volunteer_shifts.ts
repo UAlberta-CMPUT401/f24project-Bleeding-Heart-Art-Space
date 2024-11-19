@@ -20,8 +20,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         .references('volunteer_roles.id') // Referencing the 'id' in volunteer_roles
         .onDelete('cascade')
     ) // Foreign key to 'volunteer_roles.id'
-    .addColumn('start', 'timestamp', (col) => col.notNull()) // Start time of the shift
-    .addColumn('end', 'timestamp', (col) => col.notNull()) // End time of the shift
+    .addColumn('start', 'timestamptz', (col) => col.notNull()) // Start time of the shift
+    .addColumn('end', 'timestamptz', (col) => col.notNull()) // End time of the shift
     .addColumn('description', 'varchar(255)', (col) => col.defaultTo(null)) // Optional description field
     .addColumn('max_volunteers', 'integer', (col) => col.notNull()) // Max volunteers for the shift
     .execute();

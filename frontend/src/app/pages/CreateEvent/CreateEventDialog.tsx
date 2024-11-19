@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Grid, Typography } from '@mui/material';
 import styles from "./CreateEventDialog.module.css";
 import { EventNote, LocationOn, Close } from '@mui/icons-material';
-import { useEventStore } from '@pages/EventStore/useEventStore';
+import { useEventStore } from '@stores/useEventStore';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from '@lib/context/AuthContext';
+import { useBackendUserStore } from '@stores/useBackendUserStore';
+import { postEventRequest } from '@utils/fetch';
+import SnackbarAlert from '@components/SnackbarAlert';
 
 interface CreateEventDialogProps {
     open: boolean;
@@ -25,7 +29,19 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
     const [loading, setLoading] = useState(false);
     const { addEvent } = useEventStore(); //---> Add event function from EventStore!
     const theme = useTheme();
+    const { user } = useAuth();
+    const { backendUser } = useBackendUserStore();
+    const [validSnackbarOpen, setValidSnackbarOpen] = useState(false);
+    const [validSnackbarMessage, setValidSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
+
+    useEffect(() => {
+        setStartDateLocal(startDate);
+        setEndDateLocal(endDate);
+        setStartTimeLocal(startTime);
+        setEndTimeLocal(endTime);
+    }, [startDate, endDate, startTime, endTime]);
 
     const handleClear = () => {
         setTitle("");
@@ -44,16 +60,30 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user) return;
+        if (!backendUser) return;
         const startDateTime = new Date(`${startDateLocal}T${startTimeLocal}`);
         const endDateTime = new Date(`${endDateLocal}T${endTimeLocal}`);
 
-        if (!title || !venue || !address || !startDateLocal || !endDateLocal || !startTimeLocal || !endTimeLocal) {
-            alert("All fields are required.");
+        if (
+            !title.trim() || 
+            !venue.trim() || 
+            !address.trim() || 
+            !startDateLocal.trim() || 
+            !endDateLocal.trim() || 
+            !startTimeLocal.trim() || 
+            !endTimeLocal.trim()
+        ) {
+            setValidSnackbarMessage("All fields are required.");
+            setSnackbarSeverity('error');
+            setValidSnackbarOpen(true);
             return;
         }
 
         if (startDateTime >= endDateTime) {
-            alert("End time must be after start time.");
+            setValidSnackbarMessage("End time must be after start time.");
+            setSnackbarSeverity('error');
+            setValidSnackbarOpen(true);
             return;
         }
 
@@ -66,9 +96,11 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
         };
 
         setLoading(true);
-        await addEvent(
-            eventData
-        );
+        if (backendUser.is_admin) {
+            addEvent(eventData, user);
+        } else {
+            postEventRequest(eventData, user);
+        }
         dialogClose();
         setLoading(false);
     };
@@ -84,7 +116,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                 </IconButton>
                 <div>
                     <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
-                        Create Event
+                        {backendUser?.is_admin ? "Create Event" : "Request Event"}
                     </Typography>
                 </div>
             </DialogTitle>
@@ -123,7 +155,13 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                                     variant="outlined"
                                     fullWidth
                                     value={startDateLocal}
-                                    onChange={(e) => setStartDateLocal(e.target.value)}
+                                    onChange={(e) => {
+                                        const newStartDate = e.target.value;
+                                        setStartDateLocal(newStartDate);
+                                        if (!endDateLocal) {
+                                            setEndDateLocal(newStartDate);
+                                        }
+                                    }}
                                     required
                                     InputLabelProps={{ shrink: true }}
                                 />
@@ -208,6 +246,12 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                     </Grid>
                 </Grid>
             </DialogActions>
+            <SnackbarAlert
+                open={validSnackbarOpen}
+                onClose={() => setValidSnackbarOpen(false)}
+                message={validSnackbarMessage}
+                severity={snackbarSeverity}
+            />
         </Dialog>
     );
 };

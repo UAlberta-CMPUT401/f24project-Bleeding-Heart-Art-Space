@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { VolunteerRolesController } from './volunteerRoles.controller';
-import { authMiddleware, firebaseAuthMiddleware, userMiddleware } from '@middlewares/auth.middleware';
+import { authMiddleware, isAdminMiddleware } from '@middlewares/auth.middleware';
 
 export class VolunteerRolesRoute implements Routes {
   public path = '/volunteer_roles';
@@ -13,24 +13,30 @@ export class VolunteerRolesRoute implements Routes {
   }
 
   private initializeRoutes() {
-    // Define routes with middleware
-    // Uncomment the middleware when ready for production or after debugging
     this.router.get(
       this.path, 
-      // firebaseAuthMiddleware, // Uncomment this to enable Firebase authentication
+      authMiddleware,
       this.asyncHandler(this.volunteerRolesController.getAllVolunteerRoles)
     );
 
     this.router.post(
       this.path,
-    //   authMiddleware, // Uncomment this to enable generic auth middleware
-    //   userMiddleware, // Uncomment this to enable user-specific middleware
+      authMiddleware,
+      isAdminMiddleware,
       this.asyncHandler(this.volunteerRolesController.createVolunteerRole)
+    );
+
+    this.router.post(
+      `${this.path}/batch_delete`,
+      authMiddleware,
+      isAdminMiddleware,
+      this.asyncHandler(this.volunteerRolesController.deleteVolunteerRoles)
     );
 
     this.router.delete(
       `${this.path}/:id`,
-      // authMiddleware, // Uncomment for authorization
+      authMiddleware,
+      isAdminMiddleware,
       this.asyncHandler(this.volunteerRolesController.deleteVolunteerRole)
     );
   }

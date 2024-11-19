@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { EventsService, EventRequestsService } from './event.service';
-import { NewEvent, NewEventRequest } from './events.model';
+import { EventsService } from './event.service';
+import { NewEvent } from './events.model';
 import { container } from 'tsyringe';
+import { isWithinInterval, addWeeks, startOfToday } from 'date-fns';
 
 export class EventsController {
   private eventsService = container.resolve(EventsService);
-  private eventRequestsService = container.resolve(EventRequestsService);
 
   /**
    * Create a new event
@@ -37,6 +37,27 @@ export class EventsController {
       res.json(events); // Respond with the array of events
     } catch (error) {
       next(error);
+    }
+  };
+
+  public getUpcomingEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // Get the current date and calculate the two-week interval
+      const currentDate = startOfToday(); // Get today's date at midnight
+      const twoWeeksFromNow = addWeeks(currentDate, 2); // Date two weeks from now
+
+      // Fetch all events
+      const events = await this.eventsService.getAllEvents();
+
+      // Filter events that start within the next two weeks
+      const upcomingEvents = events.filter(event => {
+        const eventStartDate = new Date(event.start);
+        return isWithinInterval(eventStartDate, { start: currentDate, end: twoWeeksFromNow });
+      });
+
+      res.json(upcomingEvents); // Respond with the upcoming events
+    } catch (error) {
+      next(error); // Pass error to global error handler middleware
     }
   };
 
@@ -93,91 +114,4 @@ export class EventsController {
       next(error);
     }
   };
-
-  public createEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventData: NewEventRequest = req.body;
-      const eventId = await this.eventRequestsService.createEventRequest(eventData);
-      res.status(201).json({ message: 'Event request created', eventId });
-    } catch (error) {
-      next(error);
-    }
-  }
-  
-  /**
-   * Get all event requests
-   * @route GET /api/event-requests
-   * @access Public (Adjust as needed)
-   */
-  public getAllEventRequests = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventRequests = await this.eventRequestsService.getAllEventRequests();
-      res.json(eventRequests);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
-   * Get a specific event request by ID
-   * @route GET /api/event-requests/:id
-   * @access Public (Adjust as needed)
-   */
-  public getEventRequestById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventId = parseInt(req.params.id, 10);
-      const eventRequest = await this.eventRequestsService.getEventRequestById(eventId);
-
-      if (!eventRequest) {
-        res.status(404).json({ message: 'Event request not found' });
-      } else {
-        res.json(eventRequest);
-      }
-    } catch (error) {
-      next(error);
-    }
-
-  }
-
-  /**
-   * Delete an event request by ID
-   * @route DELETE /api/event-requests/:id
-   * @access Public (Adjust as needed)
-   */
-  public deleteEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventId = parseInt(req.params.id, 10);
-      await this.eventRequestsService.deleteEventRequest(eventId);
-      res.status(200).json({ message: 'Event request deleted successfully' });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
-   * Update an existing event request
-   * @route PUT /api/event-requests/:id
-   * @access Public (Adjust as needed)
-   */
-  public updateEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const eventId = parseInt(req.params.id, 10);
-      const eventData = req.body;
-      await this.eventRequestsService.updateEventRequest(eventId, eventData);
-      res.status(200).json({ message: 'Event request updated successfully' });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  public getRequesterFullName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const requesterId = parseInt(req.params.id, 10);
-      const requesterName = await this.eventRequestsService.getRequesterFullName(requesterId);
-      res.json(requesterName);
-    } catch (error) {
-      next(error);
-    }
-  }
-
 }

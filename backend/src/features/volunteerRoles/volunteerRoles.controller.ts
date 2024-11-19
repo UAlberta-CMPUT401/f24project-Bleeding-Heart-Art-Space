@@ -21,8 +21,12 @@ export class VolunteerRolesController {
         res.status(400).json({ error: 'Role name is required' });
         return;
       }
-      await this.volunteerRolesService.createVolunteerRole({ name });
-      res.status(201).json({ message: 'Volunteer role created successfully' });
+      const insertedRole = await this.volunteerRolesService.createVolunteerRole({ name });
+      if (insertedRole === undefined) {
+        res.status(400)
+        return;
+      }
+      res.status(201).json(insertedRole);
     } catch (error) {
       next(error);
     }
@@ -35,13 +39,19 @@ export class VolunteerRolesController {
         res.status(400).json({ error: 'Role ID is required' });
         return;
       }
-
-      // Delete associated shifts first
-      await this.volunteerRolesService.deleteShiftsByRoleId(Number(id));
-
-      // Then delete the role
       await this.volunteerRolesService.deleteVolunteerRole(Number(id));
       res.status(200).json({ message: 'Volunteer role and associated shifts deleted successfully' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public deleteVolunteerRoles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const body: any[] = req.body;
+      const roleIds: number[] = body.map(num => Number(num));
+      const deletedIds = await this.volunteerRolesService.deleteVolunteerRoles(roleIds);
+      res.status(200).json(deletedIds);
     } catch (error) {
       next(error);
     }

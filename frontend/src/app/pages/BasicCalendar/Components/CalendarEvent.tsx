@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Calendar, momentLocalizer, SlotInfo } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { useEventStore } from '@pages/EventStore/useEventStore';
+import { useEventStore } from '@stores/useEventStore';
 
 const localizer = momentLocalizer(moment); // Using moment for date localization
 
@@ -25,7 +25,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onEventClick, onSlotSelec
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500 }}
-        onSelectEvent={(event) => onEventClick(event.id)}
+        onSelectEvent={(event) => onEventClick(String(event.id))}
         onSelectSlot={onSlotSelect}
         selectable
       />

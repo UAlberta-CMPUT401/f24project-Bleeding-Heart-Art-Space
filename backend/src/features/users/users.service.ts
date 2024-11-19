@@ -3,6 +3,21 @@ import { DeleteResult, InsertResult, UpdateResult } from "kysely";
 import { db } from "@database/database";
 import { NewUser, Role, User } from "./users.model";
 
+type UserAndRole = {
+  id: number;
+  uid: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  role: number | null;
+  title: string | null;
+  can_take_shift: boolean | null;
+  can_request_event: boolean | null;
+  is_admin: boolean | null;
+  is_blocked: boolean | null;
+};
+
 @singleton()
 export class UsersService {
 
@@ -42,4 +57,101 @@ export class UsersService {
       .executeTakeFirst();
   }
 
+  public async getUserAndRole(uid: string): Promise<UserAndRole | undefined> {
+    const userAndRole = await db
+      .selectFrom('roles')
+      .rightJoin(
+        (eb) => eb
+          .selectFrom('users')
+          .selectAll()
+          .where('uid', '=', uid)
+          .as('users'),
+        (join) => join
+          .onRef('users.role', '=', 'roles.id')
+      )
+      .select([
+        'users.id',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+        'users.email',
+        'users.phone',
+        'users.role',
+        'roles.title',
+        'roles.can_take_shift',
+        'roles.can_request_event',
+        'roles.is_admin',
+        'roles.is_blocked',
+      ])
+      .executeTakeFirst();
+
+    return userAndRole;
+  }
+
+  public async getUsersAndRole(): Promise<UserAndRole[]> {
+    const userAndRole = await db
+      .selectFrom('users')
+      .leftJoin('roles', 'roles.id', 'users.role')
+      .select([
+        'users.id',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+        'users.email',
+        'users.phone',
+        'users.role',
+        'roles.title',
+        'roles.can_take_shift',
+        'roles.can_request_event',
+        'roles.is_admin',
+        'roles.is_blocked',
+      ])
+      .execute();
+
+    return userAndRole;
+  }
+
+  public async batchAssignRole(users: number[], role: number, uid: string): Promise<number[]> {
+    // modify list of users to remove admins (but including caller so caller can demote themselves from admin)
+    const notAdmins = await db
+      .selectFrom('users')
+      .leftJoin('roles', 'roles.id', 'users.role')
+      .select('users.id')
+      .where(eb => eb.and([
+        eb('users.id', 'in', users),
+        eb.or([
+          eb('is_admin', '=', false),
+          eb('uid', '=', uid),
+        ]),
+      ]))
+      .execute();
+
+    if (notAdmins.length === 0) return [];
+
+    const updatedIds = await db
+      .updateTable('users')
+      .set({
+        role: role,
+      })
+      .where('id', 'in', notAdmins.map(user => user.id))
+      .returning('id')
+      .execute();
+
+    return updatedIds.map(id => id.id);
+  }
+
+  public async getRoles(): Promise<Role[]> {
+    return await db
+      .selectFrom('roles')
+      .selectAll()
+      .execute();
+  }
+
+  public async updateUser(uid: string, data: { first_name: string; last_name: string; phone: string | null }): Promise<UpdateResult> {
+    return await db
+      .updateTable('users')
+      .set(data)
+      .where('uid', '=', uid)
+      .executeTakeFirst();
+  }  
 }

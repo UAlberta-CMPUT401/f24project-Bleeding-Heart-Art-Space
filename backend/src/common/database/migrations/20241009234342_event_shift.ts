@@ -6,8 +6,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .createTable('events')
     .addColumn('id', 'serial', col => col.primaryKey())
     .addColumn('title', 'varchar(255)', col => col.notNull())       // Add title column
-    .addColumn('start', 'timestamp', col => col.notNull())
-    .addColumn('end', 'timestamp', col => col.notNull())
+    .addColumn('start', 'timestamptz', col => col.notNull())
+    .addColumn('end', 'timestamptz', col => col.notNull())
     .addColumn('venue', 'varchar(255)', col => col.notNull())       // Venue column
     .addColumn('address', 'varchar(255)', col => col.notNull())     // Address column
     .execute();

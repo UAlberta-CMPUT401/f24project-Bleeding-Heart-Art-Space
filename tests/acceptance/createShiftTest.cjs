@@ -25,31 +25,38 @@ describe('createShiftTest', function() {
   });
 
   it('createShiftTest', async function() {
+    // STEP 0 - LOGIN
+    await driver.get("http://localhost:5173/")
+    await driver.manage().window().setRect({ width: 1292, height: 684 })
+    await driver.findElement(By.css(".MuiButton-contained")).click()
+    await driver.findElement(By.id(":r1:")).click()
+    await driver.findElement(By.id(":r1:")).sendKeys("a@test.com")
+    await driver.findElement(By.id(":r3:")).click()
+    await driver.findElement(By.id(":r3:")).sendKeys("atestatest")
+    await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root")).click()
+    await driver.sleep(1000);
 
     // STEP 1 - CREATE A ROLE
     await driver.get("http://localhost:5173/volunteer-management")
     await driver.manage().window().setRect({ width: 1024, height: 768 });
     await driver.executeScript("document.body.style.zoom='70%';");
-    
-    await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root")).click()
-    await driver.sleep(3000);
-    await driver.findElement(By.id(":r5:")).click()
+    await driver.findElement(By.css(".MuiTab-root:nth-child(2)")).click()
+    await driver.sleep(1000);
     {
-      const element = await driver.findElement(By.css(".css-i5v8s4-MuiInputBase-input-MuiOutlinedInput-input"))
+      const element = await driver.findElement(By.css(".css-2mkfr1-MuiButtonBase-root-MuiButton-root"))
       await driver.executeScript("arguments[0].scrollIntoView(true);", element);
       await element.click();
       await driver.sleep(1000);
-      await element.sendKeys("Role for createShiftTest")
     }
-    await driver.sleep(1000);
-    await driver.findElement(By.css(".MuiButton-textPrimary")).click()
-    await driver.sleep(1000);
-    await driver.wait(until.alertIsPresent(), 5000);
-    const alert = await driver.switchTo().alert();
-    const alertText = await alert.getText();
-    assert.strictEqual(alertText, "Volunteer role created successfully!");
-    await driver.sleep(1000);
-    await alert.accept();
+    {
+      const element = await driver.findElement(By.css(".css-kw13he-MuiDialogContent-root"));
+      await driver.executeScript("arguments[0].scrollIntoView(true);", element);
+      await element.click();
+      await driver.sleep(1000);
+    }
+    await driver.findElement(By.id(":r37:")).click()
+    await driver.findElement(By.id(":r37:")).sendKeys("Role for createShiftTest")
+    await driver.findElement(By.css(".MuiButton-containedSecondary")).click()
     await driver.sleep(1000);
 
     // STEP 2: CREATE THE EVENT TO BE USED IN SHIFT SIGNUP
@@ -66,7 +73,7 @@ describe('createShiftTest', function() {
     await driver.executeScript("arguments[0].scrollIntoView(true);", inputField);
     await inputField.click();
 
-    const eventTitle = "Dragon House Party";
+    const eventTitle = "Christmas House Party";
     // This part populates the fields with values
     await driver.findElement(By.id(":r3:")).sendKeys(eventTitle)
     await driver.findElement(By.id(":r5:")).click()
@@ -96,24 +103,14 @@ describe('createShiftTest', function() {
       await element.click();
     }
     await driver.findElement(By.id(":rf:")).sendKeys("999 99th Ave, Edmonton, AB, CA")
-
-    // This part clicks the submit button and verifies the alert pop-up
     await driver.findElement(By.css(".css-1dj9jbk-MuiButtonBase-root-MuiButton-root")).click();
-    await driver.wait(until.alertIsPresent(), 5000);
-    const alert2 = await driver.switchTo().alert();
-    await driver.sleep(2000);
-    const alertText2 = await alert2.getText();
-    await driver.sleep(2000);
-    assert.strictEqual(alertText2, "Event created successfully!");
-    await driver.sleep(2000);
-    await alert2.accept();
-    await driver.sleep(1000);
 
     // STEP 3: GO TO MANAGE SHIFTS
     await driver.get("http://localhost:5173/calendar");
     await driver.manage().window().setRect({ width: 1024, height: 768 });
     await driver.executeScript("document.body.style.zoom='70%';");
-    const eventElement = await driver.findElement(By.xpath(`//div[text()="Dragon House Party"]`));
+    await driver.sleep(2000);
+    const eventElement = await driver.findElement(By.xpath(`//div[text()="Christmas House Party"]`));
     await eventElement.click();
     await driver.sleep(3000);
     await driver.findElement(By.css(".css-1q1iyvh-MuiButtonBase-root-MuiButton-root")).click();
@@ -134,21 +131,8 @@ describe('createShiftTest', function() {
     await driver.executeScript("arguments[0].scrollIntoView(true);", options[0]);
     await options[0].click();
     await driver.sleep(1000);
-    await driver.findElement(By.id(":r3:")).click()
-    await driver.findElement(By.id(":r3:")).sendKeys("08:40")
     await driver.sleep(1000);
-    await driver.findElement(By.id(":r3:")).sendKeys(Key.TAB);
-    await driver.findElement(By.id(":r3:")).sendKeys(Key.TAB);
-    await driver.findElement(By.id(":r3:")).sendKeys(Key.TAB);
-    await driver.findElement(By.id(":r3:")).sendKeys(Key.ARROW_DOWN);
-    await driver.findElement(By.id(":r3:")).sendKeys(Key.ARROW_DOWN);
-    await driver.findElement(By.id(":r3:")).sendKeys(Key.RETURN);
-    await driver.sleep(1000);
-    await driver.findElement(By.id(":r5:")).click()
-    await driver.findElement(By.id(":r5:")).click()
-    await driver.findElement(By.id(":r5:")).sendKeys("13:40")
-    await driver.sleep(1000);
-    await driver.findElement(By.css(".MuiPaper-rounded")).click()
+    await driver.findElement(By.css(".css-1q1iyvh-MuiButtonBase-root-MuiButton-root")).click()
     await driver.findElement(By.css(".MuiButton-containedSecondary")).click()
     await driver.sleep(1000);
     {
