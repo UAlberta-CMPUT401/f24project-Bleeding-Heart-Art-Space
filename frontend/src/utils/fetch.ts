@@ -485,6 +485,16 @@ export async function checkout(signupId: number, time: CheckOut, user: User): Pr
   return await postData<void, CheckOut>(`/shift-signups/${signupId}/checkout`, time, user);
 }
 
+export type UpdatedUser = {
+  first_name: string;
+  last_name: string;
+  phone: string | null;
+};
+
+export async function updateUser(user: User, updatedUser: UpdatedUser): Promise<ApiResponse<void>> {
+  return await postData<void, UpdatedUser>('/users/update-user', updatedUser, user);
+}
+
 // Notifications
 export type Notification = {
   id: number;

@@ -22,5 +22,6 @@ export class UsersRoute implements Routes {
     this.router.get(this.path, authMiddleware, isAdminMiddleware, this.usersController.getUsersAndRole);
     this.router.post(`${this.path}/batch-assign-role`, authMiddleware, isAdminMiddleware, this.usersController.batchAssignRole);
     this.router.get(`${this.path}/roles`, authMiddleware, this.usersController.getRoles);
+    this.router.post(`${this.path}/update-user`, authMiddleware, this.usersController.updateUser);
   }
 }
