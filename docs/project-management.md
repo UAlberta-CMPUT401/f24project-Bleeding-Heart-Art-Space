@@ -160,4 +160,10 @@ Estimated Sprint Velocity: **9**
 | Admin edit Shifts                                | US 2.04 | Samuel Chan | Nov 25 | 
 | Clean up shifts view in overview | US 1.05 | Samuel Chan | Nov 25 |
 | Shift notes | US 2.04 | Samuel Chan | Nov 25 | Tag for notifs and and icon badge | US 4.01 | Samuel Chan | Nov 25 | 
+| Tag for notifs and and icon badge | US 4.01 | Samuel Chan | Nov 25 |
+| Edit Email and Password | US 1.01, US 1.02, US 2.01, US 2.02 | Rishit Gajjar | Nov 25 |
+| Update the UI for Home Page | Design | Rishit Gajjar |  Nov 25 |
+
+
+
 
