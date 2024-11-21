@@ -4,7 +4,7 @@ import EventIcon from '@mui/icons-material/Event';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { useAuth } from '@lib/context/AuthContext';
-import { getUpcomingEvents, getUserSignups, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout,} from '@utils/fetch';
+import { getUpcomingEvents, getUpcomingShifts, getUserSignups, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout,} from '@utils/fetch';
 import { isBefore, addWeeks } from 'date-fns';
 import styles from './Overview.module.css';
 import CheckIcon from '@mui/icons-material/Check';
@@ -42,12 +42,19 @@ const OverviewPage: React.FC = () => {
             }
         });
 
-        // Fetch shifts the user has signed up for
-        getUserSignups(user).then(response => {
+        // Fetch shifts for the next 2 weeks
+        getUpcomingShifts(user).then(response => {
             if (isOk(response.status)) {
                 setUserSignups(response.data)
             }
         });
+
+        // Fetch shifts the user has signed up for
+        // getUserSignups(user).then(response => {
+        //     if (isOk(response.status)) {
+        //         setUserSignups(response.data)
+        //     }
+        // });
     }, [user]);
 
     useEffect(() => {
@@ -105,33 +112,6 @@ const OverviewPage: React.FC = () => {
     return (
         <div className= {styles.container}>
             <div className={styles.leftColumn}>
-                <h2>Upcoming Events</h2>
-                {upcomingEvents.length > 0 ? (
-                    <Stack spacing={2}>
-                        {upcomingEvents.map((event) => (
-                            <Card key={event.id} className={styles.card}>
-                                <Typography variant="h6" className={styles.centeredFlex} >{event.title}</Typography>
-                                <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
-                                    <EventIcon className={styles.iconSpacing}/> {format(new Date(event.start), 'MM/dd/yyyy, hh:mm a')}
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    href={`/events/details/${event.id}`}
-                                >
-                                    View Details
-                                </Button>
-                            </Card>
-                        ))}
-                    </Stack>
-                ) : (
-                    <Typography>No upcoming events in the next two weeks.</Typography>
-                )}
-            </div>
-
-            <div className = {styles.middleColumn}></div>
-
-            <div className={styles.rightColumn}>
                 <h2>Your Signed-up Shifts</h2>
                 {userSignups.length > 0 ? (
                     <Stack spacing={2}>
@@ -183,6 +163,37 @@ const OverviewPage: React.FC = () => {
                     </Stack>
                 ) : (
                     <Typography>You haven't signed up for any shifts yet.</Typography>
+                )}
+            </div>
+
+            <div className = {styles.middleColumn}>
+                <h2>Recently added shifts</h2>
+
+            </div>
+
+
+            <div className={styles.rightColumn}>
+                <h2>Upcoming Events</h2>
+                {upcomingEvents.length > 0 ? (
+                    <Stack spacing={2}>
+                        {upcomingEvents.map((event) => (
+                            <Card key={event.id} className={styles.card}>
+                                <Typography variant="h6" className={styles.centeredFlex} >{event.title}</Typography>
+                                <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
+                                    <EventIcon className={styles.iconSpacing}/> {format(new Date(event.start), 'MM/dd/yyyy, hh:mm a')}
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    href={`/events/details/${event.id}`}
+                                >
+                                    View Details
+                                </Button>
+                            </Card>
+                        ))}
+                    </Stack>
+                ) : (
+                    <Typography>No upcoming events in the next two weeks.</Typography>
                 )}
             </div>
             <SnackbarAlert
