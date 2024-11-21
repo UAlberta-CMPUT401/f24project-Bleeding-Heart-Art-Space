@@ -167,7 +167,7 @@ const OverviewPage: React.FC = () => {
             </div>
 
             <div className = {styles.middleColumn}>
-                <h2>Recently added shifts</h2>
+                <h2>Recently Added Events</h2>
 
             </div>
 
