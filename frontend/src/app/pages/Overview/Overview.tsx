@@ -4,7 +4,7 @@ import EventIcon from '@mui/icons-material/Event';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { useAuth } from '@lib/context/AuthContext';
-import { getUpcomingEvents, getUpcomingShifts, getUserSignups, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout,} from '@utils/fetch';
+import { getUpcomingEvents, getUpcomingShifts, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout,} from '@utils/fetch';
 import { isBefore, addWeeks } from 'date-fns';
 import styles from './Overview.module.css';
 import CheckIcon from '@mui/icons-material/Check';
