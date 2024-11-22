@@ -120,7 +120,6 @@ export class UsersService {
       ])
       .execute();
   
-    // Ensure total_hours is a number
     return userAndRole.map(user => ({
       ...user,
       total_hours: Number(user.total_hours ?? 0),
