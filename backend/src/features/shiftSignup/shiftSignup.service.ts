@@ -84,6 +84,8 @@ export class ShiftSignupService {
    */
   public async create(signupData: NewShiftSignup): Promise<ShiftSignupUser | ErrorResponse> {
     const existingSignup = await this.checkExistingSignup(signupData.user_id, signupData.shift_id);
+    const isMaxReached = await this.volunteerShiftsService.hasReachedMaxVolunteers(signupData.shift_id);
+    
     if (existingSignup) {
       const err: ErrorResponse = { error: 'You have already signed up for this shift.'};
       return err;
@@ -92,6 +94,11 @@ export class ShiftSignupService {
     const hasConflict = await this.checkForShiftConflicts(signupData.user_id, signupData.shift_id);
     if (hasConflict) {
       const err: ErrorResponse = { error: 'This shift conflicts with another shift you have already signed up for.'};
+      return err;
+    }
+
+    if (isMaxReached) {
+      const err: ErrorResponse = { error: 'This shift has reached the maximum number of volunteers.'};
       return err;
     }
 
