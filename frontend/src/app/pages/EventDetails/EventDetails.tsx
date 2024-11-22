@@ -12,7 +12,7 @@ import { useBackendUserStore } from '@stores/useBackendUserStore';
 import EditEventDialog from '@pages/EditEvent/EditEventDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
 import { useEventStore } from '@stores/useEventStore';
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import {ConfirmationDialogNotes} from '@components/ConfirmationDialog';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -21,11 +21,12 @@ const EventDetails: React.FC = () => {
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
-    const [eventSignups, setEventSignups] = useState<ShiftSignupUser[]>([]);
+    const [, setEventSignups] = useState<ShiftSignupUser[]>([]);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
     const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [notes, setNotes] = useState('');
     const { events, fetchEvent } = useEventStore();
     const [signupFailSnackbarOpen, setSignupFailSnackbarOpen] = useState(false);
     const [signupFailSnackbarMessage, setSignupFailSnackbarMessage] = useState('');
@@ -73,6 +74,7 @@ const EventDetails: React.FC = () => {
 
     const handleEditDialogCancel = () => {
         setEditDialogOpen(false);
+        setNotes('');
     };
 
     const handleEditSuccess = () => {
@@ -99,6 +101,8 @@ const EventDetails: React.FC = () => {
         if (!user) return;
         if (!backendUser) return;
 
+        
+
         console.log('Selected shift:', selectedShift);
 
         const newShiftSignup: NewShiftSignup = {
@@ -107,7 +111,7 @@ const EventDetails: React.FC = () => {
             volunteer_role: selectedShift.volunteer_role,
             checkin_time: null,
             checkout_time: null,
-            notes: null,
+            notes: notes.trim(),
         }
         postShiftSignup(newShiftSignup, user).then(response => {
             if (isOk(response.status)) {
@@ -116,6 +120,7 @@ const EventDetails: React.FC = () => {
                 setSignupSuccessSnackbarMessage('Successfully Signed Up to Shift!');
                 setSignupSuccessSnackbarOpen(true);
                 setSelectedShift(null);  // Close confirmation dialog
+                setNotes('');
             }
             else {
                 if (response.error) {
@@ -215,7 +220,7 @@ const EventDetails: React.FC = () => {
                         );
                     })}
                 </Grid>
-                <ConfirmationDialog
+                <ConfirmationDialogNotes
                     open={!!selectedShift}
                     title="Confirm Signup"
                     message="Are you sure you want to sign up for this shift?"
@@ -223,6 +228,8 @@ const EventDetails: React.FC = () => {
                     onCancel={() => setSelectedShift(null)}
                     confirmButtonText="Confirm"
                     cancelButtonText="Cancel"
+                    notes= {notes}
+                    setNotes={setNotes}
                 />
                 {/* Edit Event Button */}
                 <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>

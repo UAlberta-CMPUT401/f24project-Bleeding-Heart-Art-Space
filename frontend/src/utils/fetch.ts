@@ -460,6 +460,19 @@ export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): 
   return formattedResponse;
 }
 
+export async function getUpcomingShifts(user: User): Promise<ApiResponse<ShiftSignupUser[]>> {
+  const response = await getData<ShiftSignupUser[]>('/shift-signups/upcoming', user);
+  const formattedResponse: ApiResponse<ShiftSignupUser[]> = {
+    ...response,
+    data: response.data.map((shiftData) => ({
+      ...shiftData,
+      checkin_time: shiftData.checkin_time ? new Date(shiftData.checkin_time) : undefined,
+      checkout_time: shiftData.checkout_time ? new Date(shiftData.checkout_time) : undefined,
+    })),
+  }
+  return formattedResponse;
+}
+
 export async function getUserSignups(user: User): Promise<ApiResponse<ShiftSignupUser[]>> {
   const response = await getData<ShiftSignupUser[]>('/shift-signups/user', user);
   const formattedResponse: ApiResponse<ShiftSignupUser[]> = {

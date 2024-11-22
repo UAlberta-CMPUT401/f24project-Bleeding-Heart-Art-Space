@@ -22,6 +22,9 @@ export class ShiftSignupRoute implements Routes {
     // Route to get shift signups for a specific user
     this.router.get(`${this.path}/user`, authMiddleware, this.shiftSignupController.getUserSignups);
 
+    // Route to get upcoming shifts for a specific user
+    this.router.get(`${this.path}/upcoming`, authMiddleware, this.shiftSignupController.getUpcomingShifts);
+
     // Route to get a specific shift signup by ID
     this.router.get(`${this.path}/:id`, authMiddleware, this.shiftSignupController.getById);
 
