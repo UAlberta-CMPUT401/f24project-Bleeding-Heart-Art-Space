@@ -194,6 +194,11 @@ export class ShiftSignupController {
       next(error);
     }
   };
+
+  /**
+   * Get total hours worked by a specific user
+   * @route GET /api/shift-signups/user/:userId/total-hours
+   */
   public async getTotalHoursWorked(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = Number(req.params.userId);
@@ -208,5 +213,18 @@ export class ShiftSignupController {
       next(error);
     }
     
+  }
+
+  /**
+   * Get total hours worked by all users
+   * @route GET /api/shift-signups/total-hours/all
+   */
+  public async getTotalHoursForAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const totalHoursData = await this.shiftSignupService.getTotalHoursForAllUsers();
+      res.status(200).json(totalHoursData);
+    } catch (error) {
+      next(error);
+    }
   }
 }

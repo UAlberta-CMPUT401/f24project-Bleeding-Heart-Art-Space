@@ -373,6 +373,7 @@ export type BackendUserAndRole = {
   can_request_event: boolean | null;
   is_admin: boolean | null;
   is_blocked: boolean | null;
+  total_hours: number;
 }
 export async function getBackendUser(user: User): Promise<ApiResponse<BackendUser>> {
   return await getData<BackendUser>(`/users/user`, user);

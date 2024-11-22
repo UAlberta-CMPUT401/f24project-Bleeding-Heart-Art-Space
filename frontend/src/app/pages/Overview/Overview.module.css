@@ -12,7 +12,6 @@
   grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
   padding: 20px;
-  background-color: var(--bg-color);
   color: var(--text-color);
 }
 

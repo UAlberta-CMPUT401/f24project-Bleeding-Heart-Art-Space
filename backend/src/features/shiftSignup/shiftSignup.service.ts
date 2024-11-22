@@ -119,6 +119,8 @@ export class ShiftSignupService {
    */
   public async create(signupData: NewShiftSignup): Promise<ShiftSignupUser | ErrorResponse> {
     const existingSignup = await this.checkExistingSignup(signupData.user_id, signupData.shift_id);
+    const isMaxReached = await this.volunteerShiftsService.hasReachedMaxVolunteers(signupData.shift_id);
+    
     if (existingSignup) {
       const err: ErrorResponse = { error: 'You have already signed up for this shift.'};
       return err;
@@ -127,6 +129,11 @@ export class ShiftSignupService {
     const hasConflict = await this.checkForShiftConflicts(signupData.user_id, signupData.shift_id);
     if (hasConflict) {
       const err: ErrorResponse = { error: 'This shift conflicts with another shift you have already signed up for.'};
+      return err;
+    }
+
+    if (isMaxReached) {
+      const err: ErrorResponse = { error: 'This shift has reached the maximum number of volunteers.'};
       return err;
     }
 
@@ -408,21 +415,38 @@ export class ShiftSignupService {
   }
 
   /**
- * Get the total number of hours worked by a specific user.
- * @param userId - The user ID to calculate total hours worked for
- * @returns Total hours worked by the user
- */
-public async getTotalHoursWorked(userId: number): Promise<number> {
-  const result = await db
-    .selectFrom('shift_signup')
-    .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+   * Get the total number of hours worked by a specific user.
+   * @param userId - The user ID to calculate total hours worked for
+   * @returns Total hours worked by the user
+   */
+  public async getTotalHoursWorked(userId: number): Promise<number> {
+    const result = await db
+      .selectFrom('shift_signup')
+      .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+      .where('user_id', '=', userId)
+      .executeTakeFirst();
 
-  // If result is null or undefined, return 0 as the total hours worked
-  return Number(result?.total_hours ?? 0);
-}
+    // If result is null or undefined, return 0 as the total hours worked
+    return Number(result?.total_hours ?? 0);
+  }
 
+  /**
+   * Get the total hours worked by all users.
+   * @returns A list of user IDs and their corresponding total hours worked
+   */
+  public async getTotalHoursForAllUsers(): Promise<{ user_id: number; total_hours: number }[]> {
+    const results = await db
+      .selectFrom('shift_signup')
+      .select(['user_id'])
+      .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+      .groupBy('user_id')
+      .execute();
+
+    return results.map((result) => ({
+      user_id: result.user_id,
+      total_hours: Number(result.total_hours ?? 0),
+    }));
+  }
 
   /**
    * Get a specific shift signup by ID.
