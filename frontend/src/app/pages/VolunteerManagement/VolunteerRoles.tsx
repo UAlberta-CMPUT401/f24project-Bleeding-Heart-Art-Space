@@ -4,7 +4,7 @@ import { useAuth } from '@lib/context/AuthContext';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { useVolunteerRoleStore } from '@stores/useVolunteerRoleStore';
 import { VolunteerRole } from '@utils/fetch';
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import {ConfirmationDialog} from '@components/ConfirmationDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
 
 const cols: GridColDef[] = [

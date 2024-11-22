@@ -21,7 +21,7 @@ const EventDetails: React.FC = () => {
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
-    const [eventSignups, setEventSignups] = useState<ShiftSignupUser[]>([]);
+    const [, setEventSignups] = useState<ShiftSignupUser[]>([]);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
@@ -74,6 +74,7 @@ const EventDetails: React.FC = () => {
 
     const handleEditDialogCancel = () => {
         setEditDialogOpen(false);
+        setNotes('');
     };
 
     const handleEditSuccess = () => {
@@ -100,6 +101,8 @@ const EventDetails: React.FC = () => {
         if (!user) return;
         if (!backendUser) return;
 
+        
+
         console.log('Selected shift:', selectedShift);
 
         const newShiftSignup: NewShiftSignup = {
@@ -108,7 +111,7 @@ const EventDetails: React.FC = () => {
             volunteer_role: selectedShift.volunteer_role,
             checkin_time: null,
             checkout_time: null,
-            notes: notes,
+            notes: notes.trim(),
         }
         postShiftSignup(newShiftSignup, user).then(response => {
             if (isOk(response.status)) {
@@ -117,6 +120,7 @@ const EventDetails: React.FC = () => {
                 setSignupSuccessSnackbarMessage('Successfully Signed Up to Shift!');
                 setSignupSuccessSnackbarOpen(true);
                 setSelectedShift(null);  // Close confirmation dialog
+                setNotes('');
             }
             else {
                 if (response.error) {
@@ -224,7 +228,8 @@ const EventDetails: React.FC = () => {
                     onCancel={() => setSelectedShift(null)}
                     confirmButtonText="Confirm"
                     cancelButtonText="Cancel"
-                    notes= "testing"
+                    notes= {notes}
+                    setNotes={setNotes}
                 />
                 {/* Edit Event Button */}
                 <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>

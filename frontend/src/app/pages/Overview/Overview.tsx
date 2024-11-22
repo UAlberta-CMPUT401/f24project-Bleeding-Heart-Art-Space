@@ -45,16 +45,13 @@ const OverviewPage: React.FC = () => {
         // Fetch shifts for the next 2 weeks
         getUpcomingShifts(user).then(response => {
             if (isOk(response.status)) {
+                console.log(response.data)
                 setUserSignups(response.data)
             }
         });
 
-        // Fetch shifts the user has signed up for
-        // getUserSignups(user).then(response => {
-        //     if (isOk(response.status)) {
-        //         setUserSignups(response.data)
-        //     }
-        // });
+        
+
     }, [user]);
 
     useEffect(() => {
@@ -124,11 +121,21 @@ const OverviewPage: React.FC = () => {
                                     <AssignmentIndIcon className={styles.iconSpacing}/> Role: {roles.find(item => item.id === Number(signup.volunteer_role))?.name}
                                 </Typography>
                                 <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
-                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.start), 'MM/dd/yyyy, hh:mm a')}
+                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.start), 'MMM d, yyyy, hh:mm a')}
                                 </Typography>
                                 <Typography variant="body1" className={styles.centeredFlex}>
-                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.end), 'MM/dd/yyyy, hh:mm a')}
+                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.end), 'MMM d, yyyy, hh:mm a')}
                                 </Typography>
+                                {signup.notes && (
+                                    <Typography
+                                        variant="body2"
+                                        className={styles.centeredFlex}
+                                        gutterBottom
+                                        style={{ fontStyle: 'italic', color: '#6c757d' }}
+                                    >
+                                        Note: {signup.notes}
+                                    </Typography>
+                                )}
                                 <Stack direction="row" spacing={2} justifyContent="center" marginTop={2}>
                                     <Button
                                     variant="contained"
@@ -180,7 +187,7 @@ const OverviewPage: React.FC = () => {
                             <Card key={event.id} className={styles.card}>
                                 <Typography variant="h6" className={styles.centeredFlex} >{event.title}</Typography>
                                 <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
-                                    <EventIcon className={styles.iconSpacing}/> {format(new Date(event.start), 'MM/dd/yyyy, hh:mm a')}
+                                    <EventIcon className={styles.iconSpacing}/> {format(new Date(event.start), 'MMM d, yyyy, hh:mm a')}
                                 </Typography>
                                 <Button
                                     variant="contained"
