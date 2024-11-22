@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Select, MenuItem, TextField } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -29,6 +29,8 @@ const VolunteerShifts: React.FC = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
     const location = useLocation();
     const { eventStart, eventEnd } = location.state || {};    
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (eventId && user) {
@@ -91,8 +93,21 @@ const VolunteerShifts: React.FC = () => {
             })
     };
 
+    const handleBackClick = () => {
+        navigate(-1);
+    }
+
     return (
         <Container className={styles.container}>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleBackClick}
+                style={{ marginRight: '1150px', marginBottom: '20px', alignSelf: 'flex-start' }}
+            >
+                &larr;
+            </Button>
+
             <Typography variant="h5" gutterBottom>
                 Create Shifts
             </Typography>
