@@ -16,6 +16,7 @@ type UserAndRole = {
   can_request_event: boolean | null;
   is_admin: boolean | null;
   is_blocked: boolean | null;
+  total_hours?: number;
 };
 
 @singleton()
@@ -92,6 +93,16 @@ export class UsersService {
     const userAndRole = await db
       .selectFrom('users')
       .leftJoin('roles', 'roles.id', 'users.role')
+      .leftJoin(
+        db
+          .selectFrom('shift_signup')
+          .select(['user_id'])
+          .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+          .groupBy('user_id')
+          .as('user_hours'),
+        'users.id',
+        'user_hours.user_id'
+      )
       .select([
         'users.id',
         'users.uid',
@@ -105,10 +116,14 @@ export class UsersService {
         'roles.can_request_event',
         'roles.is_admin',
         'roles.is_blocked',
+        'user_hours.total_hours',
       ])
       .execute();
-
-    return userAndRole;
+  
+    return userAndRole.map(user => ({
+      ...user,
+      total_hours: Number(user.total_hours ?? 0),
+    }));
   }
 
   public async batchAssignRole(users: number[], role: number, uid: string): Promise<number[]> {
