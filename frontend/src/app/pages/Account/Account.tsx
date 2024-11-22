@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Typography, Paper, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Alert } from '@mui/material';
-import { Edit as EditIcon } from '@mui/icons-material';
+import { Button, Typography, Paper, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Alert, InputAdornment } from '@mui/material';
+import { Edit as EditIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { auth } from '@utils/firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +22,17 @@ const Account: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setter((prev) => !prev);
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -37,7 +48,11 @@ const Account: React.FC = () => {
       setLastName(backendUser.last_name ?? '');
       setPhone(backendUser.phone ?? '');
       setEmail(backendUser.email ?? '');
+      setEmail(backendUser.email ?? '');
     }
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
     setError(null);
     setOpen(true);
   };
@@ -47,6 +62,37 @@ const Account: React.FC = () => {
   const handleSave = async () => {
     setError(null);
     setIsLoading(true);
+
+    setPhone((prev) => prev.trim());
+
+    if (phone) {
+      const phoneRegex = /^[\+]?[0-9]{0,3}\W?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+      if (!phoneRegex.test(phone)) {
+        setError('Invalid Phone Format');
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    if (newPassword || confirmPassword) {
+      if (!currentPassword) {
+        setError('Current Password is required to change the password.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setError('New Password and Confirm Password do not match.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        setError('New Password must be at least 6 characters long.');
+        setIsLoading(false);
+        return;
+      }
+    }
 
     try {
       const response = await updateUser(user!, {
@@ -179,6 +225,63 @@ const Account: React.FC = () => {
               fullWidth
               disabled // Optional: Disable email editing if not allowed
             />
+            <TextField
+            label="Current Password"
+            type={showCurrentPassword ? 'text' : 'password'}
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => togglePasswordVisibility(setShowCurrentPassword)}
+                    edge="end"
+                  >
+                    {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            label="New Password"
+            type={showNewPassword ? 'text' : 'password'}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => togglePasswordVisibility(setShowNewPassword)}
+                    edge="end"
+                  >
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            label="Confirm Password"
+            type={showConfirmPassword ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => togglePasswordVisibility(setShowConfirmPassword)}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
           </Box>
         </DialogContent>
         <DialogActions>
