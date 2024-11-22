@@ -373,21 +373,38 @@ export class ShiftSignupService {
   }
 
   /**
- * Get the total number of hours worked by a specific user.
- * @param userId - The user ID to calculate total hours worked for
- * @returns Total hours worked by the user
- */
-public async getTotalHoursWorked(userId: number): Promise<number> {
-  const result = await db
-    .selectFrom('shift_signup')
-    .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+   * Get the total number of hours worked by a specific user.
+   * @param userId - The user ID to calculate total hours worked for
+   * @returns Total hours worked by the user
+   */
+  public async getTotalHoursWorked(userId: number): Promise<number> {
+    const result = await db
+      .selectFrom('shift_signup')
+      .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+      .where('user_id', '=', userId)
+      .executeTakeFirst();
 
-  // If result is null or undefined, return 0 as the total hours worked
-  return Number(result?.total_hours ?? 0);
-}
+    // If result is null or undefined, return 0 as the total hours worked
+    return Number(result?.total_hours ?? 0);
+  }
 
+  /**
+   * Get the total hours worked by all users.
+   * @returns A list of user IDs and their corresponding total hours worked
+   */
+  public async getTotalHoursForAllUsers(): Promise<{ user_id: number; total_hours: number }[]> {
+    const results = await db
+      .selectFrom('shift_signup')
+      .select(['user_id'])
+      .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+      .groupBy('user_id')
+      .execute();
+
+    return results.map((result) => ({
+      user_id: result.user_id,
+      total_hours: Number(result.total_hours ?? 0),
+    }));
+  }
 
   /**
    * Get a specific shift signup by ID.

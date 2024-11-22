@@ -42,7 +42,11 @@ export class ShiftSignupRoute implements Routes {
 
     // New Route to auto-checkout a specific shift signup by ID
     this.router.post(`${this.path}/:id/auto-checkout`, this.shiftSignupController.autoCheckOutById);
+
     // New route to get total hours worked by a specific user
     this.router.get(`${this.path}/user/:userId/total-hours`, this.shiftSignupController.getTotalHoursWorked.bind(this.shiftSignupController));
+
+    // Route to get total hours worked for all users
+    this.router.get(`${this.path}/total-hours/all`, authMiddleware, isAdminMiddleware, this.shiftSignupController.getTotalHoursForAllUsers.bind(this.shiftSignupController));
   }
 }

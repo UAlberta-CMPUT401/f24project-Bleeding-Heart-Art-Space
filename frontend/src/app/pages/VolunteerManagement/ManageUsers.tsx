@@ -12,6 +12,7 @@ const cols: GridColDef[] = [
     { field: 'email', headerName: 'Email', width: 240 },
     { field: 'phone', headerName: 'Phone', width: 180 },
     { field: 'title', headerName: 'Role', width: 120 },
+    { field: 'total_hours', headerName: 'Hours Worked', width: 150, type: 'number' },
 ];
 
 const ManageUsers: React.FC = () => {
