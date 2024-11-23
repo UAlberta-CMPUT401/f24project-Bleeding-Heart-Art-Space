@@ -536,3 +536,22 @@ export async function markNotificationAsRead(notificationId: number, user: User)
 export async function markAllNotificationsAsRead(user: User): Promise<ApiResponse<void>> {
   return await postData<void, void>('/notifications/read', undefined, user);
 }
+
+export type ShiftSignupUserBasic = {
+  id: number;
+  user_id: number;
+  shift_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
+export async function getShiftSignups(
+  shiftId: number,
+  user: User,
+  
+): Promise<ApiResponse<ShiftSignupUserBasic[]>> {
+
+  const response = await getData<ShiftSignupUserBasic[]>(`/shift-signups/shift?shiftId=${shiftId}`, user);
+  return response;
+}

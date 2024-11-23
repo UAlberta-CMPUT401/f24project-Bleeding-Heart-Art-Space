@@ -4,7 +4,6 @@ import { Grid, Typography, Button, Card, Container, Box } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import styles from './EventDetails.module.css';
 import { getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
@@ -13,6 +12,7 @@ import EditEventDialog from '@pages/EditEvent/EditEventDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
 import { useEventStore } from '@stores/useEventStore';
 import ConfirmationDialog from '@components/ConfirmationDialog';
+import ShiftDetailsDialog from '@pages/ShiftDetails/ShiftDetailsDialog';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -21,7 +21,7 @@ const EventDetails: React.FC = () => {
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
-    const [eventSignups, setEventSignups] = useState<ShiftSignupUser[]>([]);
+    const [, setEventSignups] = useState<ShiftSignupUser[]>([]);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
@@ -33,7 +33,9 @@ const EventDetails: React.FC = () => {
     const [signupSuccessSnackbarMessage, setSignupSuccessSnackbarMessage] = useState('');
     const [editSuccessSnackbarOpen, setEditSuccessSnackbarOpen] = useState(false);
     const [editSuccessSnackbarMessage, setEditSuccessSnackbarMessage] = useState('');
-
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [shiftToSignUp, setShiftToSignUp] = useState<Shift | null>(null);
+    const [shiftDialogOpen, setShiftDialogOpen] = useState(false);
 
     useEffect(() => {
         const eventId = Number(eventIdStr);
@@ -89,13 +91,19 @@ const EventDetails: React.FC = () => {
         });
     };
 
-    const handleShiftClick = (shift: Shift) => {
-        if (userSignups.find(s => s.shift_id === shift.id)) return; // Disable click if already signed up
-        setSelectedShift(shift);  // Open confirmation dialog
+    const handleViewDetailsClick = (shift: Shift) => {
+        setSelectedShift(shift);
+        setShiftDialogOpen(true);
+    };
+
+
+    const handleSignUpClick = (shift: Shift) => {
+        setShiftToSignUp(shift);
+        setConfirmDialogOpen(true);
     };
 
     const handleConfirmSignup = () => {
-        if (!selectedShift) return;
+        if (!shiftToSignUp) return;
         if (!user) return;
         if (!backendUser) return;
 
@@ -103,8 +111,8 @@ const EventDetails: React.FC = () => {
 
         const newShiftSignup: NewShiftSignup = {
             user_id: backendUser.id,
-            shift_id: selectedShift.id,
-            volunteer_role: selectedShift.volunteer_role,
+            shift_id: shiftToSignUp.id,
+            volunteer_role: shiftToSignUp.volunteer_role,
             checkin_time: null,
             checkout_time: null,
             notes: null,
@@ -115,14 +123,17 @@ const EventDetails: React.FC = () => {
                 setEventSignups(prev => [...prev, response.data]);
                 setSignupSuccessSnackbarMessage('Successfully Signed Up to Shift!');
                 setSignupSuccessSnackbarOpen(true);
-                setSelectedShift(null);  // Close confirmation dialog
+                setConfirmDialogOpen(false);  // Close confirmation dialog
+                setShiftToSignUp(null);       // Reset shiftToSignUp
             }
             else {
                 if (response.error) {
                     setSignupFailSnackbarMessage(response.error);
                 }
                 setSignupFailSnackbarOpen(true);
-                setSelectedShift(null);  // Close confirmation dialog
+                setConfirmDialogOpen(false);  // Close confirmation dialog
+                setShiftToSignUp(null);       // Reset shiftToSignUp
+          
             }
         })
     };
@@ -179,7 +190,6 @@ const EventDetails: React.FC = () => {
                             <Grid item xs={12} sm={4} key={index}>
                                 <Card 
                                     className={`${styles.shiftCard} ${userSignups.find(s => s.shift_id === shift.id) ? styles.signedUp : ''}`}
-                                    onClick={() => handleShiftClick(shift)}
                                 >
                                     <Typography variant="h6" className={styles.shiftDetail}>
                                         <AssignmentIndIcon className={styles.shiftIcon}/> 
@@ -200,30 +210,54 @@ const EventDetails: React.FC = () => {
                                             {shiftEndTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </Typography>
-                                    {userSignups.find(s => s.shift_id === shift.id) && (
-                                        <>
-                                            <Box className={styles.signedUpBox}>
-                                                <CheckCircleIcon className={styles.signedUpIcon} />
-                                                <Typography variant="body2" color="green" style={{ marginLeft: '5px' }}>
-                                                    Signed up!
-                                                </Typography>
-                                            </Box>
-                                        </>
-                                    )}
+                                    <Box
+                                      display="flex"
+                                      justifyContent="center"
+                                      alignItems="center"
+                                      marginTop={2}
+                                      gap={1}
+                                    >
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={() => handleSignUpClick(shift)}
+                                            disabled={userSignups.some(s => s.shift_id === shift.id)}
+                                        >
+                                            {userSignups.some(s => s.shift_id === shift.id) ? 'Signed Up' : 'Sign Up'}
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={() => handleViewDetailsClick(shift)}
+                                        >
+                                            View Details
+                                        </Button>
+                                    </Box>
                                 </Card>
                             </Grid>
                         );
                     })}
                 </Grid>
                 <ConfirmationDialog
-                    open={!!selectedShift}
-                    title="Confirm Signup"
-                    message="Are you sure you want to sign up for this shift?"
-                    onConfirm={handleConfirmSignup}
-                    onCancel={() => setSelectedShift(null)}
-                    confirmButtonText="Confirm"
-                    cancelButtonText="Cancel"
+                open={confirmDialogOpen}
+                title="Confirm Signup"
+                message="Are you sure you want to sign up for this shift?"
+                onConfirm={handleConfirmSignup}
+                onCancel={() => {
+                    setConfirmDialogOpen(false);
+                    setShiftToSignUp(null);
+                }}
+                confirmButtonText="Confirm"
+                cancelButtonText="Cancel"
                 />
+
+                {selectedShift && (
+                    <ShiftDetailsDialog
+                        open={shiftDialogOpen}
+                        onClose={() => setShiftDialogOpen(false)}
+                        shift={selectedShift}
+                    />
+                )}
                 {/* Edit Event Button */}
                 <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
                     <Grid item>
@@ -254,7 +288,7 @@ const EventDetails: React.FC = () => {
                     onClose={() => setEditSuccessSnackbarOpen(false)}
                     message={editSuccessSnackbarMessage}
                     severity="success"
-                    autoHideDuration={3000} // Optional: Customize duration
+                    autoHideDuration={3000}
                 />
 
                 <EditEventDialog
