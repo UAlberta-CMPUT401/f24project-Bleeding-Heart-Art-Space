@@ -78,6 +78,7 @@ const VolunteerRoles: React.FC = () => {
                         sortModel: [{ field: 'name', sort: 'asc' }],
                     }
                 }}
+                pageSizeOptions={[5, 10, 20]}
                 onRowSelectionModelChange={handleRoleSelect}
                 checkboxSelection
                 sx={{ width: '100%' }}

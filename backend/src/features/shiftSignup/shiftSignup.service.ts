@@ -455,6 +455,15 @@ export class ShiftSignupService {
       .execute();
   }
 
+  async batchDeleteSignup(ids: number[]): Promise<number[]> {
+    const deletedIds = await db
+      .deleteFrom('shift_signup')
+      .where('id', 'in', ids)
+      .returning('id')
+      .execute();
+    return deletedIds.map(id => id.id);
+  }
+
   async getShiftSignups(shiftId: number): Promise<ShiftSignupUserBasic[]> {
     const result = await db
       .selectFrom('shift_signup')

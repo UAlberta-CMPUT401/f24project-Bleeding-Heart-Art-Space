@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, Typography, IconButton, Box } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Dialog, DialogTitle, DialogContent, Typography, IconButton, Box, Button } from '@mui/material';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
 import styles from '@pages/ShiftDetails/ShiftDetailsDialog.module.css';
-import { Shift, ShiftSignupUserBasic, getShiftSignups, isOk } from '@utils/fetch';
+import { Shift, ShiftSignupUserBasic, deleteSignups, getShiftSignups, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
+import { useBackendUserStore } from '@stores/useBackendUserStore';
+import ConfirmationDialog from '@components/ConfirmationDialog';
 
 interface ShiftDetailsDialogProps {
   open: boolean;
@@ -20,6 +22,9 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
 }) => {
   const [shiftSignups, setShiftSignups] = useState<ShiftSignupUserBasic[]>([]);
   const { user } = useAuth();
+  const { backendUser } = useBackendUserStore();
+  const [selectedSignups, setSelectedSignups] = useState<ShiftSignupUserBasic[]>([]);
+  const [confirmRemove, setConfirmRemove] = useState<boolean>(false);
 
   useEffect(() => {
     if (shift && user) {
@@ -34,11 +39,32 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
   }, [shift, user]);
 
   // Define columns for DataGrid
-  const columns: GridColDef[] = [
+  const columns: GridColDef[] = backendUser?.is_admin ? [
     { field: 'first_name', headerName: 'First Name', flex: 1, minWidth: 100 },
     { field: 'last_name', headerName: 'Last Name', flex: 1, minWidth: 100 },
     { field: 'email', headerName: 'Email', flex: 2, minWidth: 200 },
+  ] : [
+    { field: 'first_name', headerName: 'First Name', flex: 1, minWidth: 100 },
+    { field: 'last_name', headerName: 'Last Name', flex: 1, minWidth: 100 },
   ];
+
+
+  const handleSignupSelect = (ids: GridRowSelectionModel) => {
+    const selectedIDs = new Set(ids);
+    setSelectedSignups(shiftSignups.filter((signup) => selectedIDs.has(signup.id)));
+  };
+
+  const removeSignups = () => {
+    if (!user) return;
+    deleteSignups(selectedSignups.map(signup => signup.id), user)
+      .then(response => {
+        if (isOk(response.status)) {
+          setShiftSignups(shiftSignups.filter(signup => !response.data.includes(signup.id)));
+        }
+      });
+    setConfirmRemove(false);
+    setSelectedSignups([]);
+  }
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -48,14 +74,14 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
             <PeopleIcon sx={{ marginRight: '8px' }} />
             <Typography variant="h6">Volunteers Signed Up</Typography>
           </Box>
-          <IconButton onClick={onClose} sx={{ color: 'white' }}>
+          <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </Box>
       </DialogTitle>
       <DialogContent className={styles.dialogContent}>
         {shiftSignups.length > 0 ? (
-          <div style={{ height: 400, width: '100%' }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
             <DataGrid
               className={styles.grid}
               rows={shiftSignups}
@@ -70,8 +96,18 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
               }}
               pageSizeOptions={[5, 10, 20]}
               disableRowSelectionOnClick
-              getRowId={(row) => row.id}     
+              onRowSelectionModelChange={handleSignupSelect}
+              checkboxSelection={backendUser?.is_admin ? true : false}
             />
+            {(selectedSignups.length > 0) && 
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => setConfirmRemove(true)}
+              >
+                Remove Selected Signups
+              </Button>
+            }
           </div>
         ) : (
           <Typography variant="body1" className={styles.noVolunteersText}>
@@ -79,6 +115,13 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
           </Typography>
         )}
       </DialogContent>
+      <ConfirmationDialog
+          open={confirmRemove}
+          message={`Are you sure you want to remove ${selectedSignups.length} selected signups(s)`}
+          onConfirm={removeSignups}
+          onCancel={() => setConfirmRemove(false)}
+          title='Confirm Delete'
+      />
     </Dialog>
   );
 };

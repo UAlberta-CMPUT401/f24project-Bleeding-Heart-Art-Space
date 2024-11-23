@@ -94,6 +94,17 @@ export class ShiftSignupController {
     }
   };
 
+  public batchDelete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const body: any[] = req.body;
+      const signupIds: number[] = body.map(num => Number(num));
+      const deletedIds = await this.shiftSignupService.batchDeleteSignup(signupIds);
+      res.status(200).json(deletedIds);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   /**
    * Update a shift signup by ID
    * @route PUT /api/shift-signups/:id
