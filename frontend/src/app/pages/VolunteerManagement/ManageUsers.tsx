@@ -1,4 +1,4 @@
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import {ConfirmationDialog} from '@components/ConfirmationDialog';
 import { useAuth } from '@lib/context/AuthContext';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';

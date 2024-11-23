@@ -86,6 +86,41 @@ export class ShiftSignupService {
     return result;
   }
 
+  public async getUpcomingShifts(uid: string): Promise<ShiftSignupUser[]> {
+    const currentDate = new Date();
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(currentDate.getDate() + 14);
+
+    const result = await db
+      .selectFrom('shift_signup')
+      .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+      .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .innerJoin('events', 'events.id', 'volunteer_shifts.event_id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.hours_worked',
+        'shift_signup.notes',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+        'volunteer_shifts.volunteer_role',
+        'volunteer_shifts.start',
+        'volunteer_shifts.end',
+        'events.id as event_id',
+        'events.title as event_title',
+      ])
+      .where('volunteer_shifts.start', '>=', currentDate)
+      .where('volunteer_shifts.start', '<=', twoWeeksFromNow)
+      .orderBy('volunteer_shifts.start', 'asc')
+      .execute();
+    return result;
+  }
+
+
   /**
    * Create a new shift signup.
    * @param signupData - The data for the new signup

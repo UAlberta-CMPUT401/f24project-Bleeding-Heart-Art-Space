@@ -47,6 +47,19 @@ export class ShiftSignupController {
     }
   };
 
+  public getUpcomingShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const shifts = await this.shiftSignupService.getUpcomingShifts(req.auth.uid);
+      res.json(shifts);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   /**
    * Get all shift signups
    * @route GET /api/shift-signups

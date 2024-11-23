@@ -11,7 +11,7 @@ import { useBackendUserStore } from '@stores/useBackendUserStore';
 import EditEventDialog from '@pages/EditEvent/EditEventDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
 import { useEventStore } from '@stores/useEventStore';
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import { ConfirmationDialogNotes } from '@components/ConfirmationDialog';
 import ShiftDetailsDialog from '@pages/ShiftDetails/ShiftDetailsDialog';
 
 const EventDetails: React.FC = () => {
@@ -26,6 +26,7 @@ const EventDetails: React.FC = () => {
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
     const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [notes, setNotes] = useState('');
     const { events, fetchEvent } = useEventStore();
     const [signupFailSnackbarOpen, setSignupFailSnackbarOpen] = useState(false);
     const [signupFailSnackbarMessage, setSignupFailSnackbarMessage] = useState('');
@@ -75,6 +76,7 @@ const EventDetails: React.FC = () => {
 
     const handleEditDialogCancel = () => {
         setEditDialogOpen(false);
+        setNotes('');
     };
 
     const handleEditSuccess = () => {
@@ -115,7 +117,7 @@ const EventDetails: React.FC = () => {
             volunteer_role: shiftToSignUp.volunteer_role,
             checkin_time: null,
             checkout_time: null,
-            notes: null,
+            notes: notes.trim(),
         }
         postShiftSignup(newShiftSignup, user).then(response => {
             if (isOk(response.status)) {
@@ -125,6 +127,7 @@ const EventDetails: React.FC = () => {
                 setSignupSuccessSnackbarOpen(true);
                 setConfirmDialogOpen(false);  // Close confirmation dialog
                 setShiftToSignUp(null);       // Reset shiftToSignUp
+                setNotes('');
             }
             else {
                 if (response.error) {
@@ -133,7 +136,6 @@ const EventDetails: React.FC = () => {
                 setSignupFailSnackbarOpen(true);
                 setConfirmDialogOpen(false);  // Close confirmation dialog
                 setShiftToSignUp(null);       // Reset shiftToSignUp
-          
             }
         })
     };
@@ -238,17 +240,19 @@ const EventDetails: React.FC = () => {
                         );
                     })}
                 </Grid>
-                <ConfirmationDialog
-                open={confirmDialogOpen}
-                title="Confirm Signup"
-                message="Are you sure you want to sign up for this shift?"
-                onConfirm={handleConfirmSignup}
-                onCancel={() => {
-                    setConfirmDialogOpen(false);
-                    setShiftToSignUp(null);
-                }}
-                confirmButtonText="Confirm"
-                cancelButtonText="Cancel"
+                <ConfirmationDialogNotes
+                    open={confirmDialogOpen}
+                    title="Confirm Signup"
+                    message="Are you sure you want to sign up for this shift?"
+                    onConfirm={handleConfirmSignup}
+                    onCancel={() => {
+                        setConfirmDialogOpen(false);
+                        setShiftToSignUp(null);
+                    }}
+                    confirmButtonText="Confirm"
+                    cancelButtonText="Cancel"
+                    notes= {notes}
+                    setNotes={setNotes}
                 />
 
                 {selectedShift && (

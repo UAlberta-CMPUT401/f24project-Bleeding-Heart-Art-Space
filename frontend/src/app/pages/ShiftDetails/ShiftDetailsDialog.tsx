@@ -7,7 +7,7 @@ import styles from '@pages/ShiftDetails/ShiftDetailsDialog.module.css';
 import { Shift, ShiftSignupUserBasic, deleteSignups, getShiftSignups, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import { ConfirmationDialog } from '@components/ConfirmationDialog';
 
 interface ShiftDetailsDialogProps {
   open: boolean;
