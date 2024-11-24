@@ -8,7 +8,7 @@ import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { useNavigate } from 'react-router-dom';
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import {ConfirmationDialog} from '@components/ConfirmationDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
 
 

@@ -460,6 +460,19 @@ export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): 
   return formattedResponse;
 }
 
+export async function getUpcomingShifts(user: User): Promise<ApiResponse<ShiftSignupUser[]>> {
+  const response = await getData<ShiftSignupUser[]>('/shift-signups/upcoming', user);
+  const formattedResponse: ApiResponse<ShiftSignupUser[]> = {
+    ...response,
+    data: response.data.map((shiftData) => ({
+      ...shiftData,
+      checkin_time: shiftData.checkin_time ? new Date(shiftData.checkin_time) : undefined,
+      checkout_time: shiftData.checkout_time ? new Date(shiftData.checkout_time) : undefined,
+    })),
+  }
+  return formattedResponse;
+}
+
 export async function getUserSignups(user: User): Promise<ApiResponse<ShiftSignupUser[]>> {
   const response = await getData<ShiftSignupUser[]>('/shift-signups/user', user);
   const formattedResponse: ApiResponse<ShiftSignupUser[]> = {
@@ -471,6 +484,9 @@ export async function getUserSignups(user: User): Promise<ApiResponse<ShiftSignu
     })),
   }
   return formattedResponse;
+}
+export async function deleteSignups(signupIds: number[], user: User): Promise<ApiResponse<number[]>> {
+  return await postData<number[], number[]>(`/shift-signups/batch-delete`, signupIds, user);
 }
 
 export type CheckIn = {
@@ -535,4 +551,23 @@ export async function markNotificationAsRead(notificationId: number, user: User)
 }
 export async function markAllNotificationsAsRead(user: User): Promise<ApiResponse<void>> {
   return await postData<void, void>('/notifications/read', undefined, user);
+}
+
+export type ShiftSignupUserBasic = {
+  id: number;
+  user_id: number;
+  shift_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
+export async function getShiftSignups(
+  shiftId: number,
+  user: User,
+  
+): Promise<ApiResponse<ShiftSignupUserBasic[]>> {
+
+  const response = await getData<ShiftSignupUserBasic[]>(`/shift-signups/shift?shiftId=${shiftId}`, user);
+  return response;
 }

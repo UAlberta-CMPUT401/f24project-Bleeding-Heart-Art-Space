@@ -47,6 +47,19 @@ export class ShiftSignupController {
     }
   };
 
+  public getUpcomingShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const shifts = await this.shiftSignupService.getUpcomingShifts(req.auth.uid);
+      res.json(shifts);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   /**
    * Get all shift signups
    * @route GET /api/shift-signups
@@ -93,6 +106,17 @@ export class ShiftSignupController {
       next(error);
     }
   };
+
+  public batchDelete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const body: any[] = req.body;
+      const signupIds: number[] = body.map(num => Number(num));
+      const deletedIds = await this.shiftSignupService.batchDeleteSignup(signupIds);
+      res.status(200).json(deletedIds);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   /**
    * Update a shift signup by ID
@@ -214,4 +238,19 @@ export class ShiftSignupController {
       next(error);
     }
   }
+
+  public getShiftSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const shiftId = req.query.shiftId ? Number(req.query.shiftId) : undefined;
+
+      if (shiftId) {
+        const signups = await this.shiftSignupService.getShiftSignups(shiftId);
+        res.json(signups);
+      } else {
+        res.status(400).json({ error: 'shiftId query parameter is required' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
 }
