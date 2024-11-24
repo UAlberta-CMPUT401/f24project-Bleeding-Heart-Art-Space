@@ -98,9 +98,6 @@ const Dashboard: React.FC = () => {
                       alignItems: 'center',
                       borderRadius: '8px',
                       backgroundColor: isActive ? 'action.selected' : 'transparent',
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
-                      }
                     }}
                   >
                     {item.icon}
