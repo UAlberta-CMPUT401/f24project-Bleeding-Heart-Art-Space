@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Select, MenuItem, TextField } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
-import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, getEvent, isOk } from '@utils/fetch';
+import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
-import { format } from 'date-fns';
 import SnackbarAlert from '@components/SnackbarAlert';
 
 const emptyNewShift: NewShift = {
@@ -27,8 +26,8 @@ const VolunteerShifts: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
-    const location = useLocation();
-    const { eventStart, eventEnd } = location.state || {};    
+    // const location = useLocation();
+    // const { eventStart, eventEnd } = location.state || {};    
 
     useEffect(() => {
         if (eventId && user) {
@@ -37,22 +36,28 @@ const VolunteerShifts: React.FC = () => {
         }
     }, [eventId, user]);
 
-    useEffect(() => {
-        if (eventStart && eventEnd) {
-            const localStartTime = new Date(eventStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-            const localEndTime = new Date(eventEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    // useEffect(() => {
+    //     if (eventStart && eventEnd) {
+    //         const localStartTime = new Date(eventStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    //         const localEndTime = new Date(eventEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     
-            setNewShift((prev) => ({
-                ...prev,
-                start: localStartTime,
-                end: localEndTime,
-            }));
-        }
-    }, [eventStart, eventEnd]);    
+    //         setNewShift((prev) => ({
+    //             ...prev,
+    //             start: localStartTime,
+    //             end: localEndTime,
+    //         }));
+    //     }
+    // }, [eventStart, eventEnd]);    
 
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
             setSnackbarMessage('Please fill in all shift details.');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
+            return;
+        }
+        if (new Date(newShift.start) >= new Date(newShift.end)) {
+            setSnackbarMessage('Start date and time must be earlier than the end date and time.');
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
             return;
@@ -72,14 +77,14 @@ const VolunteerShifts: React.FC = () => {
         }
 
         // Fetch event details to get the event date
-        const event = await getEvent(Number(eventId), user);
+        // const event = await getEvent(Number(eventId), user);
 
         const formattedShifts: NewShift[] = shifts.map((shift) => ({
             ...shift,
             event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: new Date(`${format(event.data.start, 'yyyy-MM-dd')}T${shift.start}`).toISOString(), // Combine event date with shift start time
-            end: new Date(`${format(event.data.start, 'yyyy-MM-dd')}T${shift.end}`).toISOString(),     // Combine event date with shift end time
+            start: new Date(shift.start).toISOString(), // Convert directly to ISO format
+            end: new Date(shift.end).toISOString(),     // Convert directly to ISO format
         }));
 
         postEventShifts(Number(eventId), formattedShifts, user)
@@ -119,10 +124,10 @@ const VolunteerShifts: React.FC = () => {
                     </FormControl>
                 </Grid>
 
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6}>
                     <TextField
-                        label="Start Time"
-                        type="time"
+                        label="Start Date & Time"
+                        type="datetime-local"
                         fullWidth
                         value={newShift.start}
                         onChange={(e) => setNewShift({ ...newShift, start: e.target.value })}
@@ -130,10 +135,11 @@ const VolunteerShifts: React.FC = () => {
                     />
                 </Grid>
 
-                <Grid item xs={12} md={4}>
+
+                <Grid item xs={12} md={6}>
                     <TextField
-                        label="End Time"
-                        type="time"
+                        label="End Date & Time"
+                        type="datetime-local"
                         fullWidth
                         value={newShift.end}
                         onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
@@ -174,10 +180,10 @@ const VolunteerShifts: React.FC = () => {
                                 <AssignmentIndIcon /> Role: {roles.find(item => item.id === shift.volunteer_role)?.name}
                             </Typography>
                             <Typography variant="body1">
-                                <AccessTimeIcon /> Start: {shift.start}
+                                <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleString()}
                             </Typography>
                             <Typography variant="body1">
-                                <AccessTimeIcon /> End: {shift.end}
+                                <AccessTimeIcon /> End: {new Date(shift.end).toLocaleString()}
                             </Typography>
                             <Typography variant="body1">
                                 Max Volunteers: {shift.max_volunteers}
@@ -208,10 +214,10 @@ const VolunteerShifts: React.FC = () => {
                                 <AssignmentIndIcon /> Role: {roles.find(item => item.id === shift.volunteer_role)?.name}
                             </Typography>
                             <Typography variant="body1">
-                                <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleTimeString()}
+                                <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleString()}
                             </Typography>
                             <Typography variant="body1">
-                                <AccessTimeIcon /> End: {new Date(shift.end).toLocaleTimeString()}
+                                <AccessTimeIcon /> End: {new Date(shift.end).toLocaleString()}
                             </Typography>
                             <Typography variant="body1">
                                 Max Volunteers: {shift.max_volunteers}
