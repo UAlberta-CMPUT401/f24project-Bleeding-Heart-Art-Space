@@ -1,5 +1,6 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
+import { ListItemButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
@@ -17,7 +18,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import BHASLogo from '@assets/BHAS-Logo.png';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 
 type SideBarItem = {
@@ -60,6 +61,7 @@ const Dashboard: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const { backendUser } = useBackendUserStore();
+  const location = useLocation();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -83,33 +85,31 @@ const Dashboard: React.FC = () => {
       <List>
         {sideBarItems.map((item, index) => {
           if (!item.admin || backendUser?.is_admin) {
+            const isActive = location.pathname === item.route;
             return <ListItem key={index} disablePadding>
-                <Button
-                  component={Link}
-                  variant='contained'
-                  sx={{
-                    margin: '0.5rem',
-                    width: '100%',
-                    height: '4rem',
-                    fontWeight: 'bold',
-                  }}
-                  to={item.route}
-                >
-                  <div
-                    style={{
+                  <ListItemButton
+                    component={Link}
+                    to={item.route}
+                    sx={{
+                      margin: '0.5rem',
+                      height: '4rem',
                       display: 'flex',
                       gap: '0.5rem',
                       alignItems: 'center',
-                      justifyContent: 'center',
+                      borderRadius: '8px',
+                      backgroundColor: isActive ? 'action.selected' : 'transparent',
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      }
                     }}
                   >
                     {item.icon}
                     <div style={{ whiteSpace: 'pre-line' }} >
                       {item.name}
                     </div>
-                  </div>
-                </Button>
-              </ListItem>;
+                  {/* </div> */}
+                </ListItemButton>
+              </ListItem>
           }
         })}
       </List>
