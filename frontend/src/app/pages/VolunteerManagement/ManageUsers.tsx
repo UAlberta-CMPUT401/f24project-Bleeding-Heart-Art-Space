@@ -82,6 +82,7 @@ const ManageUsers: React.FC = () => {
                         sortModel: [{ field: 'last_name', sort: 'asc' }],
                     }
                 }}
+                pageSizeOptions={[5, 10, 20]}
                 rowSelectionModel={selectionModel}
                 onRowSelectionModelChange={handleUserSelect}
                 checkboxSelection

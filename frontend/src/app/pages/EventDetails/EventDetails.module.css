@@ -14,24 +14,8 @@
     transition: transform 0.3s ease;
 }
 
-.shiftCard:hover {
-    transform: scale(1.04);
-}
-
 .signedUp {
     border: 2px solid #4caf50;
-}
-
-.signedUpIcon {
-    color: green;
-    margin-left: 8px;
-}
-
-.signedUpBox {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
 }
 
 h6 {

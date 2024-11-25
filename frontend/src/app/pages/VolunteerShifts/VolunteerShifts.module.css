@@ -1,5 +1,5 @@
 .container {
-    padding: 20px;
+    padding: 40px 20px;;
     color: white;
     border-radius: 10px;
     margin: 20px 0;
@@ -12,8 +12,54 @@
     color: white;
     border-radius: 8px;
     transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .shiftCard:hover {
     transform: scale(1.05);
+}
+
+.shiftDetail {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.shiftIcon {
+    margin-right: 8px;
+    font-size: 1.2rem;
+    color: #f0a500;
+    vertical-align: middle;
+}
+
+.shiftLabel {
+    font-weight: bold;
+    margin-right: 4px;
+    color: white;
+    font-size: 1rem;
+}
+
+.shiftValue {
+    color: #cccccc;
+    font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+    .shiftDetail {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .shiftIcon {
+        margin-bottom: 4px;
+        margin-right: 0;
+    }
+    .shiftLabel {
+        margin-right: 0;
+    }
+    .shiftValue {
+        font-size: 0.9rem;
+    }
 }
