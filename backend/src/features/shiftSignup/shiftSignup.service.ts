@@ -11,6 +11,15 @@ type ShiftSignupUser = ShiftSignup & {
   last_name: string;
 }
 
+type ShiftSignupUserBasic = {
+  id: number;
+  user_id: number;
+  shift_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
 @singleton()
 export class ShiftSignupService {
   private volunteerShiftsService = new VolunteerShiftsService();
@@ -479,6 +488,32 @@ export class ShiftSignupService {
       .deleteFrom('shift_signup')
       .where('id', '=', id)
       .execute();
+  }
+
+  async batchDeleteSignup(ids: number[]): Promise<number[]> {
+    const deletedIds = await db
+      .deleteFrom('shift_signup')
+      .where('id', 'in', ids)
+      .returning('id')
+      .execute();
+    return deletedIds.map(id => id.id);
+  }
+
+  async getShiftSignups(shiftId: number): Promise<ShiftSignupUserBasic[]> {
+    const result = await db
+      .selectFrom('shift_signup')
+      .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'users.first_name',
+        'users.last_name',
+        'users.email',
+      ])
+      .where('shift_signup.shift_id', '=', shiftId)
+      .execute();
+    return result;
   }
 }
 
