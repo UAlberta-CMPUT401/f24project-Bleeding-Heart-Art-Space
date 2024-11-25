@@ -202,14 +202,26 @@ const EventDetails: React.FC = () => {
                                         <AccessTimeIcon className={styles.shiftIcon} /> 
                                         <span className={styles.shiftLabel}>Start:</span> 
                                         <span className={styles.shiftValue}>
-                                            {shiftStartTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {shiftStartTime.toLocaleString([], { 
+                                                year: 'numeric', 
+                                                month: 'short', 
+                                                day: 'numeric', 
+                                                hour: '2-digit', 
+                                                minute: '2-digit' 
+                                            })}                                        
                                         </span>
                                     </Typography>
                                     <Typography variant="body1" className={styles.shiftDetail}>
                                         <AccessTimeIcon className={styles.shiftIcon} /> 
                                         <span className={styles.shiftLabel}>End:</span> 
                                         <span className={styles.shiftValue}>
-                                            {shiftEndTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {shiftEndTime.toLocaleString([], { 
+                                                year: 'numeric', 
+                                                month: 'short', 
+                                                day: 'numeric', 
+                                                hour: '2-digit', 
+                                                minute: '2-digit' 
+                                            })}
                                         </span>
                                     </Typography>
                                     <Box
