@@ -7,6 +7,7 @@ import styles from './VolunteerShifts.module.css';
 import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 import SnackbarAlert from '@components/SnackbarAlert';
+import PeopleIcon from '@mui/icons-material/People';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -104,21 +105,28 @@ const VolunteerShifts: React.FC = () => {
 
     return (
         <Container className={styles.container}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleBackClick}
-                style={{ marginRight: '1150px', marginBottom: '20px', alignSelf: 'flex-start' }}
-            >
-                &larr;
-            </Button>
+            <Grid container justifyContent="flex-start">
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleBackClick}
+                    style={{ marginBottom: '20px' }}
+                >
+                    &larr; Back
+                </Button>
+            </Grid>
 
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                 Create Shifts
             </Typography>
 
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={4}>
+            <Grid 
+                container 
+                spacing={2} 
+                justifyContent="center" 
+                alignItems="center"
+            >
+                <Grid item xs={12} sm={6} md={3}>
                     <FormControl fullWidth>
                         <InputLabel>Role</InputLabel>
                         <Select
@@ -139,7 +147,8 @@ const VolunteerShifts: React.FC = () => {
                     </FormControl>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                {/* Start Date & Time */}
+                <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         label="Start Date & Time"
                         type="datetime-local"
@@ -150,8 +159,8 @@ const VolunteerShifts: React.FC = () => {
                     />
                 </Grid>
 
-
-                <Grid item xs={12} md={6}>
+                {/* End Date & Time */}
+                <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         label="End Date & Time"
                         type="datetime-local"
@@ -162,8 +171,8 @@ const VolunteerShifts: React.FC = () => {
                     />
                 </Grid>
 
-                {/* Input Max Volunteers */}
-                <Grid item xs={12} md={4}>
+                {/* Max Volunteers */}
+                <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         label="Max Volunteers"
                         type="number"
@@ -189,19 +198,38 @@ const VolunteerShifts: React.FC = () => {
             </Typography>
             <Grid container spacing={2}>
                 {shifts.map((shift, index) => (
-                    <Grid item xs={12} sm={6} key={index}>
+                    <Grid item xs={12} sm={4} key={index}>
                         <Card className={styles.shiftCard}>
-                            <Typography variant="h6">
-                                <AssignmentIndIcon /> Role: {roles.find(item => item.id === shift.volunteer_role)?.name}
+                            <Typography variant="h6" className={styles.shiftDetail}>
+                                <AssignmentIndIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>Role:</span> 
+                                <span className={styles.shiftValue}>
+                                    {roles.find(item => item.id === shift.volunteer_role)?.name}
+                                </span>
                             </Typography>
-                            <Typography variant="body1">
-                                <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleString()}
+                            
+                            <Typography variant="body1" className={styles.shiftDetail}>
+                                <AccessTimeIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>Start:</span> 
+                                <span className={styles.shiftValue}>
+                                    {new Date(shift.start).toLocaleString()}
+                                </span>
                             </Typography>
-                            <Typography variant="body1">
-                                <AccessTimeIcon /> End: {new Date(shift.end).toLocaleString()}
+                            
+                            <Typography variant="body1" className={styles.shiftDetail}>
+                                <AccessTimeIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>End:</span> 
+                                <span className={styles.shiftValue}>
+                                    {new Date(shift.end).toLocaleString()}
+                                </span>
                             </Typography>
-                            <Typography variant="body1">
-                                Max Volunteers: {shift.max_volunteers}
+                            
+                            <Typography variant="body1" className={styles.shiftDetail}>
+                                <PeopleIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>Max Volunteers:</span> 
+                                <span className={styles.shiftValue}>
+                                    {shift.max_volunteers}
+                                </span>
                             </Typography>
                         </Card>
                     </Grid>
@@ -223,19 +251,38 @@ const VolunteerShifts: React.FC = () => {
             </Typography>
             <Grid container spacing={2}>
                 {savedShifts.map((shift, index) => (
-                    <Grid item xs={12} sm={6} key={index}>
+                    <Grid item xs={12} sm={4} key={index}>
                         <Card className={styles.shiftCard}>
-                            <Typography variant="h6">
-                                <AssignmentIndIcon /> Role: {roles.find(item => item.id === shift.volunteer_role)?.name}
+                            <Typography variant="h6" className={styles.shiftDetail}>
+                                <AssignmentIndIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>Role:</span> 
+                                <span className={styles.shiftValue}>
+                                    {roles.find(item => item.id === shift.volunteer_role)?.name}
+                                </span>
                             </Typography>
-                            <Typography variant="body1">
-                                <AccessTimeIcon /> Start: {new Date(shift.start).toLocaleString()}
+                            
+                            <Typography variant="body1" className={styles.shiftDetail}>
+                                <AccessTimeIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>Start:</span> 
+                                <span className={styles.shiftValue}>
+                                    {new Date(shift.start).toLocaleString()}
+                                </span>
                             </Typography>
-                            <Typography variant="body1">
-                                <AccessTimeIcon /> End: {new Date(shift.end).toLocaleString()}
+                            
+                            <Typography variant="body1" className={styles.shiftDetail}>
+                                <AccessTimeIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>End:</span> 
+                                <span className={styles.shiftValue}>
+                                    {new Date(shift.end).toLocaleString()}
+                                </span>
                             </Typography>
-                            <Typography variant="body1">
-                                Max Volunteers: {shift.max_volunteers}
+                            
+                            <Typography variant="body1" className={styles.shiftDetail}>
+                                <PeopleIcon className={styles.shiftIcon} /> 
+                                <span className={styles.shiftLabel}>Max Volunteers:</span> 
+                                <span className={styles.shiftValue}>
+                                    {shift.max_volunteers}
+                                </span>
                             </Typography>
                         </Card>
                     </Grid>
