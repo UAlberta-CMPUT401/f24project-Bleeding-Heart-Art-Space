@@ -42,6 +42,8 @@ export class VolunteerShiftsController {
         ...shift,
         event_id: Number(eventId), // Convert eventId to number
         volunteer_role: String(shift.volunteer_role), // Ensure volunteer_role is a string
+        start: new Date(shift.start).toISOString(), // Ensure start is ISO 8601
+        end: new Date(shift.end).toISOString(),     // Ensure end is ISO 8601
       }));
 
       const insertedShifts = await this.volunteerShiftsService.createShifts(shiftsWithEventId);
