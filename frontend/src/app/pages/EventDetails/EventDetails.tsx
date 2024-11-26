@@ -275,18 +275,18 @@ const EventDetails: React.FC = () => {
                     />
                 )}
                 {/* Edit Event Button */}
-                <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
+                {backendUser?.is_admin && <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
                     <Grid item>
-                        <Button variant="contained" color="primary" onClick={handleEdit}>
-                            Edit Event
+                        <Button variant="contained" color="secondary" onClick={handleEdit}>
+                            Edit
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleGoToShifts}>
-                            Go to Shifts
+                            Shifts
                         </Button>
                     </Grid>
-                </Grid>
+                </Grid>}
                 <SnackbarAlert
                 open={signupFailSnackbarOpen}
                 onClose={() => setSignupFailSnackbarOpen(false)}
