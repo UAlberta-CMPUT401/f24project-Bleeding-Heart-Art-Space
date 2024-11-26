@@ -154,6 +154,7 @@ export class ShiftSignupService {
       .values({
         user_id: signupData.user_id,
         shift_id: signupData.shift_id,
+        notes: signupData.notes || undefined,
       })
       .returning('id')
       .executeTakeFirst();
