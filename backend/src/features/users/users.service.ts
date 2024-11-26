@@ -169,4 +169,69 @@ export class UsersService {
       .where('uid', '=', uid)
       .executeTakeFirst();
   }  
+
+  public async makeUserEventAdmin(userId: number, eventId: number): Promise<boolean> {
+    const result = await db
+      .insertInto('user_event_roles')
+      .values(eb => {
+        return {
+          user_id: userId,
+          event_id: eventId,
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        };
+      })
+      .executeTakeFirst();
+
+    return result.numInsertedOrUpdatedRows === BigInt(1);
+  }
+
+  public async isEventAdmin(uid: string, eventId?: number, shiftId?: number, signupId?: number): Promise<boolean> {
+
+    if (eventId !== undefined) {
+      const res = await db
+        .selectFrom('user_event_roles')
+        .selectAll()
+        .where(eb => eb.and({
+          user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+          event_id: eventId,
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        }))
+        .execute();
+      return res.length > 0;
+    }
+
+    if (shiftId !== undefined) {
+      const res = await db
+        .selectFrom('user_event_roles')
+        .selectAll()
+        .where(eb => eb.and({
+          user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+          event_id: eb.selectFrom('volunteer_shifts').where('volunteer_shifts.id', '=', shiftId).select('volunteer_shifts.event_id').limit(1),
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        }))
+        .execute();
+      return res.length > 0;
+    }
+
+    if (signupId !== undefined) {
+      const res = await db
+        .selectFrom('user_event_roles')
+        .selectAll()
+        .where(eb => eb.and({
+          user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+          event_id: eb
+            .selectFrom('volunteer_shifts')
+            .where(eb => eb.and({
+              id: eb.selectFrom('shift_signup').where('shift_signup.id', '=', signupId).select('shift_signup.shift_id').limit(1),
+            }))
+            .select('volunteer_shifts.event_id').limit(1),
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        }))
+        .execute();
+      return res.length > 0;
+    }
+
+    return false;
+  }
+
 }
