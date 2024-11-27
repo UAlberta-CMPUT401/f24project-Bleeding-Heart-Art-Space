@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Card, Container, Box } from '@mui/material';
+import { Grid, Typography, Button, Card, Box, Paper } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
@@ -13,6 +13,7 @@ import SnackbarAlert from '@components/SnackbarAlert';
 import { useEventStore } from '@stores/useEventStore';
 import { ConfirmationDialogNotes } from '@components/ConfirmationDialog';
 import ShiftDetailsDialog from '@pages/ShiftDetails/ShiftDetailsDialog';
+import useEventAdmin from '@lib/hooks/useEventAdmin';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -37,6 +38,7 @@ const EventDetails: React.FC = () => {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const [shiftToSignUp, setShiftToSignUp] = useState<Shift | null>(null);
     const [shiftDialogOpen, setShiftDialogOpen] = useState(false);
+    const { isEventAdmin } = useEventAdmin(eventIdStr);
 
     useEffect(() => {
         const eventId = Number(eventIdStr);
@@ -93,6 +95,10 @@ const EventDetails: React.FC = () => {
         });
     };
 
+    const handleBackClick = () => {
+        navigate(`/calendar`);
+    }
+
     const handleViewDetailsClick = (shift: Shift) => {
         setSelectedShift(shift);
         setShiftDialogOpen(true);
@@ -143,7 +149,17 @@ const EventDetails: React.FC = () => {
 
     return (
         <>
-            {event && <Container className={styles.container}>
+            {event && <Paper className={styles.container}>
+                <Grid container justifyContent="flex-start">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleBackClick}
+                        style={{ marginBottom: '20px' }}
+                    >
+                        &larr; Back
+                    </Button>
+                </Grid>
                 {/* Event Details Section */}
                 <Typography variant="h4" align="center" gutterBottom fontSize="3.5rem">
                     {event?.title}
@@ -192,6 +208,7 @@ const EventDetails: React.FC = () => {
                         return (
                             <Grid item xs={12} sm={4} key={index}>
                                 <Card 
+                                    elevation={15}
                                     className={`${styles.shiftCard} ${userSignups.find(s => s.shift_id === shift.id) ? styles.signedUp : ''}`}
                                 >
                                     <Typography variant="h6" className={styles.shiftDetail}>
@@ -277,18 +294,18 @@ const EventDetails: React.FC = () => {
                     />
                 )}
                 {/* Edit Event Button */}
-                <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
+                {isEventAdmin && <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
                     <Grid item>
-                        <Button variant="contained" color="primary" onClick={handleEdit}>
-                            Edit Event
+                        <Button variant="contained" color="secondary" onClick={handleEdit}>
+                            Edit
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleGoToShifts}>
-                            Go to Shifts
+                            Shifts
                         </Button>
                     </Grid>
-                </Grid>
+                </Grid>}
                 <SnackbarAlert
                 open={signupFailSnackbarOpen}
                 onClose={() => setSignupFailSnackbarOpen(false)}
@@ -316,7 +333,7 @@ const EventDetails: React.FC = () => {
                     eventId={Number(eventIdStr)}
                     onEditSuccess={handleEditSuccess}
                 />
-            </Container>}
+            </Paper>}
         </>
     );
 };

@@ -132,7 +132,7 @@ const Notifications: React.FC = () => {
       <Typography variant="h5" gutterBottom>
         Notifications
       </Typography>
-      <Button variant="outlined" onClick={markAllAsRead}>
+      <Button variant="contained" color="inherit" onClick={markAllAsRead}>
         Mark All as Read
       </Button>
       <Button variant="contained" color="primary" onClick={() => setOpen(true)} style={{ marginLeft: '16px' }}>

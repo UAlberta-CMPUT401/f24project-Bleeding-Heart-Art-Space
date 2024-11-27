@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Card, Container, FormControl, InputLabel, Select, MenuItem, TextField } from '@mui/material';
+import { Grid, Typography, Button, Card, FormControl, InputLabel, Select, MenuItem, TextField, Paper } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import styles from './VolunteerShifts.module.css';
@@ -104,7 +104,7 @@ const VolunteerShifts: React.FC = () => {
     }
 
     return (
-        <Container className={styles.container}>
+        <Paper className={styles.container}>
             <Grid container justifyContent="flex-start">
                 <Button
                     variant="contained"
@@ -294,7 +294,7 @@ const VolunteerShifts: React.FC = () => {
                 message={snackbarMessage}
                 severity={snackbarSeverity}
             />
-        </Container>
+        </Paper>
     );
 };
 

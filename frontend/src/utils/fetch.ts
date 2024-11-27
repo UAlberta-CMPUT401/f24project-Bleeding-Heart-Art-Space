@@ -575,3 +575,7 @@ export async function getShiftSignups(
   const response = await getData<ShiftSignupUserBasic[]>(`/shift-signups/shift?shiftId=${shiftId}`, user);
   return response;
 }
+
+export async function getUserAdminEvents(user: User): Promise<ApiResponse<number[]>> {
+  return await getData<number[]>(`/users/user-admin-events`, user);
+}

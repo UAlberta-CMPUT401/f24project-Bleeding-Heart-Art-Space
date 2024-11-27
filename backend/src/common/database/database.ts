@@ -5,7 +5,7 @@ import { DB_NAME, DB_HOST, DB_USER, DB_PORT, DB_PASSWORD } from "@config/env";
 import { promises as fs } from 'fs'
 import * as path from 'path'
 import { logger } from "@utils/logger";
-import { RolesTable, UsersTable } from "@features/users/users.model";
+import { RolesTable, UserEventRolesTable, UsersTable } from "@features/users/users.model";
 import { VolunteerRolesTable } from "@/features/volunteerRoles/volunteerRoles.model";
 import { EventsTable } from "@/features/events/events.model";
 import { VolunteerShiftsTable } from "@/features/volunteerShifts/volunteerShifts.model";
@@ -22,7 +22,7 @@ export interface Database {
   shift_signup: ShiftSignupTable
   event_requests: EventRequestsTable
   notifications: NotificationsTable
-  
+  user_event_roles: UserEventRolesTable
 }
 
 // make sure that postgres 'numeric' types are numbers, not strings

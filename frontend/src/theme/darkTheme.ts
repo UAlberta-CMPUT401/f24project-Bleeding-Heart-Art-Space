@@ -30,12 +30,14 @@ export const darkTheme = createTheme({
       main: '#3f51b5',
     },
     background: {
-      base1: '#1e1e1e',
+      default: '#26272b',
+      paper: '#333333',
+      base1: '#26272b',
     },
     notification: {
       unread: '#444746',
       read: '#000',
-      background: '#1e1e1e'
+      background: '#181818'
     }
   },
 });

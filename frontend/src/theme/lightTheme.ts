@@ -40,11 +40,11 @@ export const lightTheme = createTheme({
     }
   },
   components: {
-    MuiButton: {
+    MuiListItemButton: {
       styleOverrides: {
-        contained: {
+        root: {
           '&:hover': {
-            color: '#fff',
+            color: 'black'
           }
         }
       }

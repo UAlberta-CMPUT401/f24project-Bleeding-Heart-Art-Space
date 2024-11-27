@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import { UsersController } from './users.controller';
 import { authMiddleware, firebaseAuthMiddleware, isAdminMiddleware, userMiddleware } from '@middlewares/auth.middleware';
-import { Request, Response, NextFunction } from 'express';
 
 export class UsersRoute implements Routes {
   public path = '/users';
@@ -23,5 +22,6 @@ export class UsersRoute implements Routes {
     this.router.post(`${this.path}/batch-assign-role`, authMiddleware, isAdminMiddleware, this.usersController.batchAssignRole);
     this.router.get(`${this.path}/roles`, authMiddleware, this.usersController.getRoles);
     this.router.post(`${this.path}/update-user`, authMiddleware, this.usersController.updateUser);
+    this.router.get(`${this.path}/user-admin-events`, authMiddleware, this.usersController.getUserAdminEvents);
   }
 }
