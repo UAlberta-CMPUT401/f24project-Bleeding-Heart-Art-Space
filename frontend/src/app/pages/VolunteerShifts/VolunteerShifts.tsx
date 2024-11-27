@@ -199,7 +199,7 @@ const VolunteerShifts: React.FC = () => {
             <Grid container spacing={2}>
                 {shifts.map((shift, index) => (
                     <Grid item xs={12} sm={4} key={index}>
-                        <Card className={styles.shiftCard}>
+                        <Card elevation={15} className={styles.shiftCard}>
                             <Typography variant="h6" className={styles.shiftDetail}>
                                 <AssignmentIndIcon className={styles.shiftIcon} /> 
                                 <span className={styles.shiftLabel}>Role:</span> 
@@ -252,7 +252,7 @@ const VolunteerShifts: React.FC = () => {
             <Grid container spacing={2}>
                 {savedShifts.map((shift, index) => (
                     <Grid item xs={12} sm={4} key={index}>
-                        <Card className={styles.shiftCard}>
+                        <Card elevation={15} className={styles.shiftCard}>
                             <Typography variant="h6" className={styles.shiftDetail}>
                                 <AssignmentIndIcon className={styles.shiftIcon} /> 
                                 <span className={styles.shiftLabel}>Role:</span> 
