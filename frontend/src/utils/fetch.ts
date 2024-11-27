@@ -449,6 +449,8 @@ export async function getEventShiftSignups(eventId: number, user: User): Promise
 }
 export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): Promise<ApiResponse<ShiftSignupUser>> {
   const response = await postData<ShiftSignupUser, NewShiftSignup>(`/shift-signups`, shiftSignup, user);
+
+  console.log('raw response', response);
   const formattedResponse: ApiResponse<ShiftSignupUser> = {
     ...response,
     data: {
@@ -457,6 +459,8 @@ export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): 
       checkout_time: response.data.checkout_time ? new Date(response.data.checkout_time) : undefined,
     },
   }
+
+  console.log('formatted response', formattedResponse);
   return formattedResponse;
 }
 

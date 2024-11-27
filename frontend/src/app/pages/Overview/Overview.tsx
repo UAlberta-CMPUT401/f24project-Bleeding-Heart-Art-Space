@@ -45,7 +45,6 @@ const OverviewPage: React.FC = () => {
         // Fetch shifts for the next 2 weeks
         getUpcomingShifts(user).then(response => {
             if (isOk(response.status)) {
-                console.log(response.data)
                 setUserSignups(response.data)
             }
         });

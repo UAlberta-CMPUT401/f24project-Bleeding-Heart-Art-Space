@@ -87,8 +87,11 @@ export class ShiftSignupService {
   }
 
   public async getUpcomingShifts(uid: string): Promise<ShiftSignupUser[]> {
+
     const currentDate = new Date();
     const twoWeeksFromNow = new Date();
+    const oneDayBefore = new Date();
+    oneDayBefore.setHours(currentDate.getHours() - 12);
     twoWeeksFromNow.setDate(currentDate.getDate() + 14);
 
     const result = await db
@@ -113,7 +116,7 @@ export class ShiftSignupService {
         'events.id as event_id',
         'events.title as event_title',
       ])
-      .where('volunteer_shifts.start', '>=', currentDate)
+      .where('volunteer_shifts.start', '>=', oneDayBefore)
       .where('volunteer_shifts.start', '<=', twoWeeksFromNow)
       .orderBy('volunteer_shifts.start', 'asc')
       .execute();
@@ -151,6 +154,7 @@ export class ShiftSignupService {
       .values({
         user_id: signupData.user_id,
         shift_id: signupData.shift_id,
+        notes: signupData.notes || undefined,
       })
       .returning('id')
       .executeTakeFirst();
