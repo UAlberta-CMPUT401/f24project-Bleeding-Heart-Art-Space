@@ -95,6 +95,10 @@ const EventDetails: React.FC = () => {
         });
     };
 
+    const handleBackClick = () => {
+        navigate(`/calendar`);
+    }
+
     const handleViewDetailsClick = (shift: Shift) => {
         setSelectedShift(shift);
         setShiftDialogOpen(true);
@@ -145,6 +149,16 @@ const EventDetails: React.FC = () => {
     return (
         <>
             {event && <Container className={styles.container}>
+                <Grid container justifyContent="flex-start">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleBackClick}
+                        style={{ marginBottom: '20px' }}
+                    >
+                        &larr; Back
+                    </Button>
+                </Grid>
                 {/* Event Details Section */}
                 <Typography variant="h4" align="center" gutterBottom fontSize="3.5rem">
                     {event?.title}
