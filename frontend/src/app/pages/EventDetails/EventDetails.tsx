@@ -13,6 +13,7 @@ import SnackbarAlert from '@components/SnackbarAlert';
 import { useEventStore } from '@stores/useEventStore';
 import { ConfirmationDialogNotes } from '@components/ConfirmationDialog';
 import ShiftDetailsDialog from '@pages/ShiftDetails/ShiftDetailsDialog';
+import useEventAdmin from '@lib/hooks/useEventAdmin';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -37,6 +38,7 @@ const EventDetails: React.FC = () => {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const [shiftToSignUp, setShiftToSignUp] = useState<Shift | null>(null);
     const [shiftDialogOpen, setShiftDialogOpen] = useState(false);
+    const { isEventAdmin } = useEventAdmin(eventIdStr);
 
     useEffect(() => {
         const eventId = Number(eventIdStr);
@@ -93,6 +95,10 @@ const EventDetails: React.FC = () => {
         });
     };
 
+    const handleBackClick = () => {
+        navigate(`/calendar`);
+    }
+
     const handleViewDetailsClick = (shift: Shift) => {
         setSelectedShift(shift);
         setShiftDialogOpen(true);
@@ -143,6 +149,16 @@ const EventDetails: React.FC = () => {
     return (
         <>
             {event && <Container className={styles.container}>
+                <Grid container justifyContent="flex-start">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleBackClick}
+                        style={{ marginBottom: '20px' }}
+                    >
+                        &larr; Back
+                    </Button>
+                </Grid>
                 {/* Event Details Section */}
                 <Typography variant="h4" align="center" gutterBottom fontSize="3.5rem">
                     {event?.title}
@@ -275,18 +291,18 @@ const EventDetails: React.FC = () => {
                     />
                 )}
                 {/* Edit Event Button */}
-                <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
+                {isEventAdmin && <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
                     <Grid item>
-                        <Button variant="contained" color="primary" onClick={handleEdit}>
-                            Edit Event
+                        <Button variant="contained" color="secondary" onClick={handleEdit}>
+                            Edit
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleGoToShifts}>
-                            Go to Shifts
+                            Shifts
                         </Button>
                     </Grid>
-                </Grid>
+                </Grid>}
                 <SnackbarAlert
                 open={signupFailSnackbarOpen}
                 onClose={() => setSignupFailSnackbarOpen(false)}

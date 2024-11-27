@@ -1,7 +1,8 @@
-import { singleton } from 'tsyringe';
+import { container, singleton } from 'tsyringe';
 import { db } from '@database/database';
 import { EventRequest, EventRequestUpdate } from './eventRequests.model';
 import { Event, NewEvent } from '../events/events.model';
+import { UsersService } from '../users/users.service';
 
 type EventRequestUser = EventRequest & {
   uid: string;
@@ -11,6 +12,7 @@ type EventRequestUser = EventRequest & {
 
 @singleton()
 export class EventRequestsService {
+  public usersService = container.resolve(UsersService);
 
   public async createEventRequest(
     uid: string, 
@@ -105,6 +107,8 @@ export class EventRequestsService {
       .executeTakeFirst();
 
     if (deleteRes.numDeletedRows === BigInt(0)) return undefined;
+
+    await this.usersService.makeUserEventAdmin(eventRequest.requester_id, event.id);
 
     return event;
   }

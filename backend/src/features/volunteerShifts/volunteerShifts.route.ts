@@ -26,8 +26,7 @@ export class VolunteerShiftsRoute implements Routes {
     // Create new shifts for a specific event
     this.router.post(
       '/events/:eventId' + this.path,
-      // authMiddleware,
-      // isAdminMiddleware,
+      authMiddleware,
       this.asyncHandler(this.volunteerShiftsController.createShifts)
     );
 
@@ -35,7 +34,6 @@ export class VolunteerShiftsRoute implements Routes {
     this.router.delete(
       `${this.path}/:id`,
       authMiddleware,
-      isAdminMiddleware,
       this.asyncHandler(this.volunteerShiftsController.deleteShift)
     );
   }
