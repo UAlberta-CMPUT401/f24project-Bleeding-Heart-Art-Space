@@ -4,6 +4,7 @@ import { Box, Typography, Button, TextField, Dialog, DialogActions, DialogConten
 import { NewNotification, Notification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, createNotification, getVolunteerRoles, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
+import { format } from 'date-fns';
 
 // Styled components
 const NotificationsContainer = styled(Box)(({ theme }) => ({
@@ -142,11 +143,13 @@ const Notifications: React.FC = () => {
           {notifications.map(notification => (
             <NotificationItem key={notification.id} read={notification.is_read}>
               <NotificationContent>
-                <Typography variant="body1">{notification.title}</Typography>
+                <Typography variant="body1">
+                  {notification.title} {!notification.is_read && <Typography component="span" color="error" style={{ marginLeft: '8px', fontWeight: 'bold' }}>!New</Typography>}
+                </Typography>
                 <Typography variant="body2">{notification.message}</Typography>
                 {notification.created_at && (
                   <NotificationDate variant="body2">
-                    {new Date(notification.created_at).toLocaleDateString()}
+                    {format(new Date(notification.created_at), "MMM dd, yyyy")}
                   </NotificationDate>
                 )}
               </NotificationContent>
