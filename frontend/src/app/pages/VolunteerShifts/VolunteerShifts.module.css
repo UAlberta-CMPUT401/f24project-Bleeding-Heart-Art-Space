@@ -1,6 +1,6 @@
 .container {
     padding: 40px 20px;;
-    color: white;
+    /* color: white; */
     border-radius: 10px;
     margin: 20px 0;
     background-color: #333;
@@ -9,7 +9,7 @@
 .shiftCard {
     padding: 15px;
     background-color: #444;
-    color: white;
+    /* color: white; */
     border-radius: 8px;
     transition: transform 0.3s ease;
     display: flex;
@@ -38,12 +38,12 @@
 .shiftLabel {
     font-weight: bold;
     margin-right: 4px;
-    color: white;
+    /* color: white; */
     font-size: 1rem;
 }
 
 .shiftValue {
-    color: #cccccc;
+    /* color: #cccccc; */
     font-size: 1rem;
 }
 

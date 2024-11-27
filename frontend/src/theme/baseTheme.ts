@@ -5,4 +5,11 @@ export const baseTheme: ThemeOptions = {
   shape: {
     borderRadius: 16,
   },
+  components: {
+    MuiPaper: {
+      defaultProps: {
+        elevation: 5,
+      },
+    },
+  },
 }
