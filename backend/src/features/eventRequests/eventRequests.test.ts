@@ -70,7 +70,7 @@ describe('UsersController', () => {
   });
 
   it('should get event requests', async () => {
-    app.get('/event_requests', erController.getAllEventRequests)
+    app.get('/event_requests', erController.getPendingEventRequests)
 
     const response = await request(app)
       .get('/event_requests')

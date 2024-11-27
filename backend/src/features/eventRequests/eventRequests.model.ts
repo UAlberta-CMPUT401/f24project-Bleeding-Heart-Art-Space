@@ -14,6 +14,7 @@ export interface EventRequestsTable {
   address: string;                       // Address of the event
   title: string;                         // Title of the event
   requester_id: number;                    // ID of the requester
+  status: number;                       // 0 denied, 1 approved, 2 pending
 }
 
 export type EventRequest = Selectable<EventRequestsTable>;       // Type for selecting (reading) event records
