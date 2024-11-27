@@ -1,5 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import { Box, Tab, Tabs } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import VolunteerRoles from './VolunteerRoles';
 import { useAuth } from '@lib/context/AuthContext';
 import { useVolunteerRoleStore } from '@stores/useVolunteerRoleStore';
@@ -30,6 +31,7 @@ const VolunteerManagement: React.FC = () => {
     const { user } = useAuth();
     const { fetchVolunteerRoles } = useVolunteerRoleStore();
     const { fetchInit } = useManageUserStore();
+    const theme = useTheme();
 
     useEffect(() => {
         if (user) {
@@ -48,6 +50,12 @@ const VolunteerManagement: React.FC = () => {
                 value={tabValue}
                 onChange={handleTabChange}
                 centered
+                sx={{
+                  '& .Mui-selected': {
+                    color: theme.palette.text.primary
+                  }
+                }}
+                  
             >
                 <Tab label="Manage Users" />
                 <Tab label="Volunteer Roles" />

@@ -31,13 +31,13 @@ export const darkTheme = createTheme({
     },
     background: {
       default: '#26272b',
-      paper: '#1b1c1f',
-      base1: '#1b1c1f',
+      paper: '#333333',
+      base1: '#26272b',
     },
     notification: {
       unread: '#444746',
       read: '#000',
-      background: '#1e1e1e'
+      background: '#181818'
     }
   },
 });
