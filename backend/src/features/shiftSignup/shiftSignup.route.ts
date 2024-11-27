@@ -34,7 +34,7 @@ export class ShiftSignupRoute implements Routes {
     // Route to delete a shift signup by ID
     this.router.delete(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.shiftSignupController.delete);
 
-    this.router.post(`${this.path}/batch-delete`, authMiddleware, isAdminMiddleware, this.shiftSignupController.batchDelete);
+    this.router.post(`${this.path}/batch-delete`, authMiddleware, this.shiftSignupController.batchDelete);
 
     // Route to update a shift signup by ID
     this.router.put(`${this.path}/:id`, authMiddleware, isAdminMiddleware, this.shiftSignupController.update);

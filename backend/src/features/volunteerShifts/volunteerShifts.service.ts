@@ -10,6 +10,27 @@ export class VolunteerShiftsService {
    * @returns The IDs of the created shifts
    */
   public async createShifts(shiftsData: NewVolunteerShift[]): Promise<VolunteerShift[]> {
+    // console.log(shiftsData);
+    shiftsData.forEach((shift) => {
+      // Validate that start and end times exist
+      if (!shift.start || !shift.end) {
+        throw new Error('Both shift start and end times are required.');
+      }
+    
+      // Convert start and end to Date objects and check if they are valid dates
+      const startTime = new Date(shift.start);
+      const endTime = new Date(shift.end);
+    
+      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+        throw new Error('Invalid date format for shift start or end time.');
+      }
+    
+      // Check if start time is earlier than end time
+      if (startTime >= endTime) {
+        throw new Error('Shift start time must be earlier than end time.');
+      }
+    });
+    
     const insertedShifts = await db
       .insertInto('volunteer_shifts')
       .values(shiftsData)
@@ -62,6 +83,7 @@ export class VolunteerShiftsService {
    * @param shiftData - The new data for the shift
    */
   public async updateShift(shiftId: number, shiftData: VolunteerShiftUpdate): Promise<void> {
+    
     await db
       .updateTable('volunteer_shifts')
       .set(shiftData)

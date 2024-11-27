@@ -30,7 +30,9 @@ export const darkTheme = createTheme({
       main: '#3f51b5',
     },
     background: {
-      base1: '#181818',
+      default: '#26272b',
+      paper: '#1b1c1f',
+      base1: '#1b1c1f',
     },
     notification: {
       unread: '#444746',

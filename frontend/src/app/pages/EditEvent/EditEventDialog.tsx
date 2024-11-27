@@ -108,18 +108,16 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
         setConfirmationMessage('Are you sure you want to save these changes?');
         setOnConfirmAction(() => async () => {
             setLoading(true);
-            if (backendUser.is_admin) {
-                try {
-                    await updateEvent(eventId, updatedEvent, user);
-                    if (onEditSuccess) {
-                        onEditSuccess();
-                    }
-                    dialogClose();
-                } catch (error) {
-                    setOpenConfirmationDialog(false);
-                    setEditEventFailSnackbarMessage('End time must be after start time');
-                    setEditEventFailSnackbarOpen(true);
+            try {
+                await updateEvent(eventId, updatedEvent, user);
+                if (onEditSuccess) {
+                    onEditSuccess();
                 }
+                dialogClose();
+            } catch (error) {
+                setOpenConfirmationDialog(false);
+                setEditEventFailSnackbarMessage('End time must be after start time');
+                setEditEventFailSnackbarOpen(true);
             }
             setLoading(false);
         });
@@ -130,9 +128,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
         setDeleteConfirmationMessage('Are you sure you want to delete this event?');
         setOnDeleteConfirmAction(() => async () => {
             if (!user || !eventId || !backendUser) return;
-            if (backendUser.is_admin) {
-                await deleteEvent(eventId, user);
-            }
+            await deleteEvent(eventId, user);
             deleteDialogClose();
         });
         setOpenDeleteConfirmationDialog(true);
@@ -248,8 +244,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Button
-                            variant="contained"
-                            color="secondary"
+                            color="error"
                             onClick={handleDelete}
                             fullWidth
                             style={{ marginTop: '20px' }}
@@ -263,7 +258,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
                             style={{ marginTop: '20px' }}
                             fullWidth
                             onClick={handleSubmit}
-                            color="primary"
+                            color="secondary"
                             disabled={loading}
                         >
                             {loading ? 'Saving...' : 'Save Changes'}

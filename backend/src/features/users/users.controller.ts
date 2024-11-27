@@ -160,4 +160,17 @@ export class UsersController {
     }
   }
 
+  public getUserAdminEvents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const eventIds = await this.usersService.getUserAdminEvents(req.auth.uid);
+      res.status(200).json(eventIds);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }

@@ -3,9 +3,12 @@ import { EventsService } from './event.service';
 import { NewEvent } from './events.model';
 import { container } from 'tsyringe';
 import { isWithinInterval, addWeeks, startOfToday } from 'date-fns';
+import { UsersService } from '../users/users.service';
+import { isAuthenticated } from '@/common/utils/auth';
 
 export class EventsController {
   private eventsService = container.resolve(EventsService);
+  public usersService = container.resolve(UsersService);
 
   /**
    * Create a new event
@@ -88,8 +91,17 @@ export class EventsController {
    */
   public deleteEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
       const { id } = req.params;
       const eventId = parseInt(req.params.id, 10); // Convert ID parameter to an integer
+      const isEventAdmin = await this.usersService.isEventAdmin(req.auth.uid, { eventId });
+      if (!isEventAdmin && !req.role?.is_admin) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
 
       // Delete associated shifts first
       await this.eventsService.deleteShiftsByEventId(Number(id));
@@ -105,8 +117,17 @@ export class EventsController {
    */
   public updateEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
       const eventId = parseInt(req.params.id, 10); // Extract and parse the event ID from the request parameters
       const eventData = req.body; // The updated event data
+      const isEventAdmin = await this.usersService.isEventAdmin(req.auth.uid, { eventId });
+      if (!isEventAdmin && !req.role?.is_admin) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
       
       await this.eventsService.updateEvent(eventId, eventData);
       res.status(200).json({ message: 'Event updated successfully' });
