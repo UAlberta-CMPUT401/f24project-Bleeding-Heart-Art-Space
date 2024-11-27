@@ -288,6 +288,18 @@ export async function getEventRequests(user: User): Promise<ApiResponse<EventReq
   }
   return formattedResponse;
 }
+export async function getUserEventRequests(user: User): Promise<ApiResponse<EventRequestUser[]>> {
+  const response = await getData<EventRequestUserData[]>('/event_requests_user', user);
+  const formattedResponse: ApiResponse<EventRequestUser[]> = {
+    ...response,
+    data: response.data.map((eventData) => ({
+      ...eventData,
+      start: new Date(eventData.start),
+      end: new Date(eventData.end),
+    })),
+  }
+  return formattedResponse;
+}
 export async function postEventRequest(newEventRequest: NewEventRequest, user: User): Promise<ApiResponse<EventRequest>> {
   const response = await postData<EventRequestData, NewEventRequest>('/event_requests', newEventRequest, user);
   return {
