@@ -115,7 +115,7 @@ const EventDetails: React.FC = () => {
         if (!user) return;
         if (!backendUser) return;
 
-        console.log('Selected shift:', selectedShift);
+        console.log('Notes being sent to backend:', notes); // Debugging the value of notes
 
         const newShiftSignup: NewShiftSignup = {
             user_id: backendUser.id,
@@ -133,7 +133,7 @@ const EventDetails: React.FC = () => {
                 setSignupSuccessSnackbarOpen(true);
                 setConfirmDialogOpen(false);  // Close confirmation dialog
                 setShiftToSignUp(null);       // Reset shiftToSignUp
-                setNotes('');
+                setNotes('');                 // Reset notes
             }
             else {
                 if (response.error) {
@@ -142,6 +142,7 @@ const EventDetails: React.FC = () => {
                 setSignupFailSnackbarOpen(true);
                 setConfirmDialogOpen(false);  // Close confirmation dialog
                 setShiftToSignUp(null);       // Reset shiftToSignUp
+                setNotes('');                 // Reset notes
             }
         })
     };
@@ -274,14 +275,15 @@ const EventDetails: React.FC = () => {
                     title="Confirm Signup"
                     message="Are you sure you want to sign up for this shift?"
                     onConfirm={handleConfirmSignup}
+                    notes= {notes}
+                    setNotes={setNotes}
                     onCancel={() => {
                         setConfirmDialogOpen(false);
                         setShiftToSignUp(null);
+                        setNotes('');
                     }}
                     confirmButtonText="Confirm"
                     cancelButtonText="Cancel"
-                    notes= {notes}
-                    setNotes={setNotes}
                 />
 
                 {selectedShift && (
