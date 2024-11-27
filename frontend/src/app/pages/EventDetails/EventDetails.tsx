@@ -13,6 +13,7 @@ import SnackbarAlert from '@components/SnackbarAlert';
 import { useEventStore } from '@stores/useEventStore';
 import { ConfirmationDialogNotes } from '@components/ConfirmationDialog';
 import ShiftDetailsDialog from '@pages/ShiftDetails/ShiftDetailsDialog';
+import useEventAdmin from '@lib/hooks/useEventAdmin';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -37,6 +38,7 @@ const EventDetails: React.FC = () => {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const [shiftToSignUp, setShiftToSignUp] = useState<Shift | null>(null);
     const [shiftDialogOpen, setShiftDialogOpen] = useState(false);
+    const { isEventAdmin } = useEventAdmin(eventIdStr);
 
     useEffect(() => {
         const eventId = Number(eventIdStr);
@@ -275,7 +277,7 @@ const EventDetails: React.FC = () => {
                     />
                 )}
                 {/* Edit Event Button */}
-                {backendUser?.is_admin && <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
+                {isEventAdmin && <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleEdit}>
                             Edit

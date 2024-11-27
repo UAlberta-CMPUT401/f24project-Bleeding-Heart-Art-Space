@@ -185,7 +185,11 @@ export class UsersService {
     return result.numInsertedOrUpdatedRows === BigInt(1);
   }
 
-  public async isEventAdmin(uid: string, eventId?: number, shiftId?: number, signupId?: number): Promise<boolean> {
+  public async isEventAdmin(uid: string, { eventId, shiftId, signupId }: {
+    eventId?: number,
+    shiftId?: number,
+    signupId?: number
+  }): Promise<boolean> {
 
     if (eventId !== undefined) {
       const res = await db
@@ -232,6 +236,17 @@ export class UsersService {
     }
 
     return false;
+  }
+
+  public async getUserAdminEvents(uid: string): Promise<number[]> {
+    const res = await db
+      .selectFrom('user_event_roles')
+      .select('user_event_roles.event_id')
+      .where(eb => eb.and({
+        user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+      }))
+      .execute();
+    return res.map(id => id.event_id);
   }
 
 }

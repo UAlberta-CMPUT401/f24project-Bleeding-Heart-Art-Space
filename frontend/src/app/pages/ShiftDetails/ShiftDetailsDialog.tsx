@@ -6,8 +6,9 @@ import PeopleIcon from '@mui/icons-material/People';
 import styles from '@pages/ShiftDetails/ShiftDetailsDialog.module.css';
 import { Shift, ShiftSignupUserBasic, deleteSignups, getShiftSignups, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
-import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { ConfirmationDialog } from '@components/ConfirmationDialog';
+import { useParams } from 'react-router-dom';
+import useEventAdmin from '@lib/hooks/useEventAdmin';
 
 interface ShiftDetailsDialogProps {
   open: boolean;
@@ -22,9 +23,10 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
 }) => {
   const [shiftSignups, setShiftSignups] = useState<ShiftSignupUserBasic[]>([]);
   const { user } = useAuth();
-  const { backendUser } = useBackendUserStore();
   const [selectedSignups, setSelectedSignups] = useState<ShiftSignupUserBasic[]>([]);
   const [confirmRemove, setConfirmRemove] = useState<boolean>(false);
+  const { id: eventIdStr } = useParams<{ id: string }>();
+  const { isEventAdmin } = useEventAdmin(eventIdStr);
 
   useEffect(() => {
     if (shift && user) {
@@ -39,7 +41,7 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
   }, [shift, user]);
 
   // Define columns for DataGrid
-  const columns: GridColDef[] = backendUser?.is_admin ? [
+  const columns: GridColDef[] = isEventAdmin ? [
     { field: 'first_name', headerName: 'First Name', flex: 1, minWidth: 100 },
     { field: 'last_name', headerName: 'Last Name', flex: 1, minWidth: 100 },
     { field: 'email', headerName: 'Email', flex: 2, minWidth: 200 },
@@ -97,7 +99,7 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
               pageSizeOptions={[5, 10, 20]}
               disableRowSelectionOnClick
               onRowSelectionModelChange={handleSignupSelect}
-              checkboxSelection={backendUser?.is_admin ? true : false}
+              checkboxSelection={isEventAdmin ? true : false}
             />
             {(selectedSignups.length > 0) && 
               <Button
