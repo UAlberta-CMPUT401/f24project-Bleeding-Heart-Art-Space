@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Grid, Typography, Button, Card, FormControl, InputLabel, Select, MenuItem, TextField, Paper } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -8,6 +8,7 @@ import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, Vo
 import { useAuth } from '@lib/context/AuthContext';
 import SnackbarAlert from '@components/SnackbarAlert';
 import PeopleIcon from '@mui/icons-material/People';
+import { format } from 'date-fns';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -27,8 +28,8 @@ const VolunteerShifts: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
-    // const location = useLocation();
-    // const { eventStart, eventEnd } = location.state || {};    
+    const location = useLocation();
+    const { eventStart, eventEnd } = location.state || {};    
 
     const navigate = useNavigate();
 
@@ -39,18 +40,19 @@ const VolunteerShifts: React.FC = () => {
         }
     }, [eventId, user]);
 
-    // useEffect(() => {
-    //     if (eventStart && eventEnd) {
-    //         const localStartTime = new Date(eventStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    //         const localEndTime = new Date(eventEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    
-    //         setNewShift((prev) => ({
-    //             ...prev,
-    //             start: localStartTime,
-    //             end: localEndTime,
-    //         }));
-    //     }
-    // }, [eventStart, eventEnd]);    
+    useEffect(() => {
+        if (eventStart && eventEnd) {
+            const formatDateTimeLocal = (dateString: string): string => {
+                const date = new Date(dateString);
+                return format(date, "yyyy-MM-dd'T'HH:mm");
+            };
+            setNewShift((prev) => ({
+                ...prev,
+                start: formatDateTimeLocal(eventStart),
+                end: formatDateTimeLocal(eventEnd),
+            }));
+        }
+    }, [eventStart, eventEnd]);
 
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
