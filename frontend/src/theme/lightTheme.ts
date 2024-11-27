@@ -40,6 +40,7 @@ export const lightTheme = createTheme({
     }
   },
   components: {
+    ...baseTheme.components,
     MuiButton: {
       styleOverrides: {
         contained: {

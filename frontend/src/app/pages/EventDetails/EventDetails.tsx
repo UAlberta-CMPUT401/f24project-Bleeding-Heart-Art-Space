@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Card, Container, Box } from '@mui/material';
+import { Grid, Typography, Button, Card, Box, Paper } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
@@ -144,7 +144,7 @@ const EventDetails: React.FC = () => {
 
     return (
         <>
-            {event && <Container className={styles.container}>
+            {event && <Paper className={styles.container}>
                 {/* Event Details Section */}
                 <Typography variant="h4" align="center" gutterBottom fontSize="3.5rem">
                     {event?.title}
@@ -193,6 +193,7 @@ const EventDetails: React.FC = () => {
                         return (
                             <Grid item xs={12} sm={4} key={index}>
                                 <Card 
+                                    elevation={15}
                                     className={`${styles.shiftCard} ${userSignups.find(s => s.shift_id === shift.id) ? styles.signedUp : ''}`}
                                 >
                                     <Typography variant="h6" className={styles.shiftDetail}>
@@ -316,7 +317,7 @@ const EventDetails: React.FC = () => {
                     eventId={Number(eventIdStr)}
                     onEditSuccess={handleEditSuccess}
                 />
-            </Container>}
+            </Paper>}
         </>
     );
 };

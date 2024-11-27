@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Card, Button, Stack } from '@mui/material';
+import { Typography, Card, Button, Stack, Paper } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
@@ -108,12 +108,14 @@ const OverviewPage: React.FC = () => {
       
     return (
         <div className= {styles.container}>
-            <div className={styles.leftColumn}>
+            <Paper className={styles.leftColumn}>
                 <h2>Your Signed-up Shifts</h2>
                 {userSignups.length > 0 ? (
                     <Stack spacing={2}>
                         {userSignups.map((signup) => (
-                            <Card key={signup.id} className={styles.card}>
+                            <Card 
+                                elevation={15}
+                                key={signup.id} className={styles.card}>
                                 <Typography variant="h6" className={styles.centeredFlex}>
                                     <EventIcon className={styles.iconSpacing} /> Event: {signup.event_title}
                                 </Typography>
@@ -171,20 +173,23 @@ const OverviewPage: React.FC = () => {
                 ) : (
                     <Typography>You haven't signed up for any shifts yet.</Typography>
                 )}
-            </div>
+            </Paper>
 
-            <div className = {styles.middleColumn}>
+            <Paper className = {styles.middleColumn}>
                 <h2>Recently Added Events</h2>
 
-            </div>
+            </Paper>
 
 
-            <div className={styles.rightColumn}>
+            <Paper 
+                className={styles.rightColumn}>
                 <h2>Upcoming Events</h2>
                 {upcomingEvents.length > 0 ? (
                     <Stack spacing={2}>
                         {upcomingEvents.map((event) => (
-                            <Card key={event.id} className={styles.card}>
+                            <Card 
+                                elevation={15}
+                                key={event.id} className={styles.card}>
                                 <Typography variant="h6" className={styles.centeredFlex} >{event.title}</Typography>
                                 <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
                                     <EventIcon className={styles.iconSpacing}/> {format(new Date(event.start), 'MMM d, yyyy, hh:mm a')}
@@ -202,7 +207,7 @@ const OverviewPage: React.FC = () => {
                 ) : (
                     <Typography>No upcoming events in the next two weeks.</Typography>
                 )}
-            </div>
+            </Paper>
             <SnackbarAlert
             open={snackbarOpen}
             onClose={() => setSnackbarOpen(false)}
