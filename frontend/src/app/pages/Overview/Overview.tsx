@@ -130,7 +130,7 @@ const OverviewPage: React.FC = () => {
                                 <Stack direction="row" spacing={2} justifyContent="center">
                                     <Button
                                         variant="contained"
-                                        color="primary"
+                                        color="secondary"
                                         onClick={() => handleCheckIn(signup.id)}
                                         disabled={
                                             signup.checkin_time != null ||
