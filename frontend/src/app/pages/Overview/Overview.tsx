@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Card, Button, Stack, Paper } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { useAuth } from '@lib/context/AuthContext';
 import { getUpcomingEvents, getUpcomingShifts, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout,} from '@utils/fetch';
 import { isBefore, addWeeks } from 'date-fns';
@@ -10,6 +8,8 @@ import styles from './Overview.module.css';
 import CheckIcon from '@mui/icons-material/Check';
 import SnackbarAlert from '@components/SnackbarAlert';
 import { format } from 'date-fns';
+import ShiftCard from '@components/ShiftCard';
+import { Link } from 'react-router-dom';
 
 const OverviewPage: React.FC = () => {
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
@@ -112,21 +112,11 @@ const OverviewPage: React.FC = () => {
                 {userSignups.length > 0 ? (
                     <Stack spacing={2}>
                         {userSignups.map((signup) => (
-                            <Card 
-                                elevation={15}
-                                key={signup.id} className={styles.card}>
-                                <Typography variant="h6" className={styles.centeredFlex}>
-                                    <EventIcon className={styles.iconSpacing} /> Event: {signup.event_title}
-                                </Typography>
-                                <Typography variant="h6" className={styles.centeredFlex}>
-                                    <AssignmentIndIcon className={styles.iconSpacing}/> Role: {roles.find(item => item.id === Number(signup.volunteer_role))?.name}
-                                </Typography>
-                                <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
-                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.start), 'MMM d, yyyy, hh:mm a')}
-                                </Typography>
-                                <Typography variant="body1" className={styles.centeredFlex}>
-                                    <AccessTimeIcon className={styles.iconSpacing}/> {format(new Date(signup.end), 'MMM d, yyyy, hh:mm a')}
-                                </Typography>
+                            <ShiftCard
+                                roleName={roles.find(item => item.id === Number(signup.volunteer_role))?.name || ''}
+                                start={new Date(signup.start)}
+                                end={new Date(signup.end)}
+                            >
                                 {signup.notes && (
                                     <Typography
                                         variant="body2"
@@ -137,36 +127,44 @@ const OverviewPage: React.FC = () => {
                                         Note: {signup.notes}
                                     </Typography>
                                 )}
-                                <Stack direction="row" spacing={2} justifyContent="center" marginTop={2}>
+                                <Stack direction="row" spacing={2} justifyContent="center">
                                     <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handleCheckIn(signup.id)}
-                                    disabled={
-                                        signup.checkin_time != null ||
-                                        currentTime < new Date(signup.start) ||
-                                        currentTime > new Date(signup.end)
-                                    }
-                                    startIcon={signup.checkin_time != null ? <CheckIcon /> : null}
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => handleCheckIn(signup.id)}
+                                        disabled={
+                                            signup.checkin_time != null ||
+                                            currentTime < new Date(signup.start) ||
+                                            currentTime > new Date(signup.end)
+                                        }
+                                        startIcon={signup.checkin_time != null ? <CheckIcon /> : null}
                                     >
-                                    {signup.checkin_time != null ? 'Checked In' : 'Check In'}
+                                        {signup.checkin_time != null ? 'Checked In' : 'Check In'}
                                     </Button>
                                     <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={() => handleCheckOut(signup.id)}
-                                    disabled={
-                                        signup.checkin_time == null ||
-                                        signup.checkout_time != null ||
-                                        currentTime < new Date(signup.start) ||
-                                        currentTime > new Date(signup.end)
-                                    }
-                                    startIcon={signup.checkout_time != null ? <CheckIcon /> : null}
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => handleCheckOut(signup.id)}
+                                        disabled={
+                                            signup.checkin_time == null ||
+                                            signup.checkout_time != null ||
+                                            currentTime < new Date(signup.start) ||
+                                            currentTime > new Date(signup.end)
+                                        }
+                                        startIcon={signup.checkout_time != null ? <CheckIcon /> : null}
                                     >
-                                    {signup.checkout_time != null ? 'Checked Out' : 'Check Out'}
+                                        {signup.checkout_time != null ? 'Checked Out' : 'Check Out'}
                                     </Button>
                                 </Stack>
-                            </Card>
+                                <Button 
+                                    variant="contained"
+                                    component={Link}
+                                    to={`/events/details/${signup.event_id}`}
+                                    sx={{ m: '0.5rem' }}
+                                >
+                                    View Event
+                                </Button>
+                            </ShiftCard>
                         ))}
                     </Stack>
                 ) : (
