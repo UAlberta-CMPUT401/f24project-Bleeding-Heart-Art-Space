@@ -66,6 +66,7 @@ describe('UsersController', () => {
       venue: 'Test Venue',
       address: '123 Test St',
       requester_id: 1,
+      status: 2,
     });
   });
 
@@ -88,6 +89,8 @@ describe('UsersController', () => {
       uid: 'test_uid',
       first_name: 'first',
       last_name: 'last',
+      email: 'a@test.com',
+      status: 2,
     }]);
   });
 
@@ -107,6 +110,7 @@ describe('UsersController', () => {
       address: 'Test Addr',
       title: 'Test Title',
       requester_id: 1,
+      status: 2,
     });
   });
 
