@@ -53,6 +53,7 @@ export class EventRequestsService {
         'users.uid',
         'users.first_name',
         'users.last_name',
+        'users.email',
       ])
       .where('event_requests.status', '=', 2) // where status is pending
       .execute()
@@ -74,6 +75,7 @@ export class EventRequestsService {
         'users.uid',
         'users.first_name',
         'users.last_name',
+        'users.email',
       ])
       .where('users.uid', '=', uid)
       .execute()
@@ -92,6 +94,16 @@ export class EventRequestsService {
   public async deleteEventRequest(eventRequestId: number): Promise<void> {
     await db
       .deleteFrom('event_requests')
+      .where('id', '=', eventRequestId)
+      .execute();
+  }
+
+  public async denyEventRequest(eventRequestId: number): Promise<void> {
+    await db
+      .updateTable('event_requests')
+      .set({
+        status: 0, // denied status
+      })
       .where('id', '=', eventRequestId)
       .execute();
   }

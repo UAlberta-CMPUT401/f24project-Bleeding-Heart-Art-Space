@@ -88,6 +88,16 @@ export class EventRequestsController {
     }
   }
 
+  public denyEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const eventRequestId = parseInt(req.params.id, 10);
+      await this.eventRequestsService.denyEventRequest(eventRequestId);
+      res.status(200).json({ message: 'Event request denied' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   /**
    * Update an existing event request
    * @route PUT /api/event-requests/:id

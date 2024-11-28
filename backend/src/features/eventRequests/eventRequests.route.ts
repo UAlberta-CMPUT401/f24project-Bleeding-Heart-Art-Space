@@ -20,5 +20,6 @@ export class EventRequestsRoute implements Routes {
     this.router.delete(`${this.path}/:id`, authMiddleware, this.eventsController.deleteEventRequest);
     this.router.put(`${this.path}/:id`, authMiddleware, this.eventsController.updateEventRequest);
     this.router.post(`${this.path}/:id/confirm`, authMiddleware, isAdminMiddleware, this.eventsController.confirmEventRequest);
+    this.router.post(`${this.path}/:id/deny`, authMiddleware, isAdminMiddleware, this.eventsController.denyEventRequest);
   }
 }

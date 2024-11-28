@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Card, Typography, Button } from '@mui/material';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import PersonIcon from '@mui/icons-material/Person';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { Container, Grid2, Typography, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './EventRequests.module.css';
-import { deleteEventRequest as deleteEventRequestCall, confirmEventRequest as confirmEventRequestCall, EventRequestUser, getUserEventRequests } from '@utils/fetch';
+import { deleteEventRequest as deleteEventRequestCall, EventRequestUser, getUserEventRequests } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
+import EventRequestCard from './EventRequestCard';
 
 const EventRequestsArtist: React.FC = () => {
     const [eventRequests, setEventRequests] = useState<EventRequestUser[]>([]);
@@ -32,58 +30,23 @@ const EventRequestsArtist: React.FC = () => {
             });
     };
 
-    const confirmEventRequest = (id: number) => {
-        if (!user) return;
-        confirmEventRequestCall(id, user)
-            .then(() => {
-                // remove event request from frontend
-                setEventRequests(prevRequests => prevRequests.filter(request => request.id !== id));
-            });
-    };
-
     if (loading) return <Typography>Loading...</Typography>;
 
     return (
         <Container className={styles.container}>
-            <Grid container spacing={2}>
-                {eventRequests.map((eventReq) => (
-                    <Grid item xs={12} md={6} lg={4} key={eventReq.id}>
-                        <Card className={styles.requestCard}>
-                            <Typography variant="h6">
-                                <EventNoteIcon /> Event Name: {eventReq.title} {/* Updated to use title */}
-                            </Typography>
-                            <Typography variant="body1">
-                                <PersonIcon /> Requester: 
-                                {`${eventReq.first_name} ${eventReq.last_name}`}
-                            </Typography>
-                            <Typography variant="body1">
-                                <CalendarTodayIcon /> Date Requested: 
-                                {eventReq.start ? new Date(eventReq.start).toLocaleDateString() : 'N/A'}
-                            </Typography>
-                            <Typography variant="body1">
-                                <CalendarTodayIcon /> Event Start: 
-                                {eventReq.start ? new Date(eventReq.start).toLocaleString() : 'N/A'}
-                            </Typography>
-                            <Typography variant="body1">
-                                <CalendarTodayIcon /> Event End: 
-                                {eventReq.end ? new Date(eventReq.end).toLocaleString() : 'N/A'}
-                            </Typography>
-                            <Typography variant="body1">
-                                <strong>Venue:</strong> {eventReq.venue || 'N/A'} {/* Venue field */}
-                            </Typography>
-                            <Typography variant="body1">
-                                <strong>Address:</strong> {eventReq.address || 'N/A'} {/* Address field */}
-                            </Typography>
-
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                style={{ marginTop: '10px' }}
-                                onClick={() => confirmEventRequest(eventReq.id)}
-                            >
-                                Confirm Request
-                            </Button>
-
+            <Grid2 container gap='1rem' sx={{ mt:'1rem' }}>
+                {eventRequests.sort((a, b) => b.id - a.id).map((eventReq) => (
+                    <EventRequestCard
+                        status={eventReq.status}
+                        eventName={eventReq.title}
+                        requesterName={`${eventReq.first_name} ${eventReq.last_name}`}
+                        requesterEmail={eventReq.email}
+                        start={eventReq.start}
+                        end={eventReq.end}
+                        venue={eventReq.venue}
+                        address={eventReq.address}
+                    >
+                        {(eventReq.status === 2) &&
                             <Button
                                 variant="contained"
                                 color="secondary"
@@ -93,10 +56,11 @@ const EventRequestsArtist: React.FC = () => {
                             >
                                 Delete Request
                             </Button>
-                        </Card>
-                    </Grid>
+                        }
+
+                    </EventRequestCard>
                 ))}
-            </Grid>
+            </Grid2>
         </Container>
     );
 };
