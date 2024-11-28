@@ -1,225 +1,158 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { NewNotification, Notification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, createNotification, getVolunteerRoles, isOk } from '@utils/fetch';
+import {
+  Container,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Typography,
+} from '@mui/material';
+import { getEvents, postData } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
-import { useBackendUserStore } from '@stores/useBackendUserStore';
-import { format } from 'date-fns';
 
-// Styled components
-const NotificationsContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2.5),
-  maxWidth: '800px',
-  margin: '0 auto',
-}));
 
-const NotificationsList = styled('ul')({
-  listStyle: 'none',
-  padding: 0,
-  margin: 0,
-});
+interface Event {
+  id: number;
+  title: string;
+}
 
-const NotificationItem = styled('li')<{ read: boolean }>(({ theme, read }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: theme.spacing(2),
-  borderBottom: `1px solid ${theme.palette.divider}`,
-  marginBottom: theme.spacing(1),
-  backgroundColor: read ? theme.palette.notification.read : theme.palette.notification.unread,
-  borderRadius: theme.shape.borderRadius,
-}));
+const BASE_URL = import.meta.env.VITE_API_URL;
 
-const NotificationContent = styled(Box)({
-  flexGrow: 1,
-});
-
-const MarkReadButton = styled(Button)(({ theme }) => ({
-  marginLeft: theme.spacing(2),
-  whiteSpace: 'nowrap',
-}));
-
-const NotificationDate = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  fontSize: '0.875rem',
-}));
-
-const Notifications: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+const CustomEventEmail: React.FC = () => {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const { user } = useAuth();
-  const { backendUser } = useBackendUserStore();
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [roleId, setRoleId] = useState("");
-  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
 
+  // Fetch events using the existing getEvents function
   useEffect(() => {
-    if (user) {
-      getNotifications(user).then(response => {
-        console.log("Notifications response:", response);
-        if (isOk(response.status)) {
-          console.log("Notifications data:", response.data);
-          setNotifications(response.data.data);
+    const fetchAllEvents = async () => {
+      if (user) {
+        const response = await getEvents(user);
+        if (response.status === 200) {
+          setEvents(response.data);
         } else {
-          console.error("Failed to fetch notifications:", response.error);
+          setErrorMessage('Failed to fetch events.');
         }
-      });
-
-      getVolunteerRoles(user).then(response => {
-        if (isOk(response.status)) {
-          setRoles(response.data.map((role: any) => ({ id: role.id, name: role.name })));
-        } else {
-          console.error("Failed to fetch roles:", response.error);
-        }
-      });
-    }
+      }
+    };
+    fetchAllEvents();
   }, [user]);
 
-  const markAsRead = async (id: number) => {
-    if (user) {
-      const response = await markNotificationAsRead(id, user);
-      if (isOk(response.status)) {
-        setNotifications(notifications.map(n => (n.id === id ? { ...n, is_read: true } : n)));
-      } else {
-        console.error("Failed to mark notification as read:", response.error);
-      }
-    }
-  };
-
-  const markAllAsRead = async () => {
-    if (user) {
-      const response = await markAllNotificationsAsRead(user);
-      if (isOk(response.status)) {
-        setNotifications(notifications.map(n => ({ ...n, is_read: true })));
-      } else {
-        console.error("Failed to mark all notifications as read:", response.error);
-      }
-    }
-  };
-
-  const handleCreateNotification = async () => {
-    if (!user || !backendUser || !title || !message || !roleId) {
-      alert("All fields are required.");
+  // Function to send custom emails
+  const handleSendEmail = async () => {
+    if (!selectedEvent || !subject || !message) {
+      setErrorMessage('Please fill all fields.');
       return;
     }
 
-
-    const notificationData: NewNotification = {
-      title: title,
-      message: message,
-      role_name: roles.find(role => role.id === roleId)?.name ?? "",
-      is_read: false,
-    };
-
     try {
-      const response = await createNotification(notificationData, user);
-      if (isOk(response.status)) {
-        console.log('Notification created successfully:', response.data);
-        setNotifications((prevNotifications) => Array.isArray(prevNotifications) 
-        ? [...prevNotifications, response.data] 
-        : [response.data]  // If not an array, initialize with the new notification
+      const token = user ? await user.getIdToken() : null;
+      const response = await fetch(
+        `${BASE_URL}/send_emails/event/${selectedEvent}/send_custom_email`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ subject, message }),
+        }
       );
-        setOpen(false);
+
+      if (response.ok) {
+        setSuccessMessage('Emails sent successfully!');
+        setErrorMessage('');
+        setSubject('');
+        setMessage('');
+        setSelectedEvent('');
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData.error || 'Failed to send emails.');
+        setSuccessMessage('');
       }
     } catch (error) {
-      console.error('Failed to create notification:', error);
+      setErrorMessage('An unexpected error occurred.');
+      setSuccessMessage('');
     }
   };
 
-  return (
-    <NotificationsContainer>
-      <Typography variant="h5" gutterBottom>
-        Notifications
-      </Typography>
-      <Button variant="contained" color="inherit" onClick={markAllAsRead}>
-        Mark All as Read
-      </Button>
-      <Button variant="contained" color="primary" onClick={() => setOpen(true)} style={{ marginLeft: '16px' }}>
-        Create Notification
-      </Button>
-      {Array.isArray(notifications) && notifications.length > 0 ? (
-        <NotificationsList>
-          {notifications.map(notification => (
-            <NotificationItem key={notification.id} read={notification.is_read}>
-              <NotificationContent>
-                <Typography variant="body1">
-                  {notification.title} {!notification.is_read && <Typography component="span" color="error" style={{ marginLeft: '8px', fontWeight: 'bold' }}>!New</Typography>}
-                </Typography>
-                <Typography variant="body2">{notification.message}</Typography>
-                {notification.created_at && (
-                  <NotificationDate variant="body2">
-                    {format(new Date(notification.created_at), "MMM dd, yyyy")}
-                  </NotificationDate>
-                )}
-              </NotificationContent>
-              {!notification.is_read && (
-                <MarkReadButton
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => markAsRead(notification.id ?? 0)}
-                >
-                  Mark as Read
-                </MarkReadButton>
-              )}
-            </NotificationItem>
-          ))}
-        </NotificationsList>
-      ) : (
-        <Typography variant="body1">No notifications found.</Typography>
-      )}
+  const handleSendEmails = async () => {
+    try {
+        console.log('Initiating email send for today’s shifts...');
+        const response = await postData('/send_emails/today', {});
+user
+        if (response.status === 200) {
+            alert('Emails successfully sent to all volunteers for today’s shifts!');
+        } else {
+            alert(`Failed to send emails. Reason: ${response.error || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Error sending emails:', error);
+        alert('An unexpected error occurred while sending emails.');
+    }
+};
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Create Notification</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Title"
-            fullWidth
-            variant="outlined"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            inputProps={{ "data-gramm": "false" }}
-          />
-          <TextField
-            margin="dense"
-            label="Message"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={4}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            inputProps={{ "data-gramm": "false" }}
-          />
-          <FormControl fullWidth variant="outlined" margin="dense">
-            <InputLabel>Role</InputLabel>
-            <Select
-              value={roleId}
-              onChange={(e) => setRoleId(e.target.value as string)}
-              label="Role"
-            >
-              {roles.map(role => (
-                <MenuItem key={role.id} value={role.id}>
-                  {role.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleCreateNotification} color="primary">
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </NotificationsContainer>
+
+  return (
+    <Container>
+      <Typography variant="h5" gutterBottom>
+        Send Custom Email to Volunteers
+      </Typography>
+
+      <FormControl fullWidth margin="normal">
+        <InputLabel>Event</InputLabel>
+        <Select
+          value={selectedEvent}
+          onChange={(e) => setSelectedEvent(e.target.value)}
+        >
+          {events.map((event) => (
+            <MenuItem key={event.id} value={event.id}>
+              {event.title}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <TextField
+        fullWidth
+        label="Subject"
+        value={subject}
+        onChange={(e) => setSubject(e.target.value)}
+        margin="normal"
+      />
+
+      <TextField
+        fullWidth
+        label="Message"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        multiline
+        rows={4}
+        margin="normal"
+      />
+
+      <Button variant="contained" color="primary" onClick={handleSendEmail}>
+        Send Email
+      </Button>
+      <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSendEmails}
+          style={{ marginTop: '20px' }}
+      >
+          Send Emails for Today’s Shifts
+      </Button>
+
+      {successMessage && <Typography color="green">{successMessage}</Typography>}
+      {errorMessage && <Typography color="red">{errorMessage}</Typography>}
+    </Container>
   );
 };
 
-export default Notifications;
+export default CustomEventEmail;
