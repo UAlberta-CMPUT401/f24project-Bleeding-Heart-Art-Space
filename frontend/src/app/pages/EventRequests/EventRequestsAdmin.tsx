@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid2, Typography, Button } from '@mui/material';
+import { Container, Grid2, Typography, Button, Paper } from '@mui/material';
 import styles from './EventRequests.module.css';
 import { getEventRequests, denyEventRequest as denyEventRequestCall, confirmEventRequest as confirmEventRequestCall, EventRequestUser } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
@@ -42,37 +42,56 @@ const EventRequestsAdmin: React.FC = () => {
 
     return (
         <Container className={styles.container}>
-            <Grid2 container gap='1rem' sx={{ mt:'1rem' }}>
-                {eventRequests.sort((a, b) => b.id - a.id).map((eventReq) => (
-                    <EventRequestCard
-                        status={eventReq.status}
-                        eventName={eventReq.title}
-                        requesterName={`${eventReq.first_name} ${eventReq.last_name}`}
-                        requesterEmail={eventReq.email}
-                        start={eventReq.start}
-                        end={eventReq.end}
-                        venue={eventReq.venue}
-                        address={eventReq.address}
-                    >
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            style={{ marginTop: '10px' }}
-                            onClick={() => confirmEventRequest(eventReq.id)}
+            {eventRequests.length > 0 ? 
+                <Grid2 container gap='1rem' sx={{ mt:'1rem' }}>
+                    {eventRequests.sort((a, b) => b.id - a.id).map((eventReq) => (
+                        <EventRequestCard
+                            status={eventReq.status}
+                            eventName={eventReq.title}
+                            requesterName={`${eventReq.first_name} ${eventReq.last_name}`}
+                            requesterEmail={eventReq.email}
+                            start={eventReq.start}
+                            end={eventReq.end}
+                            venue={eventReq.venue}
+                            address={eventReq.address}
                         >
-                            Approve Request
-                        </Button>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                style={{ marginTop: '10px' }}
+                                onClick={() => confirmEventRequest(eventReq.id)}
+                            >
+                                Approve Request
+                            </Button>
 
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={() => denyEventRequest(eventReq.id)}
-                        >
-                            Deny Request
-                        </Button>
-                    </EventRequestCard>
-                ))}
-            </Grid2>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={() => denyEventRequest(eventReq.id)}
+                            >
+                                Deny Request
+                            </Button>
+                        </EventRequestCard>
+                    ))}
+                </Grid2>
+            :
+                <Paper 
+                    sx={{ 
+                        width:'20rem', 
+                        height:'12rem', 
+                        display:'flex', 
+                        justifyContent:'center', 
+                        alignItems:'center', 
+                        p:'2rem',
+                        mx:'auto',
+                        mt:'2rem',
+                    }}
+                >
+                    <Typography variant='h5'>
+                        No Event Requests
+                    </Typography>
+                </Paper>
+            }
         </Container>
     );
 };
