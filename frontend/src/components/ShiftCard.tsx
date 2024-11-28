@@ -30,6 +30,7 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ roleName, start, end, volunteers,
         flexDirection: 'column',
         gap: '0.5rem',
       }}
+      elevation={15}
     >
       <Typography variant="body1">
         <AssignmentIndIcon 
@@ -43,16 +44,32 @@ const ShiftCard: React.FC<ShiftCardProps> = ({ roleName, start, end, volunteers,
         <AccessTimeIcon 
           sx={iconSx}
         /> 
-        <span style={{ fontWeight: 'bold' }} >Start:</span> 
-        <span> {start.toLocaleString()}</span>
+        <span style={{ fontWeight: 'bold' }} >Start: </span> 
+        <span>
+          {start.toLocaleString([], { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit' 
+          })}
+        </span>
       </Typography>
       
       <Typography variant="body1">
         <AccessTimeIcon 
           sx={iconSx}
         /> 
-        <span style={{ fontWeight: 'bold' }} >End:</span> 
-        <span> {end.toLocaleString()}</span>
+        <span style={{ fontWeight: 'bold' }} >End: </span> 
+        <span>
+          {end.toLocaleString([], { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit' 
+          })}
+        </span>
       </Typography>
         
       {
