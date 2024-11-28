@@ -92,4 +92,40 @@ export class SendEmailsService {
       throw new Error('Failed to send emails. Please check the SendGrid configuration.');
     }
   }
+  public async sendCustomEmailForEvent(eventId: number, subject: string, message: string): Promise<void> {
+    // Fetch the emails of volunteers who signed up for shifts for the given event
+    const volunteers = await db
+    .selectFrom('shift_signup')
+    .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+    .innerJoin('users', 'shift_signup.user_id', 'users.id')
+    .select(['users.email'])
+    .where('volunteer_shifts.event_id', '=', eventId)
+    .where('users.role', '=', 2) // Filter users with role = 2 (volunteers)
+    .execute();
+
+
+    const volunteerEmails = volunteers.map((volunteer) => volunteer.email);
+    console.log('Fetched volunteer emails:', volunteerEmails);
+
+    if (!volunteerEmails.length) {
+      console.log(`No volunteers found for event ID ${eventId}.`);
+      return;
+    }
+
+    // Construct the email
+    const msg = {
+      to: volunteerEmails, // List of volunteer emails
+      from: 'anhadpre@ualberta.ca', // Replace with your verified sender email
+      subject: subject,
+      text: message,
+    };
+
+    try {
+      await sgMail.send(msg);
+      console.log(`Custom email sent successfully for event ID ${eventId}!`);
+    } catch (error) {
+      console.error('Error sending custom email:', error);
+      throw new Error('Failed to send custom email. Please check the SendGrid configuration.');
+    }
+  }
 }

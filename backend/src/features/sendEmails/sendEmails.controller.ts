@@ -48,5 +48,23 @@ export class SendEmailsController {
       
 };
 
+public sendCustomEmailForEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    // console.log('Received request for sending custom email:', req.params, req.body);
+    try {
+      const { eventId } = req.params;
+      const { subject, message } = req.body;
+
+      if (!subject || !message) {
+        res.status(400).json({ error: 'Subject and message are required' });
+        return;
+      }
+
+      await this.sendEmailsService.sendCustomEmailForEvent(Number(eventId), subject, message);
+      res.status(200).json({ message: 'Emails sent successfully!' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   
 }

@@ -19,6 +19,12 @@ export class SendEmailsRoute implements Routes {
         // isAdminMiddleware,
         this.sendEmailsController.sendTodayEmails
     );
+    this.router.post(
+        `${this.path}/event/:eventId/send_custom_email`,
+        // authMiddleware, // Ensure the user is authenticated
+        // isAdminMiddleware, // Ensure only admins can send emails
+        this.sendEmailsController.sendCustomEmailForEvent
+      );
 }
 
   /**
