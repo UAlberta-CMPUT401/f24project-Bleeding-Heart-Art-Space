@@ -14,6 +14,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       .notNull()
       .references('users.id')
       .onDelete('cascade'))
+    .addColumn('status', 'integer', col => col.notNull()) // 0 denied, 1 approved, 2 pending
     .execute();
 }
 

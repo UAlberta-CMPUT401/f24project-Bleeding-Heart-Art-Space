@@ -245,6 +245,8 @@ export type EventRequestUser = {
   uid: string;
   first_name: string;
   last_name: string;
+  email: string;
+  status: number;
 }
 export type EventRequestUserData = {
   id: number;
@@ -257,6 +259,8 @@ export type EventRequestUserData = {
   uid: string;
   first_name: string;
   last_name: string;
+  email: string;
+  status: number;
 }
 export type NewEventRequest = {
   start: string;
@@ -288,6 +292,18 @@ export async function getEventRequests(user: User): Promise<ApiResponse<EventReq
   }
   return formattedResponse;
 }
+export async function getUserEventRequests(user: User): Promise<ApiResponse<EventRequestUser[]>> {
+  const response = await getData<EventRequestUserData[]>('/event_requests_user', user);
+  const formattedResponse: ApiResponse<EventRequestUser[]> = {
+    ...response,
+    data: response.data.map((eventData) => ({
+      ...eventData,
+      start: new Date(eventData.start),
+      end: new Date(eventData.end),
+    })),
+  }
+  return formattedResponse;
+}
 export async function postEventRequest(newEventRequest: NewEventRequest, user: User): Promise<ApiResponse<EventRequest>> {
   const response = await postData<EventRequestData, NewEventRequest>('/event_requests', newEventRequest, user);
   return {
@@ -304,6 +320,9 @@ export async function deleteEventRequest(eventRequestId: number, user: User): Pr
 }
 export async function confirmEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<Event>> {
   return await postData<Event, void>(`/event_requests/${eventRequestId}/confirm`, undefined, user);
+}
+export async function denyEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<void>> {
+  return await postData<void, void>(`/event_requests/${eventRequestId}/deny`, undefined, user);
 }
 
 export type VolunteerRole = {

@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Toolbar from '@mui/material/Toolbar';
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
@@ -21,11 +21,17 @@ import BHASLogo from '@assets/BHAS-Logo.png';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 
+enum Role {
+  VOLUNTEER,
+  ARTIST,
+  ADMIN,
+}
+
 type SideBarItem = {
   name: string;
   route: string;
   icon: React.ReactNode;
-  admin: boolean;
+  minRole: Role;
 }
 
 const sideBarItems: SideBarItem[] = [
@@ -33,25 +39,25 @@ const sideBarItems: SideBarItem[] = [
     name: 'Overview',
     route: '/overview',
     icon: <HomeIcon />,
-    admin: false,
+    minRole: Role.VOLUNTEER,
   },
   {
     name: 'Calendar',
     route: '/calendar',
     icon: <CalendarIcon />,
-    admin: false,
+    minRole: Role.VOLUNTEER,
   },
   {
     name: 'Volunteer\nManagement',
     route: '/volunteer-management',
     icon: <ManageAccountsIcon />,
-    admin: true,
+    minRole: Role.ADMIN,
   },
   {
     name: 'Event\nRequests',
     route: '/event-requests',
     icon: <QuestionAnswerIcon/>,
-    admin: true,
+    minRole: Role.ARTIST,
   },
 ]
 
@@ -84,7 +90,11 @@ const Dashboard: React.FC = () => {
       <Divider />
       <List>
         {sideBarItems.map((item, index) => {
-          if (!item.admin || backendUser?.is_admin) {
+          if (
+            (item.minRole === Role.VOLUNTEER) ||
+            (item.minRole === Role.ARTIST && (backendUser?.can_request_event || backendUser?.is_admin)) ||
+            (item.minRole === Role.ADMIN && backendUser?.is_admin)
+          ) {
             const isActive = location.pathname === item.route;
             return <ListItem key={index} disablePadding>
                   <ListItemButton
