@@ -9,9 +9,9 @@ import {
   InputLabel,
   Typography,
 } from '@mui/material';
-import { getEvents } from '@utils/fetch';
+import { getEvents, postData } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
-import { postData } from '@utils/fetch';
+
 
 interface Event {
   id: number;
@@ -81,21 +81,22 @@ const CustomEventEmail: React.FC = () => {
       setSuccessMessage('');
     }
   };
-  const handleSendEmails = async () => {
-    console.log('Sending email payload to the backend');
 
+  const handleSendEmails = async () => {
     try {
-      const response = await postData('/send_emails/today', {});
-      if (response.status === 200) {
-        alert('Emails sent successfully to volunteers!');
-      } else {
-        alert(`Failed to send emails: ${response.error}`);
-      }
+        console.log('Initiating email send for today’s shifts...');
+        const response = await postData('/send_emails/today', {});
+user
+        if (response.status === 200) {
+            alert('Emails successfully sent to all volunteers for today’s shifts!');
+        } else {
+            alert(`Failed to send emails. Reason: ${response.error || 'Unknown error'}`);
+        }
     } catch (error) {
-      console.error('Error sending emails:', error);
-      alert('An unexpected error occurred.');
+        console.error('Error sending emails:', error);
+        alert('An unexpected error occurred while sending emails.');
     }
-  };
+};
 
 
   return (
@@ -140,20 +141,13 @@ const CustomEventEmail: React.FC = () => {
         Send Email
       </Button>
       <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSendEmails}
-        style={{ marginTop: '20px' }}
-        >
-        Send Emails for Today’s Shifts
-        </Button>
-        {/* <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleViewDetailsClick(shift)}
-        >
-            View Details
-        </Button> */}
+          variant="contained"
+          color="primary"
+          onClick={handleSendEmails}
+          style={{ marginTop: '20px' }}
+      >
+          Send Emails for Today’s Shifts
+      </Button>
 
       {successMessage && <Typography color="green">{successMessage}</Typography>}
       {errorMessage && <Typography color="red">{errorMessage}</Typography>}

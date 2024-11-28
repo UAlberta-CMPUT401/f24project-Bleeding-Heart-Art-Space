@@ -6,11 +6,12 @@ import { db } from '@database/database';
 export class SendEmailsService {
   constructor() {
     // Initialize SendGrid with API Key
-    const apiKey = 'SG.'+'w1BsZj_wSFuY3O56_HTBtg.tUQVoM-cxKHnUq3DuvEgasXSg22jUdonQlLEwgp5hqE';
+    const apiKey = process.env.SENDGRID_API_KEY;
     if (!apiKey || !apiKey.startsWith('SG.')) {
       throw new Error('Invalid SendGrid API Key. Ensure it starts with "SG."');
     }
     sgMail.setApiKey(apiKey);
+    
   }
 
   /**
@@ -19,6 +20,10 @@ export class SendEmailsService {
   public async sendTodayShiftEmails(): Promise<void> {
     // Get today's date
     const today = new Date();
+    const senderEmail = process.env.SENDGRID_FROM_EMAIL;
+    if (!senderEmail) {
+        throw new Error('Sender email is not properly configured in .env');
+      }
     const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
 
@@ -38,7 +43,7 @@ export class SendEmailsService {
     .execute();
 
 
-    console.log('Fetched shifts from database:', shifts);
+    // console.log('Fetched shifts from database:', shifts);
 
 
 
@@ -77,7 +82,7 @@ export class SendEmailsService {
     // Construct email message
     const msg = {
       to: volunteerEmails, // List of volunteer emails
-      from: 'anhadpre@ualberta.ca', // Replace with your verified sender email
+      from: senderEmail, // Replace with your verified sender email
       subject: 'Today’s Newly added Volunteer Shifts',
       text: `Hello Volunteers,\n\nHere are the details of today's shifts:\n\n${emailContent}\nPlease log in to the platform for more information.\n\nThank you!`,
     };
@@ -94,6 +99,10 @@ export class SendEmailsService {
   }
   public async sendCustomEmailForEvent(eventId: number, subject: string, message: string): Promise<void> {
     // Fetch the emails of volunteers who signed up for shifts for the given event
+    const senderEmail = process.env.SENDGRID_FROM_EMAIL;
+    if (!senderEmail) {
+        throw new Error('Sender email is not properly configured in .env');
+      }
     const volunteers = await db
     .selectFrom('shift_signup')
     .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
@@ -115,7 +124,7 @@ export class SendEmailsService {
     // Construct the email
     const msg = {
       to: volunteerEmails, // List of volunteer emails
-      from: 'anhadpre@ualberta.ca', // Replace with your verified sender email
+      from: senderEmail, // Replace with your verified sender email
       subject: subject,
       text: message,
     };
