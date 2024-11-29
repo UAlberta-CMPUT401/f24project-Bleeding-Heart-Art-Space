@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Card, Divider, TextField, Alert} from "@mui/material";
 import styles from '@pages/Login/Login.module.css';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "@utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
@@ -13,6 +13,8 @@ const Signup: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const [verificationSent, setVerificationSent] = useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,12 +28,23 @@ const Signup: React.FC = () => {
     }
 
     setError(null);
+    setIsProcessing(true);
 
     try {
 
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("User created:", userCredential.user);
 
+      if (auth.currentUser) {
+        try {
+          await sendEmailVerification(auth.currentUser);
+          setVerificationSent(true);
+        } catch (verificationError) {
+          console.error("Error sending verification email:", verificationError);
+          setError("Failed to send verification email. Please try again later.");
+        }
+      }
+      
       setSuccess(true);
 
       setTimeout(() => {
@@ -41,6 +54,8 @@ const Signup: React.FC = () => {
     } catch (error: any) {
       console.error("Error signing up:", error);
       setError(error.message); 
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -58,7 +73,11 @@ const Signup: React.FC = () => {
 
           {error && <Alert severity="error">{error}</Alert>}
 
-          {success && <Alert severity="success">Signup successful! Redirecting to login...</Alert>}
+          {success && (
+            <Alert severity="success">
+              Signup successful! {verificationSent && "A verification email has been sent. Please check your inbox."} Redirecting to login...
+            </Alert>
+          )}
           
           
           <TextField
@@ -94,8 +113,8 @@ const Signup: React.FC = () => {
             disabled={success}
           />
           
-          <Button type="submit" variant="contained">
-            Sign-up
+          <Button type="submit" variant="contained" disabled={isProcessing || success}>
+            {isProcessing ? "Processing..." : "Sign-up"}
           </Button>
         </form>
         
