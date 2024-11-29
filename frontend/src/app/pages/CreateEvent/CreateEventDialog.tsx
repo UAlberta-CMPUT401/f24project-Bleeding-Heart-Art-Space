@@ -223,8 +223,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Button
-                            variant="contained"
-                            color="secondary"
+                            color="error"
                             onClick={handleClear}
                             fullWidth
                             style={{ marginTop: '20px' }}
@@ -238,7 +237,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                             style={{ marginTop: '20px' }}
                             fullWidth 
                             onClick={handleSubmit} 
-                            color="primary" 
+                            color="secondary" 
                             disabled={loading}
                         >
                             {loading ? 'Creating...' : 'Create'}

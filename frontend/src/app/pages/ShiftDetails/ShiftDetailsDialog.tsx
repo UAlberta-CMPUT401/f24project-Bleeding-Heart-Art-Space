@@ -45,6 +45,9 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
     { field: 'first_name', headerName: 'First Name', flex: 1, minWidth: 100 },
     { field: 'last_name', headerName: 'Last Name', flex: 1, minWidth: 100 },
     { field: 'email', headerName: 'Email', flex: 2, minWidth: 200 },
+    { field: 'checkin_time', headerName: 'Check In', flex: 1, minWidth: 100 },
+    { field: 'checkout_time', headerName: 'Check Out', flex: 1, minWidth: 100 },
+    { field: 'notes', headerName: 'Notes', flex: 2, minWidth: 200 },
   ] : [
     { field: 'first_name', headerName: 'First Name', flex: 1, minWidth: 100 },
     { field: 'last_name', headerName: 'Last Name', flex: 1, minWidth: 100 },
@@ -69,7 +72,14 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog 
+      open={open} 
+      onClose={onClose}   
+      maxWidth={false}
+      PaperProps={{
+        style: { width: 'auto', maxWidth: '90vw' },
+      }}
+    >
       <DialogTitle className={styles.dialogTitle}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center">
@@ -83,7 +93,7 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
       </DialogTitle>
       <DialogContent className={styles.dialogContent}>
         {shiftSignups.length > 0 ? (
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <DataGrid
               className={styles.grid}
               rows={shiftSignups}

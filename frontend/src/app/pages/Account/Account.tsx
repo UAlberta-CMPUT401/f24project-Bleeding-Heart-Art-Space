@@ -310,10 +310,10 @@ const Account: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="secondary">
+          <Button onClick={handleClose} color="error">
             Cancel
           </Button>
-          <Button onClick={handleSave} color="primary" variant="contained" disabled={isLoading}>
+          <Button onClick={handleSave} color="secondary" variant="contained" disabled={isLoading}>
             {isLoading ? 'Saving...' : 'Save'}
           </Button>
         </DialogActions>

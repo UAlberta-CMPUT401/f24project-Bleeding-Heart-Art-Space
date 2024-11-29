@@ -15,7 +15,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import EmailIcon from '@mui/icons-material/Email';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import BHASLogo from '@assets/BHAS-Logo.png';
 import { Link, Outlet, useLocation } from 'react-router-dom';
@@ -158,12 +158,14 @@ const Dashboard: React.FC = () => {
             Bleeding Heart Art Space
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
+          {backendUser?.is_admin && (
           <IconButton
             component={Link}
             to={'/notifications'}
           >
-            <NotificationsIcon />
+            <EmailIcon />
           </IconButton>
+          )}
           <IconButton
             component={Link}
             to={'/account'}
