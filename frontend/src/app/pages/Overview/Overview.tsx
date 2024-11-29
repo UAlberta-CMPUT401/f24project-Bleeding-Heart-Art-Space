@@ -6,6 +6,7 @@ import { getUpcomingEvents, getUpcomingShifts, Event, VolunteerRole, ShiftSignup
 import { isBefore, addWeeks } from 'date-fns';
 import styles from './Overview.module.css';
 import CheckIcon from '@mui/icons-material/Check';
+import PeopleIcon from '@mui/icons-material/People';
 import SnackbarAlert from '@components/SnackbarAlert';
 import { format } from 'date-fns';
 import ShiftCard from '@components/ShiftCard';
@@ -225,6 +226,7 @@ const OverviewPage: React.FC = () => {
                                 {format(new Date(event.start), 'MMM d, yyyy, hh:mm a')}
                             </Typography>
                             <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
+                                <PeopleIcon className={styles.iconSpacing} />{' '}
                                 Total Volunteers: {totalVolunteersSignedUp}/{totalMaxVolunteers}
                             </Typography>
                             <Button
