@@ -272,39 +272,6 @@ export class ShiftSignupService {
       .execute();
   }
 
-  /**
-   * Automatically check out users who forgot to check out by the shift end time.
-   */
-  // public async autoCheckOut(): Promise<void> {
-  //   const now = new Date();
-
-  //   const overdueSignups = await db
-  //     .selectFrom('shift_signup')
-  //     .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
-  //     .select([
-  //       'shift_signup.id',
-  //       'shift_signup.shift_id',
-  //       'shift_signup.checkin_time',
-  //       'shift_signup.checkout_time',
-  //       'volunteer_shifts.end as shift_end',
-  //       'shift_signup.checkin_time as checkin_time'
-  //     ])
-  //     .where('shift_signup.checkin_time', 'is not', null)
-  //     .where('shift_signup.checkout_time', 'is', null)
-  //     .where('volunteer_shifts.end', '<', now)
-  //     .execute();
-
-      
-
-  //   for (const signup of overdueSignups) {
-  //     await db
-  //       .updateTable('shift_signup')
-  //       .set({ checkout_time: signup.shift_end }) // Use shift_end as checkout time
-  //       .where('id', '=', signup.id)
-  //       .execute();
-  //   }
-  // }
-
   public async autoCheckOut(): Promise<void> {
     const now = new Date();
   
@@ -512,6 +479,9 @@ export class ShiftSignupService {
         'shift_signup.id',
         'shift_signup.user_id',
         'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.notes',
         'users.first_name',
         'users.last_name',
         'users.email',
