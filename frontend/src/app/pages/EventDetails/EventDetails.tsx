@@ -96,7 +96,7 @@ const EventDetails: React.FC = () => {
     };
 
     const handleBackClick = () => {
-        navigate(`/calendar`);
+        navigate(-1);
     }
 
     const handleViewDetailsClick = (shift: Shift) => {
