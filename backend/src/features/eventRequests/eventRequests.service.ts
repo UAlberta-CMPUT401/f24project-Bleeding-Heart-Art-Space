@@ -29,6 +29,7 @@ export class EventRequestsService {
       .values(({ selectFrom }) => ({
         ...eventData,
         requester_id: selectFrom('users').select('id').where('uid', '=', uid),
+        status: 2, // pending
       }))
       .returningAll()
       .executeTakeFirst();
@@ -36,7 +37,7 @@ export class EventRequestsService {
     return insertedEvent;
   }
 
-  public async getAllEventRequests(): Promise<EventRequestUser[]> {
+  public async getPendingEventRequests(): Promise<EventRequestUser[]> {
     return await db
       .selectFrom('event_requests')
       .innerJoin('users', 'users.id', 'event_requests.requester_id')
@@ -48,10 +49,35 @@ export class EventRequestsService {
         'event_requests.address',
         'event_requests.title',
         'event_requests.requester_id',
+        'event_requests.status',
         'users.uid',
         'users.first_name',
         'users.last_name',
+        'users.email',
       ])
+      .where('event_requests.status', '=', 2) // where status is pending
+      .execute()
+  }
+
+  public async getUserEventRequests(uid: string): Promise<EventRequestUser[]> {
+    return await db
+      .selectFrom('event_requests')
+      .innerJoin('users', 'users.id', 'event_requests.requester_id')
+      .select([
+        'event_requests.id',
+        'event_requests.start',
+        'event_requests.end',
+        'event_requests.venue',
+        'event_requests.address',
+        'event_requests.title',
+        'event_requests.requester_id',
+        'event_requests.status',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+        'users.email',
+      ])
+      .where('users.uid', '=', uid)
       .execute()
   }
 
@@ -68,6 +94,16 @@ export class EventRequestsService {
   public async deleteEventRequest(eventRequestId: number): Promise<void> {
     await db
       .deleteFrom('event_requests')
+      .where('id', '=', eventRequestId)
+      .execute();
+  }
+
+  public async denyEventRequest(eventRequestId: number): Promise<void> {
+    await db
+      .updateTable('event_requests')
+      .set({
+        status: 0, // denied status
+      })
       .where('id', '=', eventRequestId)
       .execute();
   }
@@ -101,12 +137,15 @@ export class EventRequestsService {
 
     if (!event) return undefined;
 
-    const deleteRes = await db
-      .deleteFrom('event_requests')
-      .where('event_requests.id', '=', eventRequestId)
+    // change event request to approved
+    const approveRes = await db
+      .updateTable('event_requests')
+      .set({
+        status: 1, // approved
+      })
+      .where('id', '=', eventRequest.id)
       .executeTakeFirst();
-
-    if (deleteRes.numDeletedRows === BigInt(0)) return undefined;
+    if (approveRes.numUpdatedRows === BigInt(0)) return undefined;
 
     await this.usersService.makeUserEventAdmin(eventRequest.requester_id, event.id);
 
