@@ -118,6 +118,7 @@ export class ShiftSignupService {
       ])
       .where('volunteer_shifts.end', '>=', oneDayBefore)
       .where('volunteer_shifts.start', '<=', twoWeeksFromNow)
+      .where('users.uid', '=', uid)
       .orderBy('volunteer_shifts.start', 'asc')
       .execute();
     return result;
