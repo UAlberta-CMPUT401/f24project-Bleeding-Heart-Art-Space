@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container,
   TextField,
   Button,
   Select,
@@ -8,10 +7,15 @@ import {
   FormControl,
   InputLabel,
   Typography,
+  Divider,
+  Paper,
+  Container,
 } from '@mui/material';
 import { getEvents, postData } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
-
+import styles from '@pages/Notifications/Notifications.module.css';
+import { ConfirmationDialog } from '@components/ConfirmationDialog';
+import SnackbarAlert from '@components/SnackbarAlert';
 
 interface Event {
   id: number;
@@ -25,11 +29,14 @@ const CustomEventEmail: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const { user } = useAuth();
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [onConfirmAction, setOnConfirmAction] = useState<(() => void) | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('info');  
 
-  // Fetch events using the existing getEvents function
   useEffect(() => {
     const fetchAllEvents = async () => {
       if (user) {
@@ -37,17 +44,20 @@ const CustomEventEmail: React.FC = () => {
         if (response.status === 200) {
           setEvents(response.data);
         } else {
-          setErrorMessage('Failed to fetch events.');
+          setSnackbarMessage('Failed to fetch events.');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         }
       }
     };
     fetchAllEvents();
   }, [user]);
 
-  // Function to send custom emails
   const handleSendEmail = async () => {
-    if (!selectedEvent || !subject || !message) {
-      setErrorMessage('Please fill all fields.');
+    if (!selectedEvent || !subject.trim() || !message.trim()) {
+      setSnackbarMessage('Please fill all fields.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
       return;
     }
 
@@ -66,91 +76,181 @@ const CustomEventEmail: React.FC = () => {
       );
 
       if (response.ok) {
-        setSuccessMessage('Emails sent successfully!');
-        setErrorMessage('');
+        setSnackbarMessage('Email sent successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);  
         setSubject('');
         setMessage('');
         setSelectedEvent('');
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.error || 'Failed to send emails.');
-        setSuccessMessage('');
+        setSnackbarMessage(errorData.error || 'Failed to send emails.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     } catch (error) {
-      setErrorMessage('An unexpected error occurred.');
-      setSuccessMessage('');
+      setSnackbarMessage('An unexpected error occurred.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
   const handleSendEmails = async () => {
     try {
-        console.log('Initiating email send for today’s shifts...');
-        const response = await postData('/send_emails/today', {});
-user
-        if (response.status === 200) {
-            alert('Emails successfully sent to all volunteers for today’s shifts!');
-        } else {
-            alert(`Failed to send emails. Reason: ${response.error || 'Unknown error'}`);
-        }
-    } catch (error) {
-        console.error('Error sending emails:', error);
-        alert('An unexpected error occurred while sending emails.');
-    }
-};
+      console.log('Initiating email send for today’s shifts...');
+      const response = await postData('/send_emails/today', {});
 
+      if (response.status === 200) {
+        setSnackbarMessage("Emails successfully sent to all volunteers for today's shifts!");
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      } else {
+        setSnackbarMessage(`Failed to send emails. Reason: ${response.error || 'Unknown error'}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      setSnackbarMessage('An unexpected error occurred while sending emails.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
 
   return (
-    <Container>
-      <Typography variant="h5" gutterBottom>
-        Send Custom Email to Volunteers
+    <Container maxWidth="md" className={styles.container}>
+      <Typography variant="h3" gutterBottom fontWeight="bold">
+        Custom Email Service
       </Typography>
 
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Event</InputLabel>
-        <Select
-          value={selectedEvent}
-          onChange={(e) => setSelectedEvent(e.target.value)}
-        >
-          {events.map((event) => (
-            <MenuItem key={event.id} value={event.id}>
-              {event.title}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Typography variant="body1" sx={{ mb: 3 }}>
+        Use this page to send custom emails to volunteers signed up to any shift for a particular event or send a bulk email for all shifts that start today.
+      </Typography>
 
-      <TextField
-        fullWidth
-        label="Subject"
-        value={subject}
-        onChange={(e) => setSubject(e.target.value)}
-        margin="normal"
-      />
-
-      <TextField
-        fullWidth
-        label="Message"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        multiline
-        rows={4}
-        margin="normal"
-      />
-
-      <Button variant="contained" color="primary" onClick={handleSendEmail}>
-        Send Email
-      </Button>
-      <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSendEmails}
-          style={{ marginTop: '20px' }}
+      {/* Custom Event Email Form */}
+      <Paper
+        component="form"
+        sx={{
+          borderRadius: 2,
+          boxShadow: 1,
+          p: 4,
+          mb: 4,
+        }}
+        elevation={6}
       >
-          Send Emails for Today’s Shifts
-      </Button>
+        <Typography variant="h5" gutterBottom fontWeight="bold">
+          Send Custom Event Email
+        </Typography>
 
-      {successMessage && <Typography color="green">{successMessage}</Typography>}
-      {errorMessage && <Typography color="red">{errorMessage}</Typography>}
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Select Event</InputLabel>
+          <Select
+            value={selectedEvent}
+            onChange={(e) => setSelectedEvent(e.target.value)}
+            required
+          >
+            {events.map((event) => (
+              <MenuItem key={event.id} value={event.id}>
+                {event.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <TextField
+          fullWidth
+          label="Subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          margin="normal"
+          required
+        />
+
+        <TextField
+          fullWidth
+          label="Message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          multiline
+          rows={4}
+          margin="normal"
+          required
+        />
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            if (!selectedEvent || !subject || !message) {
+              setSnackbarMessage('Please fill all fields.');
+              setSnackbarSeverity('error');
+              setSnackbarOpen(true);
+              return;
+            }
+            setConfirmationMessage(
+              'Are you sure you want to send this email for the selected event?'
+            );
+            setOnConfirmAction(() => handleSendEmail);
+            setOpenConfirmationDialog(true);
+          }}
+          sx={{ mt: 2 }}
+          disabled={!selectedEvent || !subject || !message}
+        >
+          Send Email
+        </Button>
+      </Paper>
+
+      <Divider sx={{ my: 4, borderBottomWidth: 3 }} />
+
+      {/* Bulk Email Section */}
+      <Paper
+        sx={{
+          borderRadius: 2,
+          boxShadow: 1,
+          p: 4,
+        }}
+        elevation={6}
+      >
+        <Typography variant="h5" gutterBottom fontWeight="bold">
+          Bulk Email for Today’s Shifts
+        </Typography>
+
+        <Typography variant="body2" sx={{ mb: 2 }}>
+          Notify all existing volunteers about all shifts that start today for any event.
+        </Typography>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            setConfirmationMessage(
+              "Are you sure you want to send a bulk email?"
+            );
+            setOnConfirmAction(() => handleSendEmails);
+            setOpenConfirmationDialog(true);
+          }}
+        >
+          Send Emails for Today’s Shifts
+        </Button>
+
+      </Paper>
+      <ConfirmationDialog
+        open={openConfirmationDialog}
+        message={confirmationMessage}
+        onConfirm={() => {
+          if (onConfirmAction) {
+            onConfirmAction();
+          }
+          setOpenConfirmationDialog(false);
+        }}
+        onCancel={() => setOpenConfirmationDialog(false)}
+        title="Confirm Send"
+        confirmButtonText="Confirm"
+      />
+      <SnackbarAlert
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+      />
     </Container>
   );
 };
