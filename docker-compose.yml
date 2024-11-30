@@ -1,4 +1,13 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - ./frontend/.env.production.local
+    restart: always
+    ports:
+      - "3001:80"
   backend:
     build:
       context: ./backend
