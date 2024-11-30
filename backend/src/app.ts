@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import { Routes } from '@interfaces/routes.interface';
-import { NODE_ENV, PORT } from '@config/env';
+import { NODE_ENV, URL, PORT } from '@config/env';
 import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
@@ -46,8 +46,16 @@ export class App {
   private initializeMiddlewares() {
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
-    if (NODE_ENV === 'development') {
-      this.app.use(cors())
+    if (NODE_ENV === 'development' || URL === undefined) {
+      this.app.use(cors());
+    } else {
+      this.app.use(cors({
+        origin: [
+          URL,
+          `${URL}:80`, // HTTP
+          `${URL}:443`, // HTTPS
+        ]
+      }))
     }
     const swaggerDocument = YAML.load(this.apiSpecPath);
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
