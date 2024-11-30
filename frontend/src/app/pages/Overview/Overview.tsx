@@ -197,7 +197,7 @@ const OverviewPage: React.FC = () => {
                         ))}
                     </Stack>
                 ) : (
-                    <Typography>You haven't signed up for any shifts yet.</Typography>
+                    <Typography>No upcoming signed up shifts in the next two weeks.</Typography>
                 )}
             </Paper>
 
