@@ -54,6 +54,7 @@ export class App {
           URL,
           `${URL}:80`, // HTTP
           `${URL}:443`, // HTTPS
+          `${URL}:3001`, // Testing
         ]
       }))
     }
@@ -70,14 +71,14 @@ export class App {
   }
 
   private initializeCronJobs() {
-    console.log('Starting cron job for aut-checkout every 5 minutes');
+    logger.info('Starting cron job for aut-checkout every 5 minutes');
     cron.schedule('*/1 * * * *', async () => {
-      console.log('Running auto-checkout cron job...');
+      logger.info('Running auto-checkout cron job...');
       try{
         await this.shiftSignupService.autoCheckOut();
-        console.log('Auto-checkout cron job completed');
+        logger.info('Auto-checkout cron job completed');
       } catch (error){
-        console.error('Error running auto-checkout cron job', error);
+        logger.error('Error running auto-checkout cron job', error);
       }
     })
   }
