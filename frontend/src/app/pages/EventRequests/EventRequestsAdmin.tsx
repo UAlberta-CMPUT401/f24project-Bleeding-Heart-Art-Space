@@ -43,7 +43,7 @@ const EventRequestsAdmin: React.FC = () => {
     return (
         <Container className={styles.container}>
             {eventRequests.length > 0 ? 
-                <Grid2 container gap='1rem' sx={{ mt:'1rem' }}>
+                <Grid2 container gap='1rem' sx={{ mt:'1rem' }} justifyContent="center" alignItems="center">
                     {eventRequests.sort((a, b) => b.id - a.id).map((eventReq) => (
                         <EventRequestCard
                             status={eventReq.status}

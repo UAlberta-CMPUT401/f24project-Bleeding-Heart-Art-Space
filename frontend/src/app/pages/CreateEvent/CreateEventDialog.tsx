@@ -115,7 +115,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                         <Close style={{ fontSize: '40px', color: theme.palette.text.primary }} />
                 </IconButton>
                 <div>
-                    <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
+                    <Typography fontWeight="bold" variant="h4" align="center" gutterBottom>
                         {backendUser?.is_admin ? "Create Event" : "Request Event"}
                     </Typography>
                 </div>
