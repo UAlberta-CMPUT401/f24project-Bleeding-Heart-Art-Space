@@ -116,9 +116,13 @@ export class SendEmailsService {
     const volunteerEmails = volunteers.map((volunteer) => volunteer.email);
     console.log('Fetched volunteer emails:', volunteerEmails);
 
-    if (!volunteerEmails.length) {
-      console.log(`No volunteers found for event ID ${eventId}.`);
-      return;
+    // if (!volunteerEmails.length) {
+    //   console.log(`No volunteers found for event ID ${eventId}.`);
+    //   return;
+    // }
+    if (!volunteerEmails || volunteerEmails.length === 0) {
+      console.error(`No volunteers found for event ID ${eventId}.`);
+      throw new Error(`No volunteers found for the selected event.`);
     }
 
     // Construct the email

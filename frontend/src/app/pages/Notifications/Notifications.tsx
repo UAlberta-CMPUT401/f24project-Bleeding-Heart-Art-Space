@@ -84,7 +84,7 @@ const CustomEventEmail: React.FC = () => {
         setSelectedEvent('');
       } else {
         const errorData = await response.json();
-        setSnackbarMessage(errorData.error || 'Failed to send emails.');
+        setSnackbarMessage(errorData.error || `Failed to send emails. Reason: No volunteers found for the selected event.`);
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
       }
