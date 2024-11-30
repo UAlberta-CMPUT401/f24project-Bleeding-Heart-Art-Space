@@ -13,4 +13,4 @@ if (!fs.existsSync(envPath)) {
 config({ path: envPath });
 
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';
-export const { NODE_ENV, PORT, LOG_LEVEL, DB_NAME, DB_HOST, DB_USER, DB_PORT, DB_PASSWORD, OPEN_WEATHER_KEY } = process.env;
+export const { NODE_ENV, DOMAIN, PORT, LOG_LEVEL, DB_NAME, DB_HOST, DB_USER, DB_PORT, DB_PASSWORD, OPEN_WEATHER_KEY } = process.env;

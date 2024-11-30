@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemButton, ListItemText, CssBaseline } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box } from '@mui/system';
-import CreateEvent from './pages/CreateEvent'; // Import your component
 
 const drawerWidth = 240;
 
@@ -74,7 +73,6 @@ const AppLayout: React.FC = () => {
                 }}
             >
                 <Toolbar />
-                <CreateEvent isSidebarOpen={isDrawerOpen} /> {/* Pass isSidebarOpen prop */}
             </Box>
         </Box>
     );
