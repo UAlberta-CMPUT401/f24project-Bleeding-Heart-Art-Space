@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import { Routes } from '@interfaces/routes.interface';
-import { NODE_ENV, URL, PORT } from '@config/env';
+import { NODE_ENV, DOMAIN, PORT } from '@config/env';
 import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
@@ -46,15 +46,15 @@ export class App {
   private initializeMiddlewares() {
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
-    if (NODE_ENV === 'development' || URL === undefined) {
+    if (NODE_ENV === 'development' || DOMAIN === undefined) {
       this.app.use(cors());
     } else {
       this.app.use(cors({
         origin: [
-          URL,
-          `${URL}:80`, // HTTP
-          `${URL}:443`, // HTTPS
-          `${URL}:3001`, // Testing
+          `http://${DOMAIN}`,
+          `http://${DOMAIN}:80`, // HTTP
+          `https://${DOMAIN}:443`, // HTTPS
+          `http://${DOMAIN}:3001`, // Testing
         ]
       }))
     }
