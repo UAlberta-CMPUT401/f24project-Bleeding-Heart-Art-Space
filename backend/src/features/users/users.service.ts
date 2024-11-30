@@ -31,13 +31,30 @@ export class UsersService {
   }
   
   public async createVolunteer(newUser: NewUser): Promise<InsertResult> {
-    return await db
-      .insertInto('users')
-      .values((eb) => ({
-        ...newUser,
-        role: eb.selectFrom('roles').where('roles.title', '=', 'volunteer').select('roles.id').limit(1),
-      }))
-      .executeTakeFirst();
+    const exists = await db
+      .selectFrom('users')
+      .select('id')
+      .limit(1)
+      .executeTakeFirst()
+    const isEmpty = !exists
+
+    if (isEmpty) {
+      return await db
+        .insertInto('users')
+        .values((eb) => ({
+          ...newUser,
+          role: eb.selectFrom('roles').where('roles.title', '=', 'admin').select('roles.id').limit(1),
+        }))
+        .executeTakeFirst();
+    } else {
+      return await db
+        .insertInto('users')
+        .values((eb) => ({
+          ...newUser,
+          role: eb.selectFrom('roles').where('roles.title', '=', 'volunteer').select('roles.id').limit(1),
+        }))
+        .executeTakeFirst();
+    }
   }
 
   public async getUserRole(user: User): Promise<Role | undefined> {
