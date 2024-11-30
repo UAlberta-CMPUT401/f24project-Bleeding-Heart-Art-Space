@@ -90,8 +90,8 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
         const eventData = {
             title,
             venue,
-            start: `${startDateLocal}T${startTimeLocal}`,
-            end: `${endDateLocal}T${endTimeLocal}`,
+            start: startDateTime.toISOString(),
+            end: endDateTime.toISOString(),
             address
         };
 

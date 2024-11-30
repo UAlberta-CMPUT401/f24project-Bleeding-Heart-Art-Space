@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import { Routes } from '@interfaces/routes.interface';
-import { NODE_ENV, PORT } from '@config/env';
+import { NODE_ENV, DOMAIN, PORT } from '@config/env';
 import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
@@ -46,8 +46,17 @@ export class App {
   private initializeMiddlewares() {
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
-    if (NODE_ENV === 'development') {
-      this.app.use(cors())
+    if (NODE_ENV === 'development' || DOMAIN === undefined) {
+      this.app.use(cors());
+    } else {
+      this.app.use(cors({
+        origin: [
+          `http://${DOMAIN}`,
+          `http://${DOMAIN}:80`, // HTTP
+          `https://${DOMAIN}:443`, // HTTPS
+          `http://${DOMAIN}:3001`, // Testing
+        ]
+      }))
     }
     const swaggerDocument = YAML.load(this.apiSpecPath);
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -62,14 +71,14 @@ export class App {
   }
 
   private initializeCronJobs() {
-    console.log('Starting cron job for aut-checkout every 5 minutes');
+    logger.info('Starting cron job for aut-checkout every 5 minutes');
     cron.schedule('*/1 * * * *', async () => {
-      console.log('Running auto-checkout cron job...');
+      logger.info('Running auto-checkout cron job...');
       try{
         await this.shiftSignupService.autoCheckOut();
-        console.log('Auto-checkout cron job completed');
+        logger.info('Auto-checkout cron job completed');
       } catch (error){
-        console.error('Error running auto-checkout cron job', error);
+        logger.error('Error running auto-checkout cron job', error);
       }
     })
   }
