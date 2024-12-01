@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Divider, TextField, Alert } from "@mui/material";
+import { Button, Card, Divider, TextField, Alert, IconButton, InputAdornment} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import styles from './Login.module.css';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@utils/firebase.ts";
@@ -12,6 +13,7 @@ const Login: React.FC = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
   const [error, setError] = useState<string | null>(null);
   
   const navigate = useNavigate();
@@ -102,12 +104,24 @@ const Login: React.FC = () => {
           />
 
           <TextField
-            type="password"
+            type={showPassword ? "text" : "password"} // Toggle between text and password
             className={styles.textField}
             variant="outlined"
             label="Password"
             color="secondary"
             onChange={(e) => setPassword(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <Button
