@@ -9,7 +9,7 @@ const EventRequests: React.FC = () => {
 
     return (
         <>
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom align='center'>
                 Event Requests
             </Typography>
 
