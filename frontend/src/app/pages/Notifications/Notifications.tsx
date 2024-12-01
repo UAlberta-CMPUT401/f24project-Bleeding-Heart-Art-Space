@@ -1,222 +1,258 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { NewNotification, Notification, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, createNotification, getVolunteerRoles, isOk } from '@utils/fetch';
+import {
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Typography,
+  Divider,
+  Paper,
+  Container,
+} from '@mui/material';
+import { getEvents, postData } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
-import { useBackendUserStore } from '@stores/useBackendUserStore';
+import styles from '@pages/Notifications/Notifications.module.css';
+import { ConfirmationDialog } from '@components/ConfirmationDialog';
+import SnackbarAlert from '@components/SnackbarAlert';
 
-// Styled components
-const NotificationsContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2.5),
-  maxWidth: '800px',
-  margin: '0 auto',
-}));
+interface Event {
+  id: number;
+  title: string;
+}
 
-const NotificationsList = styled('ul')({
-  listStyle: 'none',
-  padding: 0,
-  margin: 0,
-});
+const BASE_URL = import.meta.env.VITE_API_URL;
 
-const NotificationItem = styled('li')<{ read: boolean }>(({ theme, read }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: theme.spacing(2),
-  borderBottom: `1px solid ${theme.palette.divider}`,
-  marginBottom: theme.spacing(1),
-  backgroundColor: read ? theme.palette.notification.read : theme.palette.notification.unread,
-  borderRadius: theme.shape.borderRadius,
-}));
-
-const NotificationContent = styled(Box)({
-  flexGrow: 1,
-});
-
-const MarkReadButton = styled(Button)(({ theme }) => ({
-  marginLeft: theme.spacing(2),
-  whiteSpace: 'nowrap',
-}));
-
-const NotificationDate = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  fontSize: '0.875rem',
-}));
-
-const Notifications: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+const CustomEventEmail: React.FC = () => {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
   const { user } = useAuth();
-  const { backendUser } = useBackendUserStore();
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [roleId, setRoleId] = useState("");
-  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [onConfirmAction, setOnConfirmAction] = useState<(() => void) | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('info');  
 
   useEffect(() => {
-    if (user) {
-      getNotifications(user).then(response => {
-        console.log("Notifications response:", response);
-        if (isOk(response.status)) {
-          console.log("Notifications data:", response.data);
-          setNotifications(response.data.data);
+    const fetchAllEvents = async () => {
+      if (user) {
+        const response = await getEvents(user);
+        if (response.status === 200) {
+          setEvents(response.data);
         } else {
-          console.error("Failed to fetch notifications:", response.error);
+          setSnackbarMessage('Failed to fetch events.');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         }
-      });
-
-      getVolunteerRoles(user).then(response => {
-        if (isOk(response.status)) {
-          setRoles(response.data.map((role: any) => ({ id: role.id, name: role.name })));
-        } else {
-          console.error("Failed to fetch roles:", response.error);
-        }
-      });
-    }
+      }
+    };
+    fetchAllEvents();
   }, [user]);
 
-  const markAsRead = async (id: number) => {
-    if (user) {
-      const response = await markNotificationAsRead(id, user);
-      if (isOk(response.status)) {
-        setNotifications(notifications.map(n => (n.id === id ? { ...n, is_read: true } : n)));
-      } else {
-        console.error("Failed to mark notification as read:", response.error);
-      }
-    }
-  };
-
-  const markAllAsRead = async () => {
-    if (user) {
-      const response = await markAllNotificationsAsRead(user);
-      if (isOk(response.status)) {
-        setNotifications(notifications.map(n => ({ ...n, is_read: true })));
-      } else {
-        console.error("Failed to mark all notifications as read:", response.error);
-      }
-    }
-  };
-
-  const handleCreateNotification = async () => {
-    if (!user || !backendUser || !title || !message || !roleId) {
-      alert("All fields are required.");
+  const handleSendEmail = async () => {
+    if (!selectedEvent || !subject.trim() || !message.trim()) {
+      setSnackbarMessage('Please fill all fields.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
       return;
     }
 
-
-    const notificationData: NewNotification = {
-      title: title,
-      message: message,
-      role_name: roles.find(role => role.id === roleId)?.name ?? "",
-      is_read: false,
-    };
-
     try {
-      const response = await createNotification(notificationData, user);
-      if (isOk(response.status)) {
-        console.log('Notification created successfully:', response.data);
-        setNotifications((prevNotifications) => Array.isArray(prevNotifications) 
-        ? [...prevNotifications, response.data] 
-        : [response.data]  // If not an array, initialize with the new notification
+      const token = user ? await user.getIdToken() : null;
+      const response = await fetch(
+        `${BASE_URL}/send_emails/event/${selectedEvent}/send_custom_email`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ subject, message }),
+        }
       );
-        setOpen(false);
+
+      if (response.ok) {
+        setSnackbarMessage('Email sent successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);  
+        setSubject('');
+        setMessage('');
+        setSelectedEvent('');
+      } else {
+        const errorData = await response.json();
+        setSnackbarMessage(errorData.error || `Failed to send emails. No volunteers found for the selected event.`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     } catch (error) {
-      console.error('Failed to create notification:', error);
+      setSnackbarMessage('An unexpected error occurred.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleSendEmails = async () => {
+    try {
+      console.log('Initiating email send for today’s shifts...');
+      const response = await postData('/send_emails/today', {});
+
+      if (response.status === 200) {
+        setSnackbarMessage("Emails successfully sent to all volunteers for today's shifts!");
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      } else {
+        setSnackbarMessage(`Failed to send emails. Reason: ${response.error || 'Unknown error'}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      setSnackbarMessage('An unexpected error occurred while sending emails.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
   return (
-    <NotificationsContainer>
-      <Typography variant="h5" gutterBottom>
-        Notifications
+    <Container maxWidth="md" className={styles.container}>
+      <Typography variant="h3" gutterBottom fontWeight="bold">
+        Custom Email Service
       </Typography>
-      <Button variant="contained" color="inherit" onClick={markAllAsRead}>
-        Mark All as Read
-      </Button>
-      <Button variant="contained" color="primary" onClick={() => setOpen(true)} style={{ marginLeft: '16px' }}>
-        Create Notification
-      </Button>
-      {Array.isArray(notifications) && notifications.length > 0 ? (
-        <NotificationsList>
-          {notifications.map(notification => (
-            <NotificationItem key={notification.id} read={notification.is_read}>
-              <NotificationContent>
-                <Typography variant="body1">{notification.title}</Typography>
-                <Typography variant="body2">{notification.message}</Typography>
-                {notification.created_at && (
-                  <NotificationDate variant="body2">
-                    {new Date(notification.created_at).toLocaleDateString()}
-                  </NotificationDate>
-                )}
-              </NotificationContent>
-              {!notification.is_read && (
-                <MarkReadButton
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => markAsRead(notification.id ?? 0)}
-                >
-                  Mark as Read
-                </MarkReadButton>
-              )}
-            </NotificationItem>
-          ))}
-        </NotificationsList>
-      ) : (
-        <Typography variant="body1">No notifications found.</Typography>
-      )}
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Create Notification</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Title"
-            fullWidth
-            variant="outlined"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            inputProps={{ "data-gramm": "false" }}
-          />
-          <TextField
-            margin="dense"
-            label="Message"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={4}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            inputProps={{ "data-gramm": "false" }}
-          />
-          <FormControl fullWidth variant="outlined" margin="dense">
-            <InputLabel>Role</InputLabel>
-            <Select
-              value={roleId}
-              onChange={(e) => setRoleId(e.target.value as string)}
-              label="Role"
-            >
-              {roles.map(role => (
-                <MenuItem key={role.id} value={role.id}>
-                  {role.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleCreateNotification} color="primary">
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </NotificationsContainer>
+      <Typography variant="body1" sx={{ mb: 3 }}>
+        Use this page to send custom emails to volunteers signed up to any shift for a particular event or send a bulk email for all shifts that start today.
+      </Typography>
+
+      {/* Custom Event Email Form */}
+      <Paper
+        component="form"
+        sx={{
+          borderRadius: 2,
+          boxShadow: 1,
+          p: 4,
+          mb: 4,
+        }}
+        elevation={6}
+      >
+        <Typography variant="h5" gutterBottom fontWeight="bold">
+          Send Custom Event Email
+        </Typography>
+
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Select Event</InputLabel>
+          <Select
+            value={selectedEvent}
+            onChange={(e) => setSelectedEvent(e.target.value)}
+            required
+          >
+            {events.map((event) => (
+              <MenuItem key={event.id} value={event.id}>
+                {event.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <TextField
+          fullWidth
+          label="Subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          margin="normal"
+          required
+        />
+
+        <TextField
+          fullWidth
+          label="Message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          multiline
+          rows={4}
+          margin="normal"
+          required
+        />
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            if (!selectedEvent || !subject || !message) {
+              setSnackbarMessage('Please fill all fields.');
+              setSnackbarSeverity('error');
+              setSnackbarOpen(true);
+              return;
+            }
+            setConfirmationMessage(
+              'Are you sure you want to send this email for the selected event?'
+            );
+            setOnConfirmAction(() => handleSendEmail);
+            setOpenConfirmationDialog(true);
+          }}
+          sx={{ mt: 2 }}
+          disabled={!selectedEvent || !subject || !message}
+        >
+          Send Email
+        </Button>
+      </Paper>
+
+      <Divider sx={{ my: 4, borderBottomWidth: 3 }} />
+
+      {/* Bulk Email Section */}
+      <Paper
+        sx={{
+          borderRadius: 2,
+          boxShadow: 1,
+          p: 4,
+        }}
+        elevation={6}
+      >
+        <Typography variant="h5" gutterBottom fontWeight="bold">
+          Bulk Email for Today’s Shifts
+        </Typography>
+
+        <Typography variant="body2" sx={{ mb: 2 }}>
+          Notify all existing volunteers about all shifts that start today for any event.
+        </Typography>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            setConfirmationMessage(
+              "Are you sure you want to send a bulk email?"
+            );
+            setOnConfirmAction(() => handleSendEmails);
+            setOpenConfirmationDialog(true);
+          }}
+        >
+          Send Emails for Today’s Shifts
+        </Button>
+
+      </Paper>
+      <ConfirmationDialog
+        open={openConfirmationDialog}
+        message={confirmationMessage}
+        onConfirm={() => {
+          if (onConfirmAction) {
+            onConfirmAction();
+          }
+          setOpenConfirmationDialog(false);
+        }}
+        onCancel={() => setOpenConfirmationDialog(false)}
+        title="Confirm Send"
+        confirmButtonText="Confirm"
+      />
+      <SnackbarAlert
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+      />
+    </Container>
   );
 };
 
-export default Notifications;
+export default CustomEventEmail;

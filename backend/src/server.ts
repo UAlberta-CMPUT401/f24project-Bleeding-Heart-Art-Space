@@ -8,6 +8,7 @@ import { ShiftSignupRoute } from './features/shiftSignup/shiftSignup.route';
 import 'reflect-metadata';
 import { EventRequestsRoute } from './features/eventRequests/eventRequests.route';
 import { NotificationsRoute } from './features/notifications/notifications.route';
+import { SendEmailsRoute } from './features/sendEmails/sendEmails.route';
 
 
 async function startServer() {
@@ -23,6 +24,7 @@ async function startServer() {
     new ShiftSignupRoute(),
     new EventRequestsRoute(),
     new NotificationsRoute(),
+    new SendEmailsRoute(),
   ]);
 
   // Start the server

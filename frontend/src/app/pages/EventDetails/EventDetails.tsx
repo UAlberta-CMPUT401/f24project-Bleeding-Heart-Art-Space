@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Card, Box, Paper } from '@mui/material';
+import { Grid, Typography, Button, Box, Paper } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import styles from './EventDetails.module.css';
 import { getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, ShiftSignupUser, getEventShiftSignups, postShiftSignup, NewShiftSignup } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
@@ -14,6 +13,7 @@ import { useEventStore } from '@stores/useEventStore';
 import { ConfirmationDialogNotes } from '@components/ConfirmationDialog';
 import ShiftDetailsDialog from '@pages/ShiftDetails/ShiftDetailsDialog';
 import useEventAdmin from '@lib/hooks/useEventAdmin';
+import ShiftCard from '@components/ShiftCard';
 
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
@@ -22,7 +22,7 @@ const EventDetails: React.FC = () => {
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
-    const [, setEventSignups] = useState<ShiftSignupUser[]>([]);
+    const [eventSignups, setEventSignups] = useState<ShiftSignupUser[]>([]);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
@@ -96,7 +96,7 @@ const EventDetails: React.FC = () => {
     };
 
     const handleBackClick = () => {
-        navigate(`/calendar`);
+        navigate(-1);
     }
 
     const handleViewDetailsClick = (shift: Shift) => {
@@ -115,7 +115,7 @@ const EventDetails: React.FC = () => {
         if (!user) return;
         if (!backendUser) return;
 
-        console.log('Selected shift:', selectedShift);
+        console.log('Notes being sent to backend:', notes); // Debugging the value of notes
 
         const newShiftSignup: NewShiftSignup = {
             user_id: backendUser.id,
@@ -133,7 +133,7 @@ const EventDetails: React.FC = () => {
                 setSignupSuccessSnackbarOpen(true);
                 setConfirmDialogOpen(false);  // Close confirmation dialog
                 setShiftToSignUp(null);       // Reset shiftToSignUp
-                setNotes('');
+                setNotes('');                 // Reset notes
             }
             else {
                 if (response.error) {
@@ -142,6 +142,7 @@ const EventDetails: React.FC = () => {
                 setSignupFailSnackbarOpen(true);
                 setConfirmDialogOpen(false);  // Close confirmation dialog
                 setShiftToSignUp(null);       // Reset shiftToSignUp
+                setNotes('');                 // Reset notes
             }
         })
     };
@@ -202,59 +203,34 @@ const EventDetails: React.FC = () => {
                 </Typography>
                 <Grid container spacing={2}>
                     {shifts.map((shift, index) => {
+                        const signedUp: boolean = userSignups.some(s => s.shift_id === shift.id)
                         const shiftStartTime = new Date(shift.start);
                         const shiftEndTime = new Date(shift.end);
+                        const volunteersCount = eventSignups.filter(signup => signup.shift_id === shift.id).length;
                         return (
                             <Grid item xs={12} sm={4} key={index}>
-                                <Card 
-                                    elevation={15}
-                                    className={`${styles.shiftCard} ${userSignups.find(s => s.shift_id === shift.id) ? styles.signedUp : ''}`}
+                                <ShiftCard
+                                    roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
+                                    start={shiftStartTime}
+                                    end={shiftEndTime}
+                                    volunteers={volunteersCount}
+                                    maxVolunteers={shift.max_volunteers}
+                                    sx={signedUp ? { outline: '2px solid #4caf50' } : undefined}
                                 >
-                                    <Typography variant="h6" className={styles.shiftDetail}>
-                                        <AssignmentIndIcon className={styles.shiftIcon}/> 
-                                        <span className={styles.shiftLabel}>Role:</span> 
-                                        <span className={styles.shiftValue}>{roles.find(item => item.id === shift.volunteer_role)?.name}</span>
-                                    </Typography>                                        
-                                    <Typography variant="body1" className={styles.shiftDetail}>
-                                        <AccessTimeIcon className={styles.shiftIcon} /> 
-                                        <span className={styles.shiftLabel}>Start:</span> 
-                                        <span className={styles.shiftValue}>
-                                            {shiftStartTime.toLocaleString([], { 
-                                                year: 'numeric', 
-                                                month: 'short', 
-                                                day: 'numeric', 
-                                                hour: '2-digit', 
-                                                minute: '2-digit' 
-                                            })}                                        
-                                        </span>
-                                    </Typography>
-                                    <Typography variant="body1" className={styles.shiftDetail}>
-                                        <AccessTimeIcon className={styles.shiftIcon} /> 
-                                        <span className={styles.shiftLabel}>End:</span> 
-                                        <span className={styles.shiftValue}>
-                                            {shiftEndTime.toLocaleString([], { 
-                                                year: 'numeric', 
-                                                month: 'short', 
-                                                day: 'numeric', 
-                                                hour: '2-digit', 
-                                                minute: '2-digit' 
-                                            })}
-                                        </span>
-                                    </Typography>
                                     <Box
                                       display="flex"
                                       justifyContent="center"
                                       alignItems="center"
-                                      marginTop={2}
-                                      gap={1}
+                                      my='0.5rem'
+                                      gap='1rem'
                                     >
                                         <Button
                                             variant="contained"
                                             color="secondary"
                                             onClick={() => handleSignUpClick(shift)}
-                                            disabled={userSignups.some(s => s.shift_id === shift.id)}
+                                            disabled={signedUp}
                                         >
-                                            {userSignups.some(s => s.shift_id === shift.id) ? 'Signed Up' : 'Sign Up'}
+                                            {signedUp ? 'Signed Up' : 'Sign Up'}
                                         </Button>
                                         <Button
                                             variant="contained"
@@ -264,7 +240,7 @@ const EventDetails: React.FC = () => {
                                             View Details
                                         </Button>
                                     </Box>
-                                </Card>
+                                </ShiftCard>
                             </Grid>
                         );
                     })}
@@ -274,14 +250,15 @@ const EventDetails: React.FC = () => {
                     title="Confirm Signup"
                     message="Are you sure you want to sign up for this shift?"
                     onConfirm={handleConfirmSignup}
+                    notes= {notes}
+                    setNotes={setNotes}
                     onCancel={() => {
                         setConfirmDialogOpen(false);
                         setShiftToSignUp(null);
+                        setNotes('');
                     }}
                     confirmButtonText="Confirm"
                     cancelButtonText="Cancel"
-                    notes= {notes}
-                    setNotes={setNotes}
                 />
 
                 {selectedShift && (

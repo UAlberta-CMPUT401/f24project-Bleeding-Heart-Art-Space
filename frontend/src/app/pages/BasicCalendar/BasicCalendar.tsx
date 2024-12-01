@@ -51,7 +51,7 @@ const BasicCalendar: React.FC = () => {
     };
 
     return (
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ width: '100%', height: '80vh', margin: "0 auto" }}>
             <EventCalendar 
                 onEventClick={handleEventClick} 
                 onSlotSelect={handleSlotSelect} 
@@ -60,12 +60,11 @@ const BasicCalendar: React.FC = () => {
                 variant='extended'
                 color="primary" 
                 aria-label="add" 
-                className="floating-button"
                 onClick={() => setDialogOpen(true)}
                 style={{
-                    position: 'fixed', 
-                    bottom: 16, 
-                    right: 16, 
+                    position: 'absolute', 
+                    bottom: 13, 
+                    right: 13, 
                     zIndex: 1000, 
                     fontWeight: 'bold',
                 }}

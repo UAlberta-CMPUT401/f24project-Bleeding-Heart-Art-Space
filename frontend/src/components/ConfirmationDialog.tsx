@@ -71,10 +71,10 @@ const ConfirmationDialogNotes: React.FC<ConfirmationDialogNotesProps> = ({
               />
           </DialogContent>
           <DialogActions>
-              <Button onClick={onCancel} color="secondary">
+              <Button onClick={onCancel} color="error">
                   {cancelButtonText}
               </Button>
-              <Button onClick={onConfirm} color="primary">
+              <Button onClick={onConfirm} variant="contained" color="secondary">
                   {confirmButtonText}
               </Button>
           </DialogActions>
