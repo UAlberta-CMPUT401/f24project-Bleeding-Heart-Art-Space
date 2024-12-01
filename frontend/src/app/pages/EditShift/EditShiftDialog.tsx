@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Select, MenuItem } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { useAuth } from '@lib/context/AuthContext';
 import { postEventShifts, NewShift, Shift } from '@utils/fetch';
 import { useVolunteerRoleStore } from '@stores/useVolunteerRoleStore'; // Adjust the path as needed
@@ -51,7 +51,7 @@ const EditShiftDialog: React.FC<EditShiftDialogProps> = ({ eventId, open, shift,
     setNewShift((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRoleChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+  const handleRoleChange = (e: SelectChangeEvent<number>) => {
     setNewShift((prev) => ({ ...prev, volunteer_role: e.target.value as number }));
   };
 
