@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Button, Card, Divider, TextField, Alert} from "@mui/material";
+import { Button, Card, Divider, TextField, Alert, IconButton, InputAdornment} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import styles from '@pages/Login/Login.module.css';
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "@utils/firebase.ts";
@@ -11,6 +12,8 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [verificationSent, setVerificationSent] = useState<boolean>(false);
@@ -93,24 +96,48 @@ const Signup: React.FC = () => {
           
           <TextField
             required
-            type="password"
+            type={showPassword ? "text" : "password"} // Toggle between text and password
             variant="outlined"
             label="Password"
             color="secondary"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={success}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          
+
           <TextField
             required
-            type="password"
+            type={showConfirmPassword ? "text" : "password"} // Toggle between text and password
             variant="outlined"
             label="Confirm Password"
             color="secondary"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={success}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           
           <Button type="submit" variant="contained" disabled={isProcessing || success}>
