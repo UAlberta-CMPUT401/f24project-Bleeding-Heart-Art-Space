@@ -8,7 +8,6 @@ import { getVolunteerRoles, Shift, VolunteerRole, Event, isOk, getEventShifts, S
 import { useAuth } from '@lib/context/AuthContext';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import EditEventDialog from '@pages/EditEvent/EditEventDialog';
-import EditShiftDialog from '@pages/EditShift/EditShiftDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
 import { useEventStore } from '@stores/useEventStore';
 import { ConfirmationDialogNotes } from '@components/ConfirmationDialog';
@@ -40,8 +39,6 @@ const EventDetails: React.FC = () => {
     const [shiftToSignUp, setShiftToSignUp] = useState<Shift | null>(null);
     const [shiftDialogOpen, setShiftDialogOpen] = useState(false);
     const { isEventAdmin } = useEventAdmin(eventIdStr);
-    const [editShiftDialogOpen, setEditShiftDialogOpen] = useState(false);
-    const [shiftToEdit, setShiftToEdit] = useState<Shift | null>(null);
 
     useEffect(() => {
         const eventId = Number(eventIdStr);
@@ -96,16 +93,6 @@ const EventDetails: React.FC = () => {
                 eventEnd: event?.end,
             },
         });
-    };
-    
-    const handleEditShiftClick = (shift: Shift) => {
-        setShiftToEdit(shift);
-        setEditShiftDialogOpen(true);
-    };
-    
-    const handleEditShiftClose = () => {
-        setEditShiftDialogOpen(false);
-        setShiftToEdit(null);
     };
       
 
@@ -253,15 +240,7 @@ const EventDetails: React.FC = () => {
                                         >
                                             View Details
                                         </Button>
-                                        {isEventAdmin && (
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={() => handleEditShiftClick(shift)}
-                                        >
-                                            Edit
-                                        </Button>
-                                        )}
+                                        
                                     </Box>
                                 </ShiftCard>
                             </Grid>
@@ -332,17 +311,6 @@ const EventDetails: React.FC = () => {
                     onEditSuccess={handleEditSuccess}
                 />
 
-                <EditShiftDialog
-                eventId={Number(eventIdStr)}
-                open={editShiftDialogOpen}
-                onClose={handleEditShiftClose}
-                shift={shiftToEdit}
-                onSuccess={() => {
-                    setEditShiftDialogOpen(false);
-                    setShiftToEdit(null);
-                    getEventShifts(Number(eventIdStr), user!); // Refresh shifts list
-                }}
-                />
             </Paper>}
         </>
     );
