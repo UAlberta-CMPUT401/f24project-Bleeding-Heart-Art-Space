@@ -120,7 +120,8 @@ const Login: React.FC = () => {
 
         <Button
           component={Link}
-          variant="outlined"
+          variant="contained"
+          color="inherit"
           to="/reset-password"
           sx={{
             marginTop: '1rem',
@@ -139,7 +140,8 @@ const Login: React.FC = () => {
 
         <Button
           component={Link}
-          variant="outlined"
+          variant="contained"
+          color="inherit"
           to="/signup"
         >
           Sign-up
