@@ -34,6 +34,7 @@ const Account: React.FC = () => {
   const [phone, setPhone] = useState(backendUser?.phone || '');
   const [email, setEmail] = useState(backendUser?.email || '');
   const [error, setError] = useState<string | null>(null);
+  const [totalHoursError, setTotalHoursError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -186,14 +187,14 @@ const Account: React.FC = () => {
         `/shift-signups/user/${backendUser.id}/total-hours`
       );
       if (response.error) {
-        setError(response.error);
+        setTotalHoursError(response.error);
         setTotalHours(null);
       } else {
         setTotalHours(response.data.totalHours);
-        setError(null);
+        setTotalHoursError(null);
       }
     } catch (err) {
-      setError('Failed to fetch total hours worked.');
+      setTotalHoursError('Failed to fetch total hours worked.');
       setTotalHours(null);
       console.error(err);
     }
@@ -216,6 +217,13 @@ const Account: React.FC = () => {
           position: 'relative',
         }}
       >
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        
         <IconButton onClick={handleEdit} sx={{ position: 'absolute', top: 16, right: 16 }}>
           <EditIcon />
         </IconButton>
@@ -250,12 +258,13 @@ const Account: React.FC = () => {
           <Typography variant="body1" color="textSecondary">
             <strong>Total Hours Worked:</strong>
           </Typography>
+          {totalHoursError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {totalHoursError}
+            </Alert>
+          )}
           <Typography variant="body1">
-            {error
-              ? `Error: ${error}`
-              : totalHours !== null
-              ? `${totalHours} hours`
-              : 'Loading...'}
+            {totalHours !== null ? `${totalHours} hours` : 'Loading...'}
           </Typography>
         </Box>
         <Button variant="contained" color="primary" fullWidth onClick={handleSignOut}>
