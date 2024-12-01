@@ -22,7 +22,7 @@ const EventDetails: React.FC = () => {
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);
-    const [, setEventSignups] = useState<ShiftSignupUser[]>([]);
+    const [eventSignups, setEventSignups] = useState<ShiftSignupUser[]>([]);
     const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const { user } = useAuth();
     const { backendUser } = useBackendUserStore();
@@ -96,7 +96,7 @@ const EventDetails: React.FC = () => {
     };
 
     const handleBackClick = () => {
-        navigate(`/calendar`);
+        navigate(-1);
     }
 
     const handleViewDetailsClick = (shift: Shift) => {
@@ -206,12 +206,14 @@ const EventDetails: React.FC = () => {
                         const signedUp: boolean = userSignups.some(s => s.shift_id === shift.id)
                         const shiftStartTime = new Date(shift.start);
                         const shiftEndTime = new Date(shift.end);
+                        const volunteersCount = eventSignups.filter(signup => signup.shift_id === shift.id).length;
                         return (
                             <Grid item xs={12} sm={4} key={index}>
                                 <ShiftCard
                                     roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
                                     start={shiftStartTime}
                                     end={shiftEndTime}
+                                    volunteers={volunteersCount}
                                     maxVolunteers={shift.max_volunteers}
                                     sx={signedUp ? { outline: '2px solid #4caf50' } : undefined}
                                 >

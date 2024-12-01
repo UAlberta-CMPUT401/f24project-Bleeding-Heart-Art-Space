@@ -12,7 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-import CalendarIcon from '@mui/icons-material/CalendarToday';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
@@ -44,7 +44,7 @@ const sideBarItems: SideBarItem[] = [
   {
     name: 'Calendar',
     route: '/calendar',
-    icon: <CalendarIcon />,
+    icon: <CalendarMonthIcon />,
     minRole: Role.VOLUNTEER,
   },
   {

@@ -18,18 +18,16 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onEventClick, onSlotSelec
   }, [events])
 
   return (
-    <div style={{ height: 500 }}>
       <Calendar
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 500 }}
+        style={{ height: '100%', width: '100%' }}
         onSelectEvent={(event) => onEventClick(String(event.id))}
         onSelectSlot={onSlotSelect}
         selectable
       />
-    </div>
   );
 };
 

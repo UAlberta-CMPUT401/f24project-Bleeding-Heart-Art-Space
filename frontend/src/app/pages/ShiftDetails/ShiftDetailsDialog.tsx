@@ -45,8 +45,38 @@ const ShiftDetailsDialog: React.FC<ShiftDetailsDialogProps> = ({
     { field: 'first_name', headerName: 'First Name', flex: 1, minWidth: 100 },
     { field: 'last_name', headerName: 'Last Name', flex: 1, minWidth: 100 },
     { field: 'email', headerName: 'Email', flex: 2, minWidth: 200 },
-    { field: 'checkin_time', headerName: 'Check In', flex: 1, minWidth: 100 },
-    { field: 'checkout_time', headerName: 'Check Out', flex: 1, minWidth: 100 },
+    { 
+      field: 'checkin_time',
+      headerName: 'Check In',
+      flex: 1,
+      minWidth: 200,
+      valueFormatter: (value?: string) => {
+        if (!value) return '';
+        return (new Date(value)).toLocaleString([], {
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+      }
+    },
+    { 
+      field: 'checkout_time',
+      headerName: 'Check Out',
+      flex: 1,
+      minWidth: 200,
+      valueFormatter: (value?: string) => {
+        if (!value) return '';
+        return (new Date(value)).toLocaleString([], {
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+      }
+    },
     { field: 'notes', headerName: 'Notes', flex: 2, minWidth: 200 },
   ] : [
     { field: 'first_name', headerName: 'First Name', flex: 1, minWidth: 100 },

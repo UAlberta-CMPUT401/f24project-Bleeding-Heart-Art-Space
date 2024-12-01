@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Card, Button, Stack, Paper } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import { useAuth } from '@lib/context/AuthContext';
-import { getUpcomingEvents, getUpcomingShifts, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout,} from '@utils/fetch';
+import { getUpcomingEvents, getUpcomingShifts, Event, VolunteerRole, ShiftSignupUser, isOk, getVolunteerRoles, checkin, checkout, getEventShifts, getEventShiftSignups, Shift } from '@utils/fetch';
 import { isBefore, addWeeks } from 'date-fns';
 import styles from './Overview.module.css';
 import CheckIcon from '@mui/icons-material/Check';
+import PeopleIcon from '@mui/icons-material/People';
 import SnackbarAlert from '@components/SnackbarAlert';
 import { format } from 'date-fns';
 import ShiftCard from '@components/ShiftCard';
@@ -20,6 +21,8 @@ const OverviewPage: React.FC = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [eventShiftsMap, setEventShiftsMap] = useState<{ [eventId: number]: Shift[] }>({});
+    const [eventSignupsMap, setEventSignupsMap] = useState<{ [eventId: number]: ShiftSignupUser[] }>({});
 
     useEffect(() => {
 
@@ -54,12 +57,38 @@ const OverviewPage: React.FC = () => {
     }, [user]);
 
     useEffect(() => {
+        if (upcomingEvents.length > 0 && user) {
+            const fetchEventShiftsAndSignups = async () => {
+                const shiftsMap: { [eventId: number]: Shift[] } = {};
+                const signupsMap: { [eventId: number]: ShiftSignupUser[] } = {};
+            
+                await Promise.all(
+                    upcomingEvents.map(async (event) => {
+                    const [shiftsResponse, signupsResponse] = await Promise.all([
+                        getEventShifts(event.id, user),
+                        getEventShiftSignups(event.id, user),
+                    ]);
+            
+                    shiftsMap[event.id] = isOk(shiftsResponse.status) ? shiftsResponse.data : [];
+                    signupsMap[event.id] = isOk(signupsResponse.status) ? signupsResponse.data : [];
+                    })
+                );
+            
+                setEventShiftsMap(shiftsMap);
+                setEventSignupsMap(signupsMap);
+            };
+        
+            fetchEventShiftsAndSignups();
+        }
+    }, [upcomingEvents, user]);      
+
+    useEffect(() => {
         const interval = setInterval(() => {
           setCurrentTime(new Date());
         }, 1000);
     
         return () => clearInterval(interval);
-      }, []);
+    }, []);
 
     const handleCheckIn = async (signupId: number) => {
         if (!user) return;
@@ -168,7 +197,7 @@ const OverviewPage: React.FC = () => {
                         ))}
                     </Stack>
                 ) : (
-                    <Typography>You haven't signed up for any shifts yet.</Typography>
+                    <Typography>No upcoming signed up shifts in the next two weeks.</Typography>
                 )}
             </Paper>
 
@@ -178,40 +207,50 @@ const OverviewPage: React.FC = () => {
             </Paper>
 
 
-            <Paper 
-                className={styles.rightColumn}>
+            <Paper className={styles.rightColumn}>
                 <h2>Upcoming Events</h2>
                 {upcomingEvents.length > 0 ? (
                     <Stack spacing={2}>
-                        {upcomingEvents.map((event) => (
-                            <Card 
-                                elevation={15}
-                                key={event.id} className={styles.card}>
-                                <Typography variant="h6" className={styles.centeredFlex} >{event.title}</Typography>
-                                <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
-                                    <EventIcon className={styles.iconSpacing}/> {format(new Date(event.start), 'MMM d, yyyy, hh:mm a')}
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    href={`/events/details/${event.id}`}
+                    {upcomingEvents.map((event) => {
+                        const eventShifts = eventShiftsMap[event.id] || [];
+                        const eventSignups = eventSignupsMap[event.id] || [];
+
+                        const totalMaxVolunteers = eventShifts.reduce((sum, shift) => sum + shift.max_volunteers, 0);
+                        const totalVolunteersSignedUp = eventSignups.length;
+
+                        return (
+                        <Card elevation={15} key={event.id} className={styles.card}>
+                            <Typography variant="h6" className={styles.centeredFlex}>{event.title}</Typography>
+                            <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
+                                <EventIcon className={styles.iconSpacing} />{' '}
+                                {format(new Date(event.start), 'MMM d, yyyy, hh:mm a')}
+                            </Typography>
+                            <Typography variant="body1" className={styles.centeredFlex} gutterBottom>
+                                <PeopleIcon className={styles.iconSpacing} />{' '}
+                                Total Volunteers: {totalVolunteersSignedUp}/{totalMaxVolunteers}
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                component={Link}
+                                to={`/events/details/${event.id}`}
                                 >
                                     View Details
-                                </Button>
-                            </Card>
-                        ))}
+                            </Button>
+                        </Card>
+                        );
+                    })}
                     </Stack>
                 ) : (
                     <Typography>No upcoming events in the next two weeks.</Typography>
                 )}
             </Paper>
             <SnackbarAlert
-            open={snackbarOpen}
-            onClose={() => setSnackbarOpen(false)}
-            message={snackbarMessage}
-            severity={snackbarSeverity}
+                open={snackbarOpen}
+                onClose={() => setSnackbarOpen(false)}
+                message={snackbarMessage}
+                severity={snackbarSeverity}
             />
-
         </div>
     );
 };
