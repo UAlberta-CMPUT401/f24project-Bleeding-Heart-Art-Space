@@ -62,21 +62,32 @@ const EditShiftDialog: React.FC<EditShiftDialogProps> = ({ open, onClose, onCanc
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+      console.log('Form submit triggered');
       if (!user || !shiftId || !backendUser) return;
     
-      // Ensure volunteerRole is a valid string
-      const trimmedVolunteerRole = typeof volunteerRole === 'string' ? volunteerRole.trim() : '';
+      // Log field values
+      console.log('Volunteer Role:', volunteerRole);
+      console.log('Start Time:', startTime);
+      console.log('End Time:', endTime);
     
-      if (!trimmedVolunteerRole || !startTime.trim() || !endTime.trim()) {
+      // Ensure volunteerRole, startTime, and endTime are properly defined
+      const trimmedVolunteerRole = volunteerRole ? volunteerRole.toString().trim() : ''; // Convert to string if it's a number
+      const trimmedStartTime = startTime.trim();
+      const trimmedEndTime = endTime.trim();
+    
+      // Validation for required fields
+      if (!trimmedVolunteerRole || !trimmedStartTime || !trimmedEndTime) {
         setSnackbarMessage('All fields are required.');
         setSnackbarOpen(true);
         return;
       }
     
+      console.log('Fields are valid, proceeding with saving');
+    
       const updatedShift: Shift = {
         id: shiftId,
         event_id: eventId,
-        volunteer_role: Number(trimmedVolunteerRole), // Convert to number
+        volunteer_role: Number(trimmedVolunteerRole),
         start: startTime,
         end: endTime,
         max_volunteers: maxvolunteers,
@@ -86,15 +97,17 @@ const EditShiftDialog: React.FC<EditShiftDialogProps> = ({ open, onClose, onCanc
       setOnConfirmAction(() => async () => {
         setLoading(true);
         try {
+          console.log('Updating shift...');
           await updateShift(shiftId, updatedShift, user);
           if (onSave) {
-            onSave(updatedShift);  // Save callback after successful update
+            onSave(updatedShift);
           }
           if (onEditSuccess) {
-            onEditSuccess();  // Trigger edit success callback
+            onEditSuccess();
           }
           onClose();
         } catch (error) {
+          console.error('Error updating shift:', error);
           setSnackbarMessage('Failed to update shift. Please try again.');
           setSnackbarOpen(true);
         }
@@ -102,6 +115,8 @@ const EditShiftDialog: React.FC<EditShiftDialogProps> = ({ open, onClose, onCanc
       });
       setOpenConfirmationDialog(true);
     };
+    
+    
 
     const handleDelete = () => {
       setDeleteConfirmationMessage('Are you sure you want to delete this shift?');

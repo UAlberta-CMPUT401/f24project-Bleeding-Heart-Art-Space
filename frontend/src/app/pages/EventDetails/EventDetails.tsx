@@ -274,12 +274,12 @@ const EventDetails: React.FC = () => {
                 {isEventAdmin && <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleEdit}>
-                            Edit
+                            Edit Event
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleGoToShifts}>
-                            Shifts
+                            Edit Shifts
                         </Button>
                     </Grid>
                 </Grid>}

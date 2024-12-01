@@ -166,7 +166,6 @@ const VolunteerShifts: React.FC = () => {
                         <InputLabel shrink>Role</InputLabel>
                         <Select
                             notched
-                            label="Role"
                             value={newShift.volunteer_role}
                             onChange={(e) => setNewShift({ ...newShift, volunteer_role: Number(e.target.value) })}
                             label="Role"
