@@ -15,4 +15,10 @@ declare module '@mui/material/styles' {
   interface TypeBackground {
     base1: string;
   }
+  interface Theme {
+    cssVariables: boolean;
+  }
+  interface ThemeOptions {
+    cssVariables?: boolean;
+  }
 }

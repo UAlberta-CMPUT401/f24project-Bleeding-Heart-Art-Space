@@ -105,9 +105,9 @@ const Signup: React.FC = () => {
         
         <Button 
           component={Link}
-          variant="outlined" 
+          variant="contained" 
           to="/login"
-          color="primary"
+          color="inherit"
         >
           Login
         </Button>

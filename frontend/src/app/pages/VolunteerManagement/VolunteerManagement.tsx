@@ -51,7 +51,7 @@ const VolunteerManagement: React.FC = () => {
                 onChange={handleTabChange}
                 centered
                 sx={{
-                  '& .Mui-selected': {
+                  '& .MuiTab-root.Mui-selected': {
                     color: theme.palette.text.primary
                   }
                 }}
