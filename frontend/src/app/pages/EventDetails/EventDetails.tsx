@@ -240,8 +240,18 @@ const EventDetails: React.FC = () => {
                                         >
                                             View Details
                                         </Button>
-                                        
                                     </Box>
+                                    {signedUp && (
+                                            <Typography
+                                                variant="body2"
+                                                className={styles.centeredFlex}
+                                                gutterBottom
+                                                style={{ fontStyle: 'italic', color: '#ffffff97' }}
+                                                align='center'
+                                            >
+                                                Note: To cancel signup, please contact admin.
+                                            </Typography>
+                                    )}
                                 </ShiftCard>
                             </Grid>
                         );

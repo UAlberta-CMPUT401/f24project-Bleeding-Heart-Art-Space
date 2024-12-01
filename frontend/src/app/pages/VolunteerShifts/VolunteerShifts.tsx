@@ -5,8 +5,9 @@ import styles from './VolunteerShifts.module.css';
 import { getEventShifts, getVolunteerRoles, NewShift, postEventShifts, Shift, VolunteerRole, isOk } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 import SnackbarAlert from '@components/SnackbarAlert';
-import EdittableShiftCard from '@components/EdittableShiftCard';
+import ShiftCard from '@components/ShiftCard';
 import { format } from 'date-fns';
+import EditShiftDialog from '@pages/EditShift/EditShiftDialog';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -20,17 +21,17 @@ const VolunteerShifts: React.FC = () => {
     const { id: eventId } = useParams<{ id: string }>();
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
     const [newShift, setNewShift] = useState<NewShift>(emptyNewShift);
-    const [shifts, setShifts] = useState<NewShift[]>([]); // Holds shifts being added
-    const [savedShifts, setSavedShifts] = useState<Shift[]>([]); // Holds saved shifts
+    const [shifts, setShifts] = useState<NewShift[]>([]);
+    const [savedShifts, setSavedShifts] = useState<Shift[]>([]);
     const { user } = useAuth();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
     const location = useLocation();
-    const { eventStart, eventEnd } = location.state || {};    
-
+    const { eventStart, eventEnd } = location.state || {};
+    const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+    const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const navigate = useNavigate();
-    const [editingShift, setEditingShift] = useState<Shift | null>(null); // State to track shift being edited
 
     useEffect(() => {
         if (eventId && user) {
@@ -53,6 +54,16 @@ const VolunteerShifts: React.FC = () => {
         }
     }, [eventStart, eventEnd]);
 
+    const handleDeleteSuccess = () => {
+        if (eventId && user) {
+          getEventShifts(Number(eventId), user).then((response) => {
+            if (isOk(response.status)) {
+              setSavedShifts(response.data);
+            }
+          });
+        }
+    };
+      
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
             setSnackbarMessage('Please fill in all shift details.');
@@ -84,63 +95,31 @@ const VolunteerShifts: React.FC = () => {
             ...shift,
             event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: new Date(shift.start).toISOString(), // Convert directly to ISO format
-            end: new Date(shift.end).toISOString(),     // Convert directly to ISO format
+            start: new Date(shift.start).toISOString(),
+            end: new Date(shift.end).toISOString(),
         }));
 
         postEventShifts(Number(eventId), formattedShifts, user)
             .then((response) => {
                 if (isOk(response.status)) {
                     setSavedShifts(prev => [...prev, ...response.data]);
-                    setShifts([]); // Clear new shifts after saving
+                    setShifts([]);
                 }
-            });
-    };
-
-    const handleEditShift = (shift: Shift) => {
-        setEditingShift(shift); // Set shift for editing
-        setNewShift({
-            volunteer_role: shift.volunteer_role,
-            start: shift.start,
-            end: shift.end,
-            max_volunteers: shift.max_volunteers,
-            description: shift.description,
-        });
-    };
-
-    const handleUpdateShift = () => {
-        if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
-            setSnackbarMessage('Please fill in all shift details.');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-            return;
-        }
-        if (new Date(newShift.start) >= new Date(newShift.end)) {
-            setSnackbarMessage('Start date and time must be earlier than the end date and time.');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-            return;
-        }
-
-        // Ensure the shift being edited is properly updated
-        const updatedShifts = savedShifts.map((shift) => 
-            shift.id === editingShift?.id ? { ...shift, ...newShift } : shift
-        );
-
-        // Now update the saved shifts state with the updated shift
-        setSavedShifts(updatedShifts); // Update saved shifts
-
-        // Clear the form and reset the editing state
-        setNewShift(emptyNewShift); // Clear the form
-        setEditingShift(null); // Clear the editing state
-
-        setSnackbarMessage('Shift updated successfully.');
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true); // Show success message
+            })
     };
 
     const handleBackClick = () => {
         navigate(-1);
+    }
+
+    const handleEditClick = (shift: Shift) => {
+        setSelectedShift(shift);
+        setEditDialogOpen(true);
+    };
+    
+    const handleEditDialogClose = () => {
+        setEditDialogOpen(false);
+        setSelectedShift(null);
     };
 
     return (
@@ -160,17 +139,27 @@ const VolunteerShifts: React.FC = () => {
                 Create Shifts
             </Typography>
 
-            <Grid container spacing={2} justifyContent="center" alignItems="center">
+            <Grid 
+                container 
+                spacing={2} 
+                justifyContent="center" 
+                alignItems="center"
+            >
                 <Grid item xs={12} sm={6} md={3}>
                     <FormControl fullWidth>
                         <InputLabel shrink>Role</InputLabel>
                         <Select
                             notched
+                            label="Role"
                             value={newShift.volunteer_role}
                             onChange={(e) => setNewShift({ ...newShift, volunteer_role: Number(e.target.value) })}
-                            label="Role"
+                            displayEmpty
+                            renderValue={(selected) => {
+                                return selected ? roles.find(role => role.id === selected)?.name : 'Select a Role';
+                            }}
                         >
-                            {roles.map((role) => (
+                            <MenuItem value="" disabled>Select a Role</MenuItem>
+                            {roles.map(role => (
                                 <MenuItem key={role.id} value={role.id}>
                                     {role.name}
                                 </MenuItem>
@@ -179,98 +168,121 @@ const VolunteerShifts: React.FC = () => {
                     </FormControl>
                 </Grid>
 
+                {/* Start Date & Time */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
+                        label="Start Date & Time"
                         type="datetime-local"
-                        label="Start Time"
+                        fullWidth
                         value={newShift.start}
                         onChange={(e) => setNewShift({ ...newShift, start: e.target.value })}
-                        fullWidth
+                        InputLabelProps={{ shrink: true }}
                     />
                 </Grid>
 
+                {/* End Date & Time */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
+                        label="End Date & Time"
                         type="datetime-local"
-                        label="End Time"
+                        fullWidth
                         value={newShift.end}
                         onChange={(e) => setNewShift({ ...newShift, end: e.target.value })}
+                        InputLabelProps={{ shrink: true }}
+                    />
+                </Grid>
+
+                {/* Max Volunteers */}
+                <Grid item xs={12} sm={6} md={3}>
+                    <TextField
+                        label="Max Volunteers"
+                        type="number"
                         fullWidth
+                        inputProps={{ min: 1 }}
+                        value={newShift.max_volunteers}
+                        onChange={(e) => setNewShift({ ...newShift, max_volunteers: parseInt(e.target.value) })}
                     />
                 </Grid>
             </Grid>
 
-            {/* Button to Add Shift */}
-            <Grid container justifyContent="center" style={{ marginTop: '20px' }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={editingShift ? handleUpdateShift : handleAddShift}
-                        fullWidth
-                    >
-                        {editingShift ? 'Update Shift' : 'Add Shift'}
-                    </Button>
-                </Grid>
-            </Grid>
+            <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleAddShift}
+                style={{ marginTop: '20px' }}
+            >
+                Add Shift
+            </Button>
 
-            <Typography variant="h6" gutterBottom style={{ marginTop: '40px' }}>
-                Shifts to Add:
+            <Typography variant="h6" gutterBottom style={{ marginTop: '20px' }}>
+                Created Shifts:
             </Typography>
             <Grid container spacing={2}>
                 {shifts.map((shift, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={index}>
-                        <EdittableShiftCard
-                            shift={{ ...shift, id: index, event_id: Number(eventId) }} // Add id and event_id to match Shift type
-                            roleName={roles.find(role => role.id === shift.volunteer_role)?.name || ''}
-                            start={shift.start}
-                            end={shift.end}
+                    <Grid item xs={12} sm={4} key={index}>
+                        <ShiftCard 
+                            roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
+                            start={new Date(shift.start)}
+                            end={new Date(shift.end)}
                             maxVolunteers={shift.max_volunteers}
-                            onEdit={() => handleEditShift({ ...shift, id: index, event_id: Number(eventId) })}
                         />
                     </Grid>
                 ))}
             </Grid>
+
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSaveShifts}
+                style={{ marginTop: '20px' }}
+                fullWidth
+            >
+                Save Shifts
+            </Button>
 
             <Typography variant="h6" gutterBottom style={{ marginTop: '40px' }}>
                 Saved Shifts:
             </Typography>
             <Grid container spacing={2}>
                 {savedShifts.map((shift, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={index}>
-                        <EdittableShiftCard
-                            shift={shift}
-                            roleName={roles.find(role => role.id === shift.volunteer_role)?.name || ''}
-                            start={shift.start}
-                            end={shift.end}
+                    <Grid item xs={12} sm={4} key={index}>
+                        <ShiftCard 
+                            roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
+                            start={new Date(shift.start)}
+                            end={new Date(shift.end)}
                             maxVolunteers={shift.max_volunteers}
-                            onEdit={() => handleEditShift(shift)}
-                        />
+                        >
+                            <Button   onClick={() => handleEditClick(shift)} variant="contained" color="secondary" style={{ marginTop: '8px' }}>
+                                Edit
+                            </Button>
+                        </ShiftCard>
                     </Grid>
                 ))}
             </Grid>
-
-            {/* Save Shifts Button */}
-            <Grid container justifyContent="center" style={{ marginTop: '20px' }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleSaveShifts}
-                        fullWidth
-                    >
-                        Save Shifts
-                    </Button>
-                </Grid>
-            </Grid>
-
-            {/* Snackbar Alert */}
             <SnackbarAlert
                 open={snackbarOpen}
+                onClose={() => setSnackbarOpen(false)}
                 message={snackbarMessage}
                 severity={snackbarSeverity}
-                onClose={() => setSnackbarOpen(false)}
             />
+            <EditShiftDialog
+                open={editDialogOpen}
+                onClose={handleEditDialogClose}
+                shift={selectedShift}
+                roles={roles}
+                onEditSuccess={() => {
+                    if (eventId && user) {
+                    getEventShifts(Number(eventId), user).then((response) => {
+                        if (isOk(response.status)) {
+                        setSavedShifts(response.data);
+                        }
+                    });
+                    }
+                }}
+                onDeleteSuccess={handleDeleteSuccess}
+            />
+
+
         </Paper>
     );
 };
