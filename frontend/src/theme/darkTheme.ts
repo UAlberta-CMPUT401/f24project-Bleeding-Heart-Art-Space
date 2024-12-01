@@ -55,6 +55,20 @@ export const darkTheme = createTheme({
                 }
             }
         }
+    },
+MuiFormControl: {
+        styleOverrides: {
+            root: {
+                '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                        borderColor: '#fff',
+                    },
+                },
+                '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#fff',
+                }
+            }
+        }
     }
   }
 });

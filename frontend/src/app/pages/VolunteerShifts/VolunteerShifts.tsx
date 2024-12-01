@@ -125,8 +125,10 @@ const VolunteerShifts: React.FC = () => {
             >
                 <Grid item xs={12} sm={6} md={3}>
                     <FormControl fullWidth>
-                        <InputLabel>Role</InputLabel>
+                        <InputLabel shrink>Role</InputLabel>
                         <Select
+                            notched
+                            label="Role"
                             value={newShift.volunteer_role}
                             onChange={(e) => setNewShift({ ...newShift, volunteer_role: Number(e.target.value) })}
                             displayEmpty
