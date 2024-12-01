@@ -25,6 +25,7 @@
 
 .leftColumn {
   background-color: var(--left-bg-color);
+  color: var(--mui-palette-text-primary);
 }
 
 .middleColumn {
@@ -37,7 +38,6 @@
 
 h2 {
   margin-top: 0;
-  color: var(--text-color);
 }
 
 .card {
