@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Typography, Paper, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Alert, InputAdornment, Snackbar } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Paper,
+  Box,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Alert,
+  InputAdornment,
+  Snackbar,
+} from '@mui/material';
 import { Edit as EditIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { auth } from '@utils/firebase';
-import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut } from 'firebase/auth';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, sendEmailVerification } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { updateUser, getData } from '@utils/fetch';
@@ -29,7 +43,9 @@ const Account: React.FC = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Snackbar state
+  const [emailVerified, setEmailVerified] = useState<boolean>(false);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const togglePasswordVisibility = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
@@ -65,6 +81,32 @@ const Account: React.FC = () => {
     setSnackbarOpen(false);
   };
 
+  const handleResendVerification = async () => {
+    if (!user) return;
+
+    try {
+      setIsResendDisabled(true);
+      await sendEmailVerification(user);
+      setSnackbarOpen(true);
+    } catch (error: any) {
+      setError('Failed to resend verification email. Please try again later.');
+      console.error('Error sending verification email:', error);
+    } finally {
+      setTimeout(() => setIsResendDisabled(false), 30000); 
+    }
+  };
+
+  const checkEmailVerificationStatus = async () => {
+    if (!user) return;
+
+    try {
+      await user.reload();
+      setEmailVerified(user.emailVerified);
+    } catch (error) {
+      console.error('Failed to check email verification status:', error);
+    }
+  };
+
   const handleSave = async () => {
     setError(null);
     setIsLoading(true);
@@ -79,7 +121,7 @@ const Account: React.FC = () => {
       }
 
       if (!user) {
-        throw new Error("User is not authenticated. Please log in again.");
+        throw new Error('User is not authenticated. Please log in again.');
       }
 
       // Handle Password Update
@@ -104,7 +146,7 @@ const Account: React.FC = () => {
           }
           setError('Failed to reauthenticate. Please try again later.');
           return;
-        }        
+        }
 
         await updatePassword(user, newPassword);
         console.log('Password updated successfully');
@@ -159,6 +201,7 @@ const Account: React.FC = () => {
 
   useEffect(() => {
     fetchTotalHoursWorked();
+    checkEmailVerificationStatus();
   }, [backendUser]);
 
   return (
@@ -218,6 +261,18 @@ const Account: React.FC = () => {
         <Button variant="contained" color="primary" fullWidth onClick={handleSignOut}>
           Sign Out
         </Button>
+        {!emailVerified && (
+          <Button
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            onClick={handleResendVerification}
+            disabled={isResendDisabled}
+            sx={{ mt: 2 }}
+          >
+            {isResendDisabled ? 'Please wait...' : 'Resend Verification Email'}
+          </Button>
+        )}
       </Paper>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
@@ -327,7 +382,7 @@ const Account: React.FC = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-          Password changed successfully!
+          {isResendDisabled ? 'Verification email sent!' : 'Password changed successfully!'}
         </Alert>
       </Snackbar>
     </>
