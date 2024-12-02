@@ -144,6 +144,7 @@ const CustomEventEmail: React.FC = () => {
         <FormControl fullWidth margin="normal">
           <InputLabel>Select Event</InputLabel>
           <Select
+            label="Select Event"
             value={selectedEvent}
             onChange={(e) => setSelectedEvent(e.target.value)}
             required

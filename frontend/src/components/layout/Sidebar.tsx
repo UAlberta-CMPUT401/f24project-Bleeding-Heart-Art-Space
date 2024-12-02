@@ -20,7 +20,9 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import BHASLogo from '@assets/BHAS-Logo.png';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
-
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { useTheme } from '@lib/context/ThemeContext';
 enum Role {
   VOLUNTEER,
   ARTIST,
@@ -63,11 +65,13 @@ const sideBarItems: SideBarItem[] = [
 
 const drawerWidth = 240;
 
+
 const Dashboard: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const { backendUser } = useBackendUserStore();
   const location = useLocation();
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -158,6 +162,13 @@ const Dashboard: React.FC = () => {
             Bleeding Heart Art Space
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
+          <IconButton 
+            onClick={toggleTheme} 
+            color="inherit"
+            aria-label="toggle theme"
+          >
+            {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
           {backendUser?.is_admin && (
           <IconButton
             component={Link}

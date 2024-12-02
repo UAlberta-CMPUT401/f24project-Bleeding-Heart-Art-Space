@@ -94,6 +94,7 @@ const EventDetails: React.FC = () => {
             },
         });
     };
+      
 
     const handleBackClick = () => {
         navigate(-1);
@@ -240,6 +241,17 @@ const EventDetails: React.FC = () => {
                                             View Details
                                         </Button>
                                     </Box>
+                                    {signedUp && (
+                                            <Typography
+                                                variant="body2"
+                                                className={styles.centeredFlex}
+                                                gutterBottom
+                                                style={{ fontStyle: 'italic', color: '#ffffff97' }}
+                                                align='center'
+                                            >
+                                                Note: To cancel signup, please contact admin.
+                                            </Typography>
+                                    )}
                                 </ShiftCard>
                             </Grid>
                         );
@@ -272,12 +284,12 @@ const EventDetails: React.FC = () => {
                 {isEventAdmin && <Grid container spacing={2} justifyContent="center" style={{ marginTop: '20px' }}>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleEdit}>
-                            Edit
+                            Edit Event
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" color="secondary" onClick={handleGoToShifts}>
-                            Shifts
+                            Edit Shifts
                         </Button>
                     </Grid>
                 </Grid>}
@@ -308,6 +320,7 @@ const EventDetails: React.FC = () => {
                     eventId={Number(eventIdStr)}
                     onEditSuccess={handleEditSuccess}
                 />
+
             </Paper>}
         </>
     );
