@@ -1,16 +1,7 @@
 services:
-  frontend:
+  app:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    env_file:
-      - ./frontend/.env.production.local
-    restart: always
-    ports:
-      - "${FRONTEND_PORT}:80"
-  backend:
-    build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
     env_file:
       - ./backend/.env.production.local
