@@ -206,16 +206,16 @@ const EventDetails: React.FC = () => {
                     {shifts.length === 0 ? (
                         <Grid item xs={12}>
                             <Typography
-                                variant="h6"
+                                variant="h5"
                                 align="center"
                                 sx={{
                                     my: 4,
                                     color: 'text.secondary'
                                 }}
                                 >
-                                    No shifts created yet
-                                </Typography>
-                                </Grid>
+                                    No shifts created yet.
+                            </Typography>
+                        </Grid>
                         ) : (
                     
                         shifts.map((shift, index) => {

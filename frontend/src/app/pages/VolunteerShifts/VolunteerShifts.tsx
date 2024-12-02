@@ -135,10 +135,9 @@ const VolunteerShifts: React.FC = () => {
                 </Button>
             </Grid>
 
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h3" gutterBottom>
                 Create Shifts
             </Typography>
-
             <Grid 
                 container 
                 spacing={2} 
@@ -205,60 +204,94 @@ const VolunteerShifts: React.FC = () => {
                 </Grid>
             </Grid>
 
-            <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleAddShift}
-                style={{ marginTop: '20px' }}
-            >
-                Add Shift
-            </Button>
+            <Grid container justifyContent="center">
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleAddShift}
+                    style={{ marginTop: '20px' }}
+                >
+                    Add Shift
+                </Button>
+            </Grid>
 
-            <Typography variant="h6" gutterBottom style={{ marginTop: '20px' }}>
+            <Typography variant="h4" gutterBottom style={{ marginTop: '20px' }}>
                 Created Shifts:
             </Typography>
             <Grid container spacing={2}>
-                {shifts.map((shift, index) => (
-                    <Grid item xs={12} sm={4} key={index}>
-                        <ShiftCard 
-                            roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
-                            start={new Date(shift.start)}
-                            end={new Date(shift.end)}
-                            maxVolunteers={shift.max_volunteers}
-                        />
+                {shifts.length > 0 ? (
+                    shifts.map((shift, index) => (
+                        <Grid item xs={12} md={4} sm={6} key={index}>
+                            <ShiftCard 
+                                roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
+                                start={new Date(shift.start)}
+                                end={new Date(shift.end)}
+                                maxVolunteers={shift.max_volunteers}
+                            />
+                        </Grid>
+                    ))
+                ) : (
+                    <Grid item xs={12}>
+                        <Typography
+                            variant="h5"
+                            align="center"
+                            sx={{
+                                my: 4,
+                                color: 'text.secondary'
+                            }}
+                        >
+                            No shifts added to creation.
+                        </Typography>
                     </Grid>
-                ))}
+                )}
             </Grid>
 
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSaveShifts}
-                style={{ marginTop: '20px' }}
-                fullWidth
-            >
-                Save Shifts
-            </Button>
+            <Grid container justifyContent="center">
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleSaveShifts}
+                    style={{ marginTop: '20px' }}
+                >
+                    Save Shifts
+                </Button>
+            </Grid>
 
-            <Typography variant="h6" gutterBottom style={{ marginTop: '40px' }}>
+            <Typography variant="h4" gutterBottom style={{ marginTop: '40px' }}>
                 Saved Shifts:
             </Typography>
             <Grid container spacing={2}>
-                {savedShifts.map((shift, index) => (
-                    <Grid item xs={12} sm={4} key={index}>
-                        <ShiftCard 
-                            roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
-                            start={new Date(shift.start)}
-                            end={new Date(shift.end)}
-                            maxVolunteers={shift.max_volunteers}
+                {savedShifts.length > 0 ? (
+                    savedShifts.map((shift, index) => (
+                        <Grid item xs={12} md={4} sm={6} key={index}>
+                            <ShiftCard 
+                                roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
+                                start={new Date(shift.start)}
+                                end={new Date(shift.end)}
+                                maxVolunteers={shift.max_volunteers}
+                            >
+                                <Button onClick={() => handleEditClick(shift)} variant="contained" color="secondary" style={{ marginTop: '8px' }}>
+                                    Edit
+                                </Button>
+                            </ShiftCard>
+                        </Grid>
+                    ))
+                ) : (
+                    <Grid item xs={12}>
+                        <Typography
+                            variant="h5"
+                            align="center"
+                            sx={{
+                                my: 4,
+                                color: 'text.secondary'
+                            }}
                         >
-                            <Button   onClick={() => handleEditClick(shift)} variant="contained" color="secondary" style={{ marginTop: '8px' }}>
-                                Edit
-                            </Button>
-                        </ShiftCard>
+                            No saved shifts yet.
+                        </Typography>
                     </Grid>
-                ))}
+                )}
             </Grid>
+
             <SnackbarAlert
                 open={snackbarOpen}
                 onClose={() => setSnackbarOpen(false)}
@@ -281,8 +314,6 @@ const VolunteerShifts: React.FC = () => {
                 }}
                 onDeleteSuccess={handleDeleteSuccess}
             />
-
-
         </Paper>
     );
 };
