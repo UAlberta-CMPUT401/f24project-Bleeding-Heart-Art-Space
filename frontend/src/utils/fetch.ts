@@ -370,6 +370,14 @@ export async function postEventShifts(eventId: number, shifts: NewShift[], user:
   return await postData<Shift[], NewShift[]>(`/events/${eventId}/volunteer_shifts`, shifts, user);
 }
 
+export async function deleteShift(shiftId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/volunteer_shifts/${shiftId}`, user);
+}
+
+export async function updateShift(shiftId: number, shift: NewShift, user: User): Promise<ApiResponse<void>> {
+  return await putData<void, NewShift>(`/volunteer_shifts/${shiftId}`, shift, user);
+}
+
 export type BackendUser = {
   first_name: string;
   last_name: string;
