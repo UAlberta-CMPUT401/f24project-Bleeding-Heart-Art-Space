@@ -201,11 +201,6 @@ const OverviewPage: React.FC = () => {
                 )}
             </Paper>
 
-            <Paper className = {styles.middleColumn}>
-                <h2>Recently Added Events</h2>
-
-            </Paper>
-
 
             <Paper className={styles.rightColumn}>
                 <h2>Upcoming Events</h2>

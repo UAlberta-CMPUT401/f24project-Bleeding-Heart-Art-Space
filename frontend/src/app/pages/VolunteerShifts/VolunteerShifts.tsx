@@ -7,6 +7,7 @@ import { useAuth } from '@lib/context/AuthContext';
 import SnackbarAlert from '@components/SnackbarAlert';
 import ShiftCard from '@components/ShiftCard';
 import { format } from 'date-fns';
+import EditShiftDialog from '@pages/EditShift/EditShiftDialog';
 
 const emptyNewShift: NewShift = {
     volunteer_role: 0,
@@ -27,8 +28,9 @@ const VolunteerShifts: React.FC = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
     const location = useLocation();
-    const { eventStart, eventEnd } = location.state || {};    
-
+    const { eventStart, eventEnd } = location.state || {};
+    const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+    const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -52,6 +54,16 @@ const VolunteerShifts: React.FC = () => {
         }
     }, [eventStart, eventEnd]);
 
+    const handleDeleteSuccess = () => {
+        if (eventId && user) {
+          getEventShifts(Number(eventId), user).then((response) => {
+            if (isOk(response.status)) {
+              setSavedShifts(response.data);
+            }
+          });
+        }
+    };
+      
     const handleAddShift = () => {
         if (!newShift.volunteer_role || !newShift.start || !newShift.end) {
             setSnackbarMessage('Please fill in all shift details.');
@@ -83,8 +95,8 @@ const VolunteerShifts: React.FC = () => {
             ...shift,
             event_id: eventId,
             volunteer_role: Number(shift.volunteer_role),
-            start: new Date(shift.start).toISOString(), // Convert directly to ISO format
-            end: new Date(shift.end).toISOString(),     // Convert directly to ISO format
+            start: new Date(shift.start).toISOString(),
+            end: new Date(shift.end).toISOString(),
         }));
 
         postEventShifts(Number(eventId), formattedShifts, user)
@@ -99,6 +111,16 @@ const VolunteerShifts: React.FC = () => {
     const handleBackClick = () => {
         navigate(-1);
     }
+
+    const handleEditClick = (shift: Shift) => {
+        setSelectedShift(shift);
+        setEditDialogOpen(true);
+    };
+    
+    const handleEditDialogClose = () => {
+        setEditDialogOpen(false);
+        setSelectedShift(null);
+    };
 
     return (
         <Paper className={styles.container}>
@@ -229,7 +251,11 @@ const VolunteerShifts: React.FC = () => {
                             start={new Date(shift.start)}
                             end={new Date(shift.end)}
                             maxVolunteers={shift.max_volunteers}
-                        />
+                        >
+                            <Button   onClick={() => handleEditClick(shift)} variant="contained" color="secondary" style={{ marginTop: '8px' }}>
+                                Edit
+                            </Button>
+                        </ShiftCard>
                     </Grid>
                 ))}
             </Grid>
@@ -239,6 +265,24 @@ const VolunteerShifts: React.FC = () => {
                 message={snackbarMessage}
                 severity={snackbarSeverity}
             />
+            <EditShiftDialog
+                open={editDialogOpen}
+                onClose={handleEditDialogClose}
+                shift={selectedShift}
+                roles={roles}
+                onEditSuccess={() => {
+                    if (eventId && user) {
+                    getEventShifts(Number(eventId), user).then((response) => {
+                        if (isOk(response.status)) {
+                        setSavedShifts(response.data);
+                        }
+                    });
+                    }
+                }}
+                onDeleteSuccess={handleDeleteSuccess}
+            />
+
+
         </Paper>
     );
 };

@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Typography, Paper, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Alert, InputAdornment, Snackbar } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Paper,
+  Box,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Alert,
+  InputAdornment,
+  Snackbar,
+} from '@mui/material';
 import { Edit as EditIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { auth } from '@utils/firebase';
-import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut } from 'firebase/auth';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, sendEmailVerification } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { updateUser, getData } from '@utils/fetch';
@@ -20,6 +34,7 @@ const Account: React.FC = () => {
   const [phone, setPhone] = useState(backendUser?.phone || '');
   const [email, setEmail] = useState(backendUser?.email || '');
   const [error, setError] = useState<string | null>(null);
+  const [totalHoursError, setTotalHoursError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -29,7 +44,9 @@ const Account: React.FC = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Snackbar state
+  const [emailVerified, setEmailVerified] = useState<boolean>(false);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const togglePasswordVisibility = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
@@ -65,6 +82,32 @@ const Account: React.FC = () => {
     setSnackbarOpen(false);
   };
 
+  const handleResendVerification = async () => {
+    if (!user) return;
+
+    try {
+      setIsResendDisabled(true);
+      await sendEmailVerification(user);
+      setSnackbarOpen(true);
+    } catch (error: any) {
+      setError('Failed to resend verification email. Please try again later.');
+      console.error('Error sending verification email:', error);
+    } finally {
+      setTimeout(() => setIsResendDisabled(false), 30000); 
+    }
+  };
+
+  const checkEmailVerificationStatus = async () => {
+    if (!user) return;
+
+    try {
+      await user.reload();
+      setEmailVerified(user.emailVerified);
+    } catch (error) {
+      console.error('Failed to check email verification status:', error);
+    }
+  };
+
   const handleSave = async () => {
     setError(null);
     setIsLoading(true);
@@ -79,7 +122,7 @@ const Account: React.FC = () => {
       }
 
       if (!user) {
-        throw new Error("User is not authenticated. Please log in again.");
+        throw new Error('User is not authenticated. Please log in again.');
       }
 
       // Handle Password Update
@@ -104,7 +147,7 @@ const Account: React.FC = () => {
           }
           setError('Failed to reauthenticate. Please try again later.');
           return;
-        }        
+        }
 
         await updatePassword(user, newPassword);
         console.log('Password updated successfully');
@@ -144,14 +187,14 @@ const Account: React.FC = () => {
         `/shift-signups/user/${backendUser.id}/total-hours`
       );
       if (response.error) {
-        setError(response.error);
+        setTotalHoursError(response.error);
         setTotalHours(null);
       } else {
         setTotalHours(response.data.totalHours);
-        setError(null);
+        setTotalHoursError(null);
       }
     } catch (err) {
-      setError('Failed to fetch total hours worked.');
+      setTotalHoursError('Failed to fetch total hours worked.');
       setTotalHours(null);
       console.error(err);
     }
@@ -159,6 +202,7 @@ const Account: React.FC = () => {
 
   useEffect(() => {
     fetchTotalHoursWorked();
+    checkEmailVerificationStatus();
   }, [backendUser]);
 
   return (
@@ -173,6 +217,13 @@ const Account: React.FC = () => {
           position: 'relative',
         }}
       >
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        
         <IconButton onClick={handleEdit} sx={{ position: 'absolute', top: 16, right: 16 }}>
           <EditIcon />
         </IconButton>
@@ -207,17 +258,30 @@ const Account: React.FC = () => {
           <Typography variant="body1" color="textSecondary">
             <strong>Total Hours Worked:</strong>
           </Typography>
+          {totalHoursError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {totalHoursError}
+            </Alert>
+          )}
           <Typography variant="body1">
-            {error
-              ? `Error: ${error}`
-              : totalHours !== null
-              ? `${totalHours} hours`
-              : 'Loading...'}
+            {totalHours !== null ? `${totalHours} hours` : 'Loading...'}
           </Typography>
         </Box>
         <Button variant="contained" color="primary" fullWidth onClick={handleSignOut}>
           Sign Out
         </Button>
+        {!emailVerified && (
+          <Button
+            variant="contained"
+            color="secondary"
+            fullWidth
+            onClick={handleResendVerification}
+            disabled={isResendDisabled}
+            sx={{ mt: 2 }}
+          >
+            {isResendDisabled ? 'Please wait...' : 'Resend Verification Email'}
+          </Button>
+        )}
       </Paper>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
@@ -327,7 +391,7 @@ const Account: React.FC = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-          Password changed successfully!
+          {isResendDisabled ? 'Verification email sent!' : 'Password changed successfully!'}
         </Alert>
       </Snackbar>
     </>
