@@ -202,48 +202,64 @@ const EventDetails: React.FC = () => {
                     Click on a shift to sign up:
                 </Typography>
                 <Grid container spacing={2}>
-                    {shifts.map((shift, index) => {
-                        const signedUp: boolean = userSignups.some(s => s.shift_id === shift.id)
-                        const shiftStartTime = new Date(shift.start);
-                        const shiftEndTime = new Date(shift.end);
-                        const volunteersCount = eventSignups.filter(signup => signup.shift_id === shift.id).length;
-                        return (
-                            <Grid item xs={12} sm={4} key={index}>
-                                <ShiftCard
-                                    roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
-                                    start={shiftStartTime}
-                                    end={shiftEndTime}
-                                    volunteers={volunteersCount}
-                                    maxVolunteers={shift.max_volunteers}
-                                    sx={signedUp ? { outline: '2px solid #4caf50' } : undefined}
+                    {shifts.length === 0 ? (
+                        <Grid item xs={12}>
+                            <Typography
+                                variant="h6"
+                                align="center"
+                                sx={{
+                                    my: 4,
+                                    color: 'text.secondary'
+                                }}
                                 >
-                                    <Box
-                                      display="flex"
-                                      justifyContent="center"
-                                      alignItems="center"
-                                      my='0.5rem'
-                                      gap='1rem'
+                                    No shifts created yet
+                                </Typography>
+                                </Grid>
+                        ) : (
+                    
+                        shifts.map((shift, index) => {
+                            const signedUp: boolean = userSignups.some(s => s.shift_id === shift.id)
+                            const shiftStartTime = new Date(shift.start);
+                            const shiftEndTime = new Date(shift.end);
+                            const volunteersCount = eventSignups.filter(signup => signup.shift_id === shift.id).length;
+                            return (
+                                <Grid item xs={12} sm={4} key={index}>
+                                    <ShiftCard
+                                        roleName={roles.find(item => item.id === shift.volunteer_role)?.name || ''}
+                                        start={shiftStartTime}
+                                        end={shiftEndTime}
+                                        volunteers={volunteersCount}
+                                        maxVolunteers={shift.max_volunteers}
+                                        sx={signedUp ? { outline: '2px solid #4caf50' } : undefined}
                                     >
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={() => handleSignUpClick(shift)}
-                                            disabled={signedUp}
+                                        <Box
+                                        display="flex"
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        my='0.5rem'
+                                        gap='1rem'
                                         >
-                                            {signedUp ? 'Signed Up' : 'Sign Up'}
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={() => handleViewDetailsClick(shift)}
-                                        >
-                                            View Details
-                                        </Button>
-                                    </Box>
-                                </ShiftCard>
-                            </Grid>
-                        );
-                    })}
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                onClick={() => handleSignUpClick(shift)}
+                                                disabled={signedUp}
+                                            >
+                                                {signedUp ? 'Signed Up' : 'Sign Up'}
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                onClick={() => handleViewDetailsClick(shift)}
+                                            >
+                                                View Details
+                                            </Button>
+                                        </Box>
+                                    </ShiftCard>
+                                </Grid>
+                            );
+                        })
+                    )}
                 </Grid>
                 <ConfirmationDialogNotes
                     open={confirmDialogOpen}
