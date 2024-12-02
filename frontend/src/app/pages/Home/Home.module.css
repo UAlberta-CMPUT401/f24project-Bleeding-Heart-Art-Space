@@ -1,0 +1,24 @@
+.carousel-image-container {
+    display: flex;
+    justify-content: center;
+    position: relative; /* Enable positioning for overlap */
+  }
+  
+  .carousel-image {
+    width: 40vw; /* Adjust the size */
+    height: 5vw;
+    object-fit: cover; /* Ensure images are cropped to fit */
+    border-radius: 10px; /* Rounded corners */
+    position: absolute; /* Overlay images */
+    left: 50%; /* Start in the center */
+    transform: translateX(-50%); /* Center align images */
+    z-index: 1; /* Layer images */
+    transition: transform 0.3s ease-in-out; /* Smooth transitions */
+  }
+  
+  /* Add hover/active effects for visual appeal */
+  .carousel-image:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    z-index: 2; /* Bring the hovered image to the front */
+  }
+  
