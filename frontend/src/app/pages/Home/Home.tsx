@@ -3,7 +3,6 @@ import { Button } from "@mui/material";
 import { Link } from 'react-router-dom';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import the carousel CSS
-import BHASLogo from '@assets/BHAS-Logo.png';
 import './Home.module.css';
 import Photo1 from '@assets/Photo1.jpeg';
 import Photo2 from '@assets/Photo2.jpg';
@@ -14,8 +13,10 @@ const Home: React.FC = () => {
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
 
+      <h2>Volunteer Management App</h2>
+
       {/* Photo Carousel */}
-      <div style={{ marginTop: '20px' , marginBottom: '40px'}}>
+      <div style={{ marginTop: '20px' , marginBottom: '20px'}}>
       <Carousel
           showArrows={false}
           autoPlay={true}
