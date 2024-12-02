@@ -272,7 +272,7 @@ const Account: React.FC = () => {
         </Button>
         {!emailVerified && (
           <Button
-            variant="outlined"
+            variant="contained"
             color="secondary"
             fullWidth
             onClick={handleResendVerification}
