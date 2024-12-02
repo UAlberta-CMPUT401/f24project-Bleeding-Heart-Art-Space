@@ -49,6 +49,15 @@ export const lightTheme = createTheme({
           }
         }
       }
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            color: 'black'
+          }
+        }
+      }
     }
   }
 });
