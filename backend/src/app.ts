@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import { Routes } from '@interfaces/routes.interface';
-import { NODE_ENV, DOMAIN, PORT } from '@config/env';
+import { NODE_ENV, PORT } from '@config/env';
 import { logger } from '@utils/logger';
 import { loggerMiddleware } from '@middlewares/logger.middleware';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
@@ -55,7 +55,7 @@ export class App {
   private initializeMiddlewares() {
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
-    if (NODE_ENV === 'development' || DOMAIN === undefined) {
+    if (NODE_ENV === 'development') {
       this.app.use(cors());
     }
     const swaggerDocument = YAML.load(this.apiSpecPath);
