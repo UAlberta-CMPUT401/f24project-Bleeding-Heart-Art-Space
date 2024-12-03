@@ -23,6 +23,7 @@ declare module '@mui/material/styles' {
 export const lightTheme = createTheme({
   ...baseTheme,
   palette: {
+    ...baseTheme.palette,
     mode: 'light',
     primary: {
       main: '#a62536',
@@ -40,11 +41,20 @@ export const lightTheme = createTheme({
     }
   },
   components: {
-    MuiButton: {
+    MuiListItemButton: {
       styleOverrides: {
-        contained: {
+        root: {
           '&:hover': {
-            color: '#fff',
+            color: 'black'
+          }
+        }
+      }
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            color: 'black'
           }
         }
       }

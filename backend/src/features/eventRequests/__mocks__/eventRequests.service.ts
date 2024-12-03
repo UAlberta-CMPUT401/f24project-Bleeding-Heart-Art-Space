@@ -19,10 +19,11 @@ export const EventRequestsService = jest.fn().mockImplementation(() => ({
         start: new Date(eventData.start),
         end: new Date(eventData.end),
         requester_id: 1,
+        status: 2,
       }
       return ret;
   }),
-  getAllEventRequests: jest.fn().mockResolvedValue([
+  getPendingEventRequests: jest.fn().mockResolvedValue([
     {
       id: 1,
       start: new Date('2024-10-15T09:00:00.000Z'),
@@ -34,6 +35,8 @@ export const EventRequestsService = jest.fn().mockImplementation(() => ({
       uid: 'test_uid',
       first_name: 'first',
       last_name: 'last',
+      email: 'a@test.com',
+      status: 2,
     },
   ]),
   getEventRequestById: jest.fn().mockImplementation(async (
@@ -50,6 +53,7 @@ export const EventRequestsService = jest.fn().mockImplementation(() => ({
         address: 'Test Addr',
         title: 'Test Title',
         requester_id: 1,
+        status: 2,
       }
       return ret;
   }),

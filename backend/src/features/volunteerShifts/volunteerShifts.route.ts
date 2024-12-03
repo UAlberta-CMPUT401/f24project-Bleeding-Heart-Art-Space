@@ -27,15 +27,20 @@ export class VolunteerShiftsRoute implements Routes {
     this.router.post(
       '/events/:eventId' + this.path,
       authMiddleware,
-      isAdminMiddleware,
       this.asyncHandler(this.volunteerShiftsController.createShifts)
+    );
+
+    // Delete a specific shift by ID
+    this.router.put(
+      `${this.path}/:id`,
+      authMiddleware,
+      this.asyncHandler(this.volunteerShiftsController.updateShift)
     );
 
     // Delete a specific shift by ID
     this.router.delete(
       `${this.path}/:id`,
       authMiddleware,
-      isAdminMiddleware,
       this.asyncHandler(this.volunteerShiftsController.deleteShift)
     );
   }

@@ -18,6 +18,18 @@ interface CreateEventDialogProps {
     endTime: string;
 }
 
+/**
+ * Props for the CreateEventDialog component.
+ * 
+ * @interface CreateEventDialogProps
+ * @property {boolean} open - Indicates whether the dialog is open.
+ * @property {() => void} onClose - Function to call when the dialog is closed.
+ * @property {string} startDate - The start date of the event.
+ * @property {string} endDate - The end date of the event.
+ * @property {string} startTime - The start time of the event.
+ * @property {string} endTime - The end time of the event.
+ */
+
 const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, startDate, endDate, startTime, endTime }) => {
     const [title, setTitle] = useState("");
     const [venue, setVenue] = useState("");
@@ -90,8 +102,8 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
         const eventData = {
             title,
             venue,
-            start: `${startDateLocal}T${startTimeLocal}`,
-            end: `${endDateLocal}T${endTimeLocal}`,
+            start: startDateTime.toISOString(),
+            end: endDateTime.toISOString(),
             address
         };
 
@@ -115,7 +127,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                         <Close style={{ fontSize: '40px', color: theme.palette.text.primary }} />
                 </IconButton>
                 <div>
-                    <Typography fontWeight="bold" variant="h3" align="center" gutterBottom>
+                    <Typography fontWeight="bold" variant="h4" align="center" gutterBottom>
                         {backendUser?.is_admin ? "Create Event" : "Request Event"}
                     </Typography>
                 </div>
@@ -223,8 +235,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Button
-                            variant="contained"
-                            color="secondary"
+                            color="error"
                             onClick={handleClear}
                             fullWidth
                             style={{ marginTop: '20px' }}
@@ -238,7 +249,7 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, st
                             style={{ marginTop: '20px' }}
                             fullWidth 
                             onClick={handleSubmit} 
-                            color="primary" 
+                            color="secondary" 
                             disabled={loading}
                         >
                             {loading ? 'Creating...' : 'Create'}

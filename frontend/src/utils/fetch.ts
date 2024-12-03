@@ -245,6 +245,8 @@ export type EventRequestUser = {
   uid: string;
   first_name: string;
   last_name: string;
+  email: string;
+  status: number;
 }
 export type EventRequestUserData = {
   id: number;
@@ -257,6 +259,8 @@ export type EventRequestUserData = {
   uid: string;
   first_name: string;
   last_name: string;
+  email: string;
+  status: number;
 }
 export type NewEventRequest = {
   start: string;
@@ -288,6 +292,18 @@ export async function getEventRequests(user: User): Promise<ApiResponse<EventReq
   }
   return formattedResponse;
 }
+export async function getUserEventRequests(user: User): Promise<ApiResponse<EventRequestUser[]>> {
+  const response = await getData<EventRequestUserData[]>('/event_requests_user', user);
+  const formattedResponse: ApiResponse<EventRequestUser[]> = {
+    ...response,
+    data: response.data.map((eventData) => ({
+      ...eventData,
+      start: new Date(eventData.start),
+      end: new Date(eventData.end),
+    })),
+  }
+  return formattedResponse;
+}
 export async function postEventRequest(newEventRequest: NewEventRequest, user: User): Promise<ApiResponse<EventRequest>> {
   const response = await postData<EventRequestData, NewEventRequest>('/event_requests', newEventRequest, user);
   return {
@@ -304,6 +320,9 @@ export async function deleteEventRequest(eventRequestId: number, user: User): Pr
 }
 export async function confirmEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<Event>> {
   return await postData<Event, void>(`/event_requests/${eventRequestId}/confirm`, undefined, user);
+}
+export async function denyEventRequest(eventRequestId: number, user: User): Promise<ApiResponse<void>> {
+  return await postData<void, void>(`/event_requests/${eventRequestId}/deny`, undefined, user);
 }
 
 export type VolunteerRole = {
@@ -351,6 +370,14 @@ export async function postEventShifts(eventId: number, shifts: NewShift[], user:
   return await postData<Shift[], NewShift[]>(`/events/${eventId}/volunteer_shifts`, shifts, user);
 }
 
+export async function deleteShift(shiftId: number, user: User): Promise<ApiResponse<void>> {
+  return await deleteData<void>(`/volunteer_shifts/${shiftId}`, user);
+}
+
+export async function updateShift(shiftId: number, shift: NewShift, user: User): Promise<ApiResponse<void>> {
+  return await putData<void, NewShift>(`/volunteer_shifts/${shiftId}`, shift, user);
+}
+
 export type BackendUser = {
   first_name: string;
   last_name: string;
@@ -373,6 +400,7 @@ export type BackendUserAndRole = {
   can_request_event: boolean | null;
   is_admin: boolean | null;
   is_blocked: boolean | null;
+  total_hours: number;
 }
 export async function getBackendUser(user: User): Promise<ApiResponse<BackendUser>> {
   return await getData<BackendUser>(`/users/user`, user);
@@ -448,6 +476,8 @@ export async function getEventShiftSignups(eventId: number, user: User): Promise
 }
 export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): Promise<ApiResponse<ShiftSignupUser>> {
   const response = await postData<ShiftSignupUser, NewShiftSignup>(`/shift-signups`, shiftSignup, user);
+
+  console.log('raw response', response);
   const formattedResponse: ApiResponse<ShiftSignupUser> = {
     ...response,
     data: {
@@ -455,6 +485,21 @@ export async function postShiftSignup(shiftSignup: NewShiftSignup, user: User): 
       checkin_time: response.data.checkin_time ? new Date(response.data.checkin_time) : undefined,
       checkout_time: response.data.checkout_time ? new Date(response.data.checkout_time) : undefined,
     },
+  }
+
+  console.log('formatted response', formattedResponse);
+  return formattedResponse;
+}
+
+export async function getUpcomingShifts(user: User): Promise<ApiResponse<ShiftSignupUser[]>> {
+  const response = await getData<ShiftSignupUser[]>('/shift-signups/upcoming', user);
+  const formattedResponse: ApiResponse<ShiftSignupUser[]> = {
+    ...response,
+    data: response.data.map((shiftData) => ({
+      ...shiftData,
+      checkin_time: shiftData.checkin_time ? new Date(shiftData.checkin_time) : undefined,
+      checkout_time: shiftData.checkout_time ? new Date(shiftData.checkout_time) : undefined,
+    })),
   }
   return formattedResponse;
 }
@@ -470,6 +515,9 @@ export async function getUserSignups(user: User): Promise<ApiResponse<ShiftSignu
     })),
   }
   return formattedResponse;
+}
+export async function deleteSignups(signupIds: number[], user: User): Promise<ApiResponse<number[]>> {
+  return await postData<number[], number[]>(`/shift-signups/batch-delete`, signupIds, user);
 }
 
 export type CheckIn = {
@@ -534,4 +582,27 @@ export async function markNotificationAsRead(notificationId: number, user: User)
 }
 export async function markAllNotificationsAsRead(user: User): Promise<ApiResponse<void>> {
   return await postData<void, void>('/notifications/read', undefined, user);
+}
+
+export type ShiftSignupUserBasic = {
+  id: number;
+  user_id: number;
+  shift_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
+export async function getShiftSignups(
+  shiftId: number,
+  user: User,
+  
+): Promise<ApiResponse<ShiftSignupUserBasic[]>> {
+
+  const response = await getData<ShiftSignupUserBasic[]>(`/shift-signups/shift?shiftId=${shiftId}`, user);
+  return response;
+}
+
+export async function getUserAdminEvents(user: User): Promise<ApiResponse<number[]>> {
+  return await getData<number[]>(`/users/user-admin-events`, user);
 }

@@ -1,7 +1,7 @@
 .container {
     padding: 20px;
     background-color: #333;
-    color: white;
+    /* color: white; */
     border-radius: 10px;
     margin: 20px 0;
 }
@@ -9,29 +9,13 @@
 .shiftCard {
     padding: 15px;
     background-color: #444;
-    color: white;
+    /* color: white; */
     border-radius: 8px;
     transition: transform 0.3s ease;
 }
 
-.shiftCard:hover {
-    transform: scale(1.04);
-}
-
 .signedUp {
     border: 2px solid #4caf50;
-}
-
-.signedUpIcon {
-    color: green;
-    margin-left: 8px;
-}
-
-.signedUpBox {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
 }
 
 h6 {
@@ -60,14 +44,14 @@ h6 {
 }
 
 .detailLabel {
-    color: white;
+    /* color: white; */
     font-weight: bold;
     margin-right: 4px;
     font-size: 1.25rem;
 }
 
 .detailValue {
-    color: #cccccc;
+    /* color: #cccccc; */
     font-size: 1.25rem;
 }
 
@@ -117,11 +101,11 @@ h6 {
 .shiftCard .shiftLabel {
     font-weight: bold;
     margin-right: 4px;
-    color: white;
+    /* color: white; */
     font-size: 1rem;
 }
 
 .shiftCard .shiftValue {
-    color: #cccccc;
+    /* color: #cccccc; */
     font-size: 1rem;
 }

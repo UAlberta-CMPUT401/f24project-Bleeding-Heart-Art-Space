@@ -1,4 +1,4 @@
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import {ConfirmationDialog} from '@components/ConfirmationDialog';
 import { useAuth } from '@lib/context/AuthContext';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
@@ -12,6 +12,7 @@ const cols: GridColDef[] = [
     { field: 'email', headerName: 'Email', width: 240 },
     { field: 'phone', headerName: 'Phone', width: 180 },
     { field: 'title', headerName: 'Role', width: 120 },
+    { field: 'total_hours', headerName: 'Hours Worked', width: 150, type: 'number' },
 ];
 
 const ManageUsers: React.FC = () => {
@@ -81,6 +82,7 @@ const ManageUsers: React.FC = () => {
                         sortModel: [{ field: 'last_name', sort: 'asc' }],
                     }
                 }}
+                pageSizeOptions={[5, 10, 20]}
                 rowSelectionModel={selectionModel}
                 onRowSelectionModelChange={handleUserSelect}
                 checkboxSelection

@@ -22,6 +22,7 @@ declare module '@mui/material/styles' {
 export const darkTheme = createTheme({
   ...baseTheme,
   palette: {
+    ...baseTheme.palette,
     mode: 'dark',
     primary: {
       main: '#a62536',
@@ -30,12 +31,44 @@ export const darkTheme = createTheme({
       main: '#3f51b5',
     },
     background: {
-      base1: '#1e1e1e',
+      default: '#26272b',
+      paper: '#333333',
+      base1: '#26272b',
     },
     notification: {
       unread: '#444746',
       read: '#000',
-      background: '#1e1e1e'
+      background: '#181818'
     }
   },
+  components: {
+    MuiTextField: {
+        styleOverrides: {
+            root: {
+                '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                        borderColor: '#fff',
+                    },
+                },
+                '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#fff',
+                }
+            }
+        }
+    },
+MuiFormControl: {
+        styleOverrides: {
+            root: {
+                '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                        borderColor: '#fff',
+                    },
+                },
+                '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#fff',
+                }
+            }
+        }
+    }
+  }
 });

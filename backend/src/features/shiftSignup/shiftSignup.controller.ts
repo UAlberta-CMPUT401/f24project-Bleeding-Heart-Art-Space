@@ -4,10 +4,13 @@ import { NewShiftSignup, ShiftSignupUpdate } from './shiftSignup.model';
 import { VolunteerShiftsService } from '../volunteerShifts/volunteerShifts.service';
 import { isAuthenticated } from '@/common/utils/auth';
 import { hasError } from '@/common/utils/error';
+import { UsersService } from '../users/users.service';
+import { container } from 'tsyringe';
 
 export class ShiftSignupController {
-  private shiftSignupService = new ShiftSignupService();
-  private volunteerShiftsService = new VolunteerShiftsService();
+  private shiftSignupService = container.resolve(ShiftSignupService);
+  private volunteerShiftsService = container.resolve(VolunteerShiftsService);
+  private usersService = container.resolve(UsersService);
   
   /**
    * Create a new shift signup
@@ -41,6 +44,19 @@ export class ShiftSignupController {
         return;
       }
       const shifts = await this.shiftSignupService.getShiftsSignupByUser(req.auth.uid);
+      res.json(shifts);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getUpcomingShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const shifts = await this.shiftSignupService.getUpcomingShifts(req.auth.uid);
       res.json(shifts);
     } catch (error) {
       next(error);
@@ -93,6 +109,33 @@ export class ShiftSignupController {
       next(error);
     }
   };
+
+  public batchDelete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const body: any[] = req.body;
+      const signupIds: number[] = body.map(num => Number(num));
+      // check that user is event admin for all signups being deleted
+      let isEventAdmin = true;
+      for (const signupId of signupIds) {
+        const isSignupAdmin = await this.usersService.isEventAdmin(req.auth.uid, { signupId });
+        if (!isSignupAdmin) {
+          isEventAdmin = false;
+        }
+      }
+      if (!isEventAdmin && !req.role?.is_admin) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const deletedIds = await this.shiftSignupService.batchDeleteSignup(signupIds);
+      res.status(200).json(deletedIds);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   /**
    * Update a shift signup by ID
@@ -181,6 +224,11 @@ export class ShiftSignupController {
       next(error);
     }
   };
+
+  /**
+   * Get total hours worked by a specific user
+   * @route GET /api/shift-signups/user/:userId/total-hours
+   */
   public async getTotalHoursWorked(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = Number(req.params.userId);
@@ -196,4 +244,32 @@ export class ShiftSignupController {
     }
     
   }
+
+  /**
+   * Get total hours worked by all users
+   * @route GET /api/shift-signups/total-hours/all
+   */
+  public async getTotalHoursForAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const totalHoursData = await this.shiftSignupService.getTotalHoursForAllUsers();
+      res.status(200).json(totalHoursData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public getShiftSignups = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const shiftId = req.query.shiftId ? Number(req.query.shiftId) : undefined;
+
+      if (shiftId) {
+        const signups = await this.shiftSignupService.getShiftSignups(shiftId);
+        res.json(signups);
+      } else {
+        res.status(400).json({ error: 'shiftId query parameter is required' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
 }

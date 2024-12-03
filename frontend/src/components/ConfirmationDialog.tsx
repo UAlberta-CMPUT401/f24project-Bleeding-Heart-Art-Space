@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, TextField } from '@mui/material';
 
 interface ConfirmationDialogProps {
   open: boolean;
@@ -34,4 +34,54 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   );
 };
 
-export default ConfirmationDialog;
+interface ConfirmationDialogNotesProps extends ConfirmationDialogProps {
+  notes: string;
+  setNotes: (value: string) => void;
+}
+
+
+const ConfirmationDialogNotes: React.FC<ConfirmationDialogNotesProps> = ({
+  open,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+  confirmButtonText,
+  cancelButtonText,
+  notes,
+  setNotes,
+}) => {
+  return (
+      <Dialog open={open} onClose={onCancel}>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogContent>
+              <p>{message}</p>
+              <TextField
+                  fullWidth
+                  label="Add Notes (optional)"
+                  value={notes} // Bind to notes state
+                  onChange={(e) => setNotes(e.target.value)} // Update state on change
+                  multiline
+                  rows={3}
+                  variant="outlined"
+                  inputProps={{
+                    'data-gramm': 'false',
+                    'data-gramm_editor': 'false',
+                  }}
+              />
+          </DialogContent>
+          <DialogActions>
+              <Button onClick={onCancel} color="error">
+                  {cancelButtonText}
+              </Button>
+              <Button onClick={onConfirm} variant="contained" color="secondary">
+                  {confirmButtonText}
+              </Button>
+          </DialogActions>
+      </Dialog>
+  );
+};
+
+
+
+export { ConfirmationDialog, ConfirmationDialogNotes };

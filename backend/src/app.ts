@@ -28,7 +28,16 @@ export class App {
 
     this.initializeFirebaseSDK();
     this.initializeMiddlewares();
+
     this.initializeRoutes(routes);
+    // serve react in production
+    if (NODE_ENV === 'production') {
+      this.app.use(express.static(path.join(__dirname, 'dist')))
+      this.app.get('*', (_req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+      });
+    }
+
     this.initializeErrorHandling(); // Add error-handling middleware
     this.initializeCronJobs();
   }
@@ -47,7 +56,7 @@ export class App {
     this.app.use(loggerMiddleware);
     this.app.use(express.json());
     if (NODE_ENV === 'development') {
-      this.app.use(cors())
+      this.app.use(cors());
     }
     const swaggerDocument = YAML.load(this.apiSpecPath);
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -62,14 +71,14 @@ export class App {
   }
 
   private initializeCronJobs() {
-    console.log('Starting cron job for aut-checkout every 5 minutes');
+    logger.info('Starting cron job for aut-checkout every 5 minutes');
     cron.schedule('*/1 * * * *', async () => {
-      console.log('Running auto-checkout cron job...');
+      logger.info('Running auto-checkout cron job...');
       try{
         await this.shiftSignupService.autoCheckOut();
-        console.log('Auto-checkout cron job completed');
+        logger.info('Auto-checkout cron job completed');
       } catch (error){
-        console.error('Error running auto-checkout cron job', error);
+        logger.error('Error running auto-checkout cron job', error);
       }
     })
   }

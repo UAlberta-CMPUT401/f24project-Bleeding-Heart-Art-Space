@@ -8,7 +8,7 @@ import { EventNote, LocationOn, Close } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { useNavigate } from 'react-router-dom';
-import ConfirmationDialog from '@components/ConfirmationDialog';
+import {ConfirmationDialog} from '@components/ConfirmationDialog';
 import SnackbarAlert from '@components/SnackbarAlert';
 
 
@@ -20,6 +20,16 @@ interface EditEventDialogProps {
     onEditSuccess?: () => void;
 }
 
+/**
+ * Props for the EditEventDialog component.
+ * 
+ * @interface EditEventDialogProps
+ * @property {boolean} open - Indicates whether the dialog is open.
+ * @property {() => void} onClose - Callback function to handle the dialog close action.
+ * @property {() => void} onCancel - Callback function to handle the cancel action.
+ * @property {number | null} eventId - The ID of the event to be edited, or null if no event is selected.
+ * @property {() => void} [onEditSuccess] - Optional callback function to handle successful edit action.
+ */
 const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCancel, eventId, onEditSuccess }) => {
     const { events, updateEvent, deleteEvent } = useEventStore();
     const { user } = useAuth();
@@ -108,18 +118,16 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
         setConfirmationMessage('Are you sure you want to save these changes?');
         setOnConfirmAction(() => async () => {
             setLoading(true);
-            if (backendUser.is_admin) {
-                try {
-                    await updateEvent(eventId, updatedEvent, user);
-                    if (onEditSuccess) {
-                        onEditSuccess();
-                    }
-                    dialogClose();
-                } catch (error) {
-                    setOpenConfirmationDialog(false);
-                    setEditEventFailSnackbarMessage('End time must be after start time');
-                    setEditEventFailSnackbarOpen(true);
+            try {
+                await updateEvent(eventId, updatedEvent, user);
+                if (onEditSuccess) {
+                    onEditSuccess();
                 }
+                dialogClose();
+            } catch (error) {
+                setOpenConfirmationDialog(false);
+                setEditEventFailSnackbarMessage('End time must be after start time');
+                setEditEventFailSnackbarOpen(true);
             }
             setLoading(false);
         });
@@ -130,9 +138,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
         setDeleteConfirmationMessage('Are you sure you want to delete this event?');
         setOnDeleteConfirmAction(() => async () => {
             if (!user || !eventId || !backendUser) return;
-            if (backendUser.is_admin) {
-                await deleteEvent(eventId, user);
-            }
+            await deleteEvent(eventId, user);
             deleteDialogClose();
         });
         setOpenDeleteConfirmationDialog(true);
@@ -248,8 +254,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Button
-                            variant="contained"
-                            color="secondary"
+                            color="error"
                             onClick={handleDelete}
                             fullWidth
                             style={{ marginTop: '20px' }}
@@ -263,7 +268,7 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCanc
                             style={{ marginTop: '20px' }}
                             fullWidth
                             onClick={handleSubmit}
-                            color="primary"
+                            color="secondary"
                             disabled={loading}
                         >
                             {loading ? 'Saving...' : 'Save Changes'}

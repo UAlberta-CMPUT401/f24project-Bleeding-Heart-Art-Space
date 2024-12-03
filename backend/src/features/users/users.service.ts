@@ -16,6 +16,7 @@ type UserAndRole = {
   can_request_event: boolean | null;
   is_admin: boolean | null;
   is_blocked: boolean | null;
+  total_hours?: number;
 };
 
 @singleton()
@@ -30,13 +31,30 @@ export class UsersService {
   }
   
   public async createVolunteer(newUser: NewUser): Promise<InsertResult> {
-    return await db
-      .insertInto('users')
-      .values((eb) => ({
-        ...newUser,
-        role: eb.selectFrom('roles').where('roles.title', '=', 'volunteer').select('roles.id').limit(1),
-      }))
-      .executeTakeFirst();
+    const exists = await db
+      .selectFrom('users')
+      .select('id')
+      .limit(1)
+      .executeTakeFirst()
+    const isEmpty = !exists
+
+    if (isEmpty) {
+      return await db
+        .insertInto('users')
+        .values((eb) => ({
+          ...newUser,
+          role: eb.selectFrom('roles').where('roles.title', '=', 'admin').select('roles.id').limit(1),
+        }))
+        .executeTakeFirst();
+    } else {
+      return await db
+        .insertInto('users')
+        .values((eb) => ({
+          ...newUser,
+          role: eb.selectFrom('roles').where('roles.title', '=', 'volunteer').select('roles.id').limit(1),
+        }))
+        .executeTakeFirst();
+    }
   }
 
   public async getUserRole(user: User): Promise<Role | undefined> {
@@ -92,6 +110,16 @@ export class UsersService {
     const userAndRole = await db
       .selectFrom('users')
       .leftJoin('roles', 'roles.id', 'users.role')
+      .leftJoin(
+        db
+          .selectFrom('shift_signup')
+          .select(['user_id'])
+          .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+          .groupBy('user_id')
+          .as('user_hours'),
+        'users.id',
+        'user_hours.user_id'
+      )
       .select([
         'users.id',
         'users.uid',
@@ -105,10 +133,14 @@ export class UsersService {
         'roles.can_request_event',
         'roles.is_admin',
         'roles.is_blocked',
+        'user_hours.total_hours',
       ])
       .execute();
-
-    return userAndRole;
+  
+    return userAndRole.map(user => ({
+      ...user,
+      total_hours: Number(user.total_hours ?? 0),
+    }));
   }
 
   public async batchAssignRole(users: number[], role: number, uid: string): Promise<number[]> {
@@ -154,4 +186,84 @@ export class UsersService {
       .where('uid', '=', uid)
       .executeTakeFirst();
   }  
+
+  public async makeUserEventAdmin(userId: number, eventId: number): Promise<boolean> {
+    const result = await db
+      .insertInto('user_event_roles')
+      .values(eb => {
+        return {
+          user_id: userId,
+          event_id: eventId,
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        };
+      })
+      .executeTakeFirst();
+
+    return result.numInsertedOrUpdatedRows === BigInt(1);
+  }
+
+  public async isEventAdmin(uid: string, { eventId, shiftId, signupId }: {
+    eventId?: number,
+    shiftId?: number,
+    signupId?: number
+  }): Promise<boolean> {
+
+    if (eventId !== undefined) {
+      const res = await db
+        .selectFrom('user_event_roles')
+        .selectAll()
+        .where(eb => eb.and({
+          user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+          event_id: eventId,
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        }))
+        .execute();
+      return res.length > 0;
+    }
+
+    if (shiftId !== undefined) {
+      const res = await db
+        .selectFrom('user_event_roles')
+        .selectAll()
+        .where(eb => eb.and({
+          user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+          event_id: eb.selectFrom('volunteer_shifts').where('volunteer_shifts.id', '=', shiftId).select('volunteer_shifts.event_id').limit(1),
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        }))
+        .execute();
+      return res.length > 0;
+    }
+
+    if (signupId !== undefined) {
+      const res = await db
+        .selectFrom('user_event_roles')
+        .selectAll()
+        .where(eb => eb.and({
+          user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+          event_id: eb
+            .selectFrom('volunteer_shifts')
+            .where(eb => eb.and({
+              id: eb.selectFrom('shift_signup').where('shift_signup.id', '=', signupId).select('shift_signup.shift_id').limit(1),
+            }))
+            .select('volunteer_shifts.event_id').limit(1),
+          role_id: eb.selectFrom('roles').where('is_admin', '=', true).select('roles.id').limit(1),
+        }))
+        .execute();
+      return res.length > 0;
+    }
+
+    return false;
+  }
+
+  public async getUserAdminEvents(uid: string): Promise<number[]> {
+    const res = await db
+      .selectFrom('user_event_roles')
+      .select('user_event_roles.event_id')
+      .where(eb => eb.and({
+        user_id: eb.selectFrom('users').where('users.uid', '=', uid).select('users.id').limit(1),
+      }))
+      .execute();
+    return res.map(id => id.event_id);
+  }
+
 }

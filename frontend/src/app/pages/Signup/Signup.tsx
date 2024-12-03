@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Card, Divider, TextField, Alert} from "@mui/material";
+import { Button, Card, Divider, TextField, Alert, IconButton, InputAdornment} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import styles from '@pages/Login/Login.module.css';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "@utils/firebase.ts";
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
@@ -11,8 +12,12 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const [verificationSent, setVerificationSent] = useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,12 +31,23 @@ const Signup: React.FC = () => {
     }
 
     setError(null);
+    setIsProcessing(true);
 
     try {
 
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("User created:", userCredential.user);
 
+      if (auth.currentUser) {
+        try {
+          await sendEmailVerification(auth.currentUser);
+          setVerificationSent(true);
+        } catch (verificationError) {
+          console.error("Error sending verification email:", verificationError);
+          setError("Failed to send verification email. Please try again later.");
+        }
+      }
+      
       setSuccess(true);
 
       setTimeout(() => {
@@ -40,7 +56,21 @@ const Signup: React.FC = () => {
 
     } catch (error: any) {
       console.error("Error signing up:", error);
-      setError(error.message); 
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          setError("Email is already in use.");
+          break;
+        case "auth/weak-password":
+          setError("Password should be at least 6 characters.");
+          break;
+        case "auth/invalid-email":
+            setError("Invalid Email.");
+            break;
+        default:
+          setError(error.message);
+      }
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -58,7 +88,11 @@ const Signup: React.FC = () => {
 
           {error && <Alert severity="error">{error}</Alert>}
 
-          {success && <Alert severity="success">Signup successful! Redirecting to login...</Alert>}
+          {success && (
+            <Alert severity="success">
+              Signup successful! {verificationSent && "A verification email has been sent. Please check your inbox."} Redirecting to login...
+            </Alert>
+          )}
           
           
           <TextField
@@ -74,28 +108,52 @@ const Signup: React.FC = () => {
           
           <TextField
             required
-            type="password"
+            type={showPassword ? "text" : "password"} // Toggle between text and password
             variant="outlined"
             label="Password"
             color="secondary"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={success}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          
+
           <TextField
             required
-            type="password"
+            type={showConfirmPassword ? "text" : "password"} // Toggle between text and password
             variant="outlined"
             label="Confirm Password"
             color="secondary"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={success}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           
-          <Button type="submit" variant="contained">
-            Sign-up
+          <Button type="submit" variant="contained" disabled={isProcessing || success}>
+            {isProcessing ? "Processing..." : "Sign-up"}
           </Button>
         </form>
         
@@ -105,9 +163,9 @@ const Signup: React.FC = () => {
         
         <Button 
           component={Link}
-          variant="outlined" 
+          variant="contained" 
           to="/login"
-          color="primary"
+          color="inherit"
         >
           Login
         </Button>

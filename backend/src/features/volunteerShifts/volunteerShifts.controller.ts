@@ -1,9 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { container } from 'tsyringe';
 import { VolunteerShiftsService } from './volunteerShifts.service';
+import { isAuthenticated } from '@/common/utils/auth';
+import { UsersService } from '../users/users.service';
 
 export class VolunteerShiftsController {
   public volunteerShiftsService = container.resolve(VolunteerShiftsService);
+  public usersService = container.resolve(UsersService);
 
   /**
    * Retrieve all shifts for a specific event.
@@ -29,8 +32,17 @@ export class VolunteerShiftsController {
    */
   public createShifts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { eventId } = req.params;
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const eventId = parseInt(req.params.eventId);
       const shifts = req.body;
+      const isEventAdmin = await this.usersService.isEventAdmin(req.auth.uid, { eventId });
+      if (!isEventAdmin && !req.role?.is_admin) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
 
       if (!eventId || !shifts || !Array.isArray(shifts)) {
         res.status(400).json({ error: 'Event ID and valid shifts data are required' });
@@ -40,8 +52,10 @@ export class VolunteerShiftsController {
       // Ensure the volunteer_role is a string and passes correct data
       const shiftsWithEventId = shifts.map((shift) => ({
         ...shift,
-        event_id: Number(eventId), // Convert eventId to number
+        event_id: eventId,
         volunteer_role: String(shift.volunteer_role), // Ensure volunteer_role is a string
+        start: new Date(shift.start).toISOString(), // Ensure start is ISO 8601
+        end: new Date(shift.end).toISOString(),     // Ensure end is ISO 8601
       }));
 
       const insertedShifts = await this.volunteerShiftsService.createShifts(shiftsWithEventId);
@@ -56,8 +70,21 @@ export class VolunteerShiftsController {
    */
   public updateShift = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (!id) {
+        res.status(400).json({ error: 'Shift ID is required' });
+        return;
+      }
       const shiftData = req.body;
+      const isEventAdmin = await this.usersService.isEventAdmin(req.auth.uid, { shiftId: id });
+      if (!isEventAdmin && !req.role?.is_admin) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
 
       if (!id || !shiftData) {
         res.status(400).json({ error: 'Shift ID and data are required' });
@@ -81,9 +108,18 @@ export class VolunteerShiftsController {
    */
   public deleteShift = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const id = parseInt(req.params.id);
       if (!id) {
         res.status(400).json({ error: 'Shift ID is required' });
+        return;
+      }
+      const isEventAdmin = await this.usersService.isEventAdmin(req.auth.uid, { shiftId: id });
+      if (!isEventAdmin && !req.role?.is_admin) {
+        res.status(401).json({ error: 'Unauthorized' });
         return;
       }
 

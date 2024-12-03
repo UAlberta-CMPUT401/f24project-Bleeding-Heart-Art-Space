@@ -154,13 +154,11 @@ Estimated Sprint Velocity: **14**
 | Modify current UI tests if functionality changes                          | Tests                            | Rushabh Shah                          | Nov 25   |
 | Deploy for production | Deployment  | Chase Johnson, Rishit Gajjar | Dec 2 | 
 | Give artist admin permission for requested events | US 3.05 | Chase Johnson | Nov 25 |
-| Admin edit event requests | US 3.01 | Chase Johnson, Rishit Gajjar | Nov 25 |
 | Artist add shifts to event for event requests | US 3.05 | Chase Johnson, Rishit Gajjar | Nov 25 |
-| Finish notifications | US 1.07, US 4.01 | Amaan Mohammed | Nov 25 |
+| Send emails | 4.01 | Anhadpreet Singh | Nov 25 | 
 | Admin edit Shifts                                | US 2.04 | Samuel Chan | Nov 25 | 
 | Clean up shifts view in overview | US 1.05 | Samuel Chan | Nov 25 |
 | Shift notes | US 2.04 | Samuel Chan | Nov 25 | Tag for notifs and and icon badge | US 4.01 | Samuel Chan | Nov 25 | 
-| Tag for notifs and and icon badge | US 4.01 | Samuel Chan | Nov 25 |
 | Edit Email and Password | US 1.01, US 1.02, US 2.01, US 2.02 | Rishit Gajjar | Nov 25 |
 | Update the UI for Home Page | Design | Rishit Gajjar |  Nov 25 |
 

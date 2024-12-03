@@ -11,6 +11,15 @@ type ShiftSignupUser = ShiftSignup & {
   last_name: string;
 }
 
+type ShiftSignupUserBasic = {
+  id: number;
+  user_id: number;
+  shift_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
 @singleton()
 export class ShiftSignupService {
   private volunteerShiftsService = new VolunteerShiftsService();
@@ -77,6 +86,45 @@ export class ShiftSignupService {
     return result;
   }
 
+  public async getUpcomingShifts(uid: string): Promise<ShiftSignupUser[]> {
+
+    const currentDate = new Date();
+    const twoWeeksFromNow = new Date();
+    const oneDayBefore = new Date();
+    oneDayBefore.setHours(currentDate.getHours() - 12);
+    twoWeeksFromNow.setDate(currentDate.getDate() + 14);
+
+    const result = await db
+      .selectFrom('shift_signup')
+      .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
+      .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .innerJoin('events', 'events.id', 'volunteer_shifts.event_id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.hours_worked',
+        'shift_signup.notes',
+        'users.uid',
+        'users.first_name',
+        'users.last_name',
+        'volunteer_shifts.volunteer_role',
+        'volunteer_shifts.start',
+        'volunteer_shifts.end',
+        'events.id as event_id',
+        'events.title as event_title',
+      ])
+      .where('volunteer_shifts.end', '>=', oneDayBefore)
+      .where('volunteer_shifts.start', '<=', twoWeeksFromNow)
+      .where('users.uid', '=', uid)
+      .orderBy('volunteer_shifts.start', 'asc')
+      .execute();
+    return result;
+  }
+
+
   /**
    * Create a new shift signup.
    * @param signupData - The data for the new signup
@@ -84,6 +132,8 @@ export class ShiftSignupService {
    */
   public async create(signupData: NewShiftSignup): Promise<ShiftSignupUser | ErrorResponse> {
     const existingSignup = await this.checkExistingSignup(signupData.user_id, signupData.shift_id);
+    const isMaxReached = await this.volunteerShiftsService.hasReachedMaxVolunteers(signupData.shift_id);
+    
     if (existingSignup) {
       const err: ErrorResponse = { error: 'You have already signed up for this shift.'};
       return err;
@@ -95,11 +145,17 @@ export class ShiftSignupService {
       return err;
     }
 
+    if (isMaxReached) {
+      const err: ErrorResponse = { error: 'This shift has reached the maximum number of volunteers.'};
+      return err;
+    }
+
     const insertedSignupRes = await db
       .insertInto('shift_signup')
       .values({
         user_id: signupData.user_id,
         shift_id: signupData.shift_id,
+        notes: signupData.notes || undefined,
       })
       .returning('id')
       .executeTakeFirst();
@@ -215,39 +271,6 @@ export class ShiftSignupService {
       .where('id', '=', signupId)
       .execute();
   }
-
-  /**
-   * Automatically check out users who forgot to check out by the shift end time.
-   */
-  // public async autoCheckOut(): Promise<void> {
-  //   const now = new Date();
-
-  //   const overdueSignups = await db
-  //     .selectFrom('shift_signup')
-  //     .innerJoin('volunteer_shifts', 'shift_signup.shift_id', 'volunteer_shifts.id')
-  //     .select([
-  //       'shift_signup.id',
-  //       'shift_signup.shift_id',
-  //       'shift_signup.checkin_time',
-  //       'shift_signup.checkout_time',
-  //       'volunteer_shifts.end as shift_end',
-  //       'shift_signup.checkin_time as checkin_time'
-  //     ])
-  //     .where('shift_signup.checkin_time', 'is not', null)
-  //     .where('shift_signup.checkout_time', 'is', null)
-  //     .where('volunteer_shifts.end', '<', now)
-  //     .execute();
-
-      
-
-  //   for (const signup of overdueSignups) {
-  //     await db
-  //       .updateTable('shift_signup')
-  //       .set({ checkout_time: signup.shift_end }) // Use shift_end as checkout time
-  //       .where('id', '=', signup.id)
-  //       .execute();
-  //   }
-  // }
 
   public async autoCheckOut(): Promise<void> {
     const now = new Date();
@@ -373,21 +396,38 @@ export class ShiftSignupService {
   }
 
   /**
- * Get the total number of hours worked by a specific user.
- * @param userId - The user ID to calculate total hours worked for
- * @returns Total hours worked by the user
- */
-public async getTotalHoursWorked(userId: number): Promise<number> {
-  const result = await db
-    .selectFrom('shift_signup')
-    .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+   * Get the total number of hours worked by a specific user.
+   * @param userId - The user ID to calculate total hours worked for
+   * @returns Total hours worked by the user
+   */
+  public async getTotalHoursWorked(userId: number): Promise<number> {
+    const result = await db
+      .selectFrom('shift_signup')
+      .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+      .where('user_id', '=', userId)
+      .executeTakeFirst();
 
-  // If result is null or undefined, return 0 as the total hours worked
-  return Number(result?.total_hours ?? 0);
-}
+    // If result is null or undefined, return 0 as the total hours worked
+    return Number(result?.total_hours ?? 0);
+  }
 
+  /**
+   * Get the total hours worked by all users.
+   * @returns A list of user IDs and their corresponding total hours worked
+   */
+  public async getTotalHoursForAllUsers(): Promise<{ user_id: number; total_hours: number }[]> {
+    const results = await db
+      .selectFrom('shift_signup')
+      .select(['user_id'])
+      .select((eb) => eb.fn.sum('hours_worked').as('total_hours'))
+      .groupBy('user_id')
+      .execute();
+
+    return results.map((result) => ({
+      user_id: result.user_id,
+      total_hours: Number(result.total_hours ?? 0),
+    }));
+  }
 
   /**
    * Get a specific shift signup by ID.
@@ -420,6 +460,35 @@ public async getTotalHoursWorked(userId: number): Promise<number> {
       .deleteFrom('shift_signup')
       .where('id', '=', id)
       .execute();
+  }
+
+  async batchDeleteSignup(ids: number[]): Promise<number[]> {
+    const deletedIds = await db
+      .deleteFrom('shift_signup')
+      .where('id', 'in', ids)
+      .returning('id')
+      .execute();
+    return deletedIds.map(id => id.id);
+  }
+
+  async getShiftSignups(shiftId: number): Promise<ShiftSignupUserBasic[]> {
+    const result = await db
+      .selectFrom('shift_signup')
+      .innerJoin('users', 'users.id', 'shift_signup.user_id')
+      .select([
+        'shift_signup.id',
+        'shift_signup.user_id',
+        'shift_signup.shift_id',
+        'shift_signup.checkin_time',
+        'shift_signup.checkout_time',
+        'shift_signup.notes',
+        'users.first_name',
+        'users.last_name',
+        'users.email',
+      ])
+      .where('shift_signup.shift_id', '=', shiftId)
+      .execute();
+    return result;
   }
 }
 

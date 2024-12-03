@@ -30,9 +30,22 @@ export class EventRequestsController {
    * @route GET /api/event-requests
    * @access Public (Adjust as needed)
    */
-  public getAllEventRequests = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getPendingEventRequests = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const eventRequests = await this.eventRequestsService.getAllEventRequests();
+      const eventRequests = await this.eventRequestsService.getPendingEventRequests();
+      res.json(eventRequests);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public getUserEventRequests = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!isAuthenticated(req)) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+      const eventRequests = await this.eventRequestsService.getUserEventRequests(req.auth.uid);
       res.json(eventRequests);
     } catch (error) {
       next(error);
@@ -70,6 +83,16 @@ export class EventRequestsController {
       const eventRequestId = parseInt(req.params.id, 10);
       await this.eventRequestsService.deleteEventRequest(eventRequestId);
       res.status(200).json({ message: 'Event request deleted successfully' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public denyEventRequest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const eventRequestId = parseInt(req.params.id, 10);
+      await this.eventRequestsService.denyEventRequest(eventRequestId);
+      res.status(200).json({ message: 'Event request denied' });
     } catch (error) {
       next(error);
     }
