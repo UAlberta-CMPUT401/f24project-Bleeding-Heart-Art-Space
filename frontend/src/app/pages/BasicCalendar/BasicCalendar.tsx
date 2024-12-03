@@ -62,7 +62,7 @@ const BasicCalendar: React.FC = () => {
                 aria-label="add" 
                 onClick={() => setDialogOpen(true)}
                 style={{
-                    position: 'absolute', 
+                    position: 'fixed', 
                     bottom: 13, 
                     right: 13, 
                     zIndex: 1000, 
