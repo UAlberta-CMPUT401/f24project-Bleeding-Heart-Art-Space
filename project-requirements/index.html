@@ -130,14 +130,14 @@
 
 <h1 id="project-requirements">Project Requirements</h1>
 <h2 id="executive-summary">Executive Summary</h2>
-<p>The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the challenges the organization faces with its current scheduling tool, which doesn’t quite fit their needs. This custom platform will streamline the process of organizing volunteer events and shifts, enabling administrators to create and manage events, track volunteer attendance, and send timely notifications. Volunteers will benefit from a simple user-friendly way to easily sign up for shifts, view upcoming events, and receive reminders. The primary users of this system will be the administrators and volunteers of Bleeding Heart Art Space. The platform will be used to simplify volunteer coordination, improve communication, and optimize event management, contributing to the smooth operation of the community art space.</p>
+<p>The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the challenges the organization faces with its current scheduling tool, which doesn’t quite fit their needs. This custom platform will streamline the process of organizing volunteer events and shifts, enabling administrators to create and manage events, track volunteer attendance, and send timely emails. Volunteers will benefit from a simple user-friendly way to easily sign up for shifts, view upcoming events, and receive reminders. The primary users of this system will be the administrators and volunteers of Bleeding Heart Art Space. The platform will be used to simplify volunteer coordination, improve communication, and optimize event management, contributing to the smooth operation of the community art space.</p>
 <h2 id="project-glossary">Project Glossary</h2>
 <ul>
 <li>
 <p><strong>Admin</strong>: A user with elevated permissions responsible for managing events, assigning roles, and organizing schedules. Admins can create, edit, and delete events, assign volunteers to shifts, and oversee overall operations. They also have the ability to sign up for volunteer shifts themselves.</p>
 </li>
 <li>
-<p><strong>Volunteer</strong>: A general user who participates in events and activities organized by admins. Volunteers can view available events, sign up for shifts, check in and out of events, and receive notifications and reminders. </p>
+<p><strong>Volunteer</strong>: A general user who participates in events and activities organized by admins. Volunteers can view available events, sign up for shifts, check in and out of events, and receive emails and reminders. </p>
 </li>
 <li>
 <p><strong>Artist</strong>: A user responsible for requesting events that have to be approved by the admins. In some cases, the artist might also participate in events or activities organized by the volunteers and admins, especially if the event centers around an art exhibit or installation.</p>
@@ -152,7 +152,7 @@
 <p><strong>Calendar</strong>: A calendar meant to organize volunteers for an event. It may include multiple shifts and volunteers may use it to sign up for different time slots.</p>
 </li>
 <li>
-<p><strong>Notifications</strong>: Alerts sent to users via email or app to remind them of upcoming events or other important information. Volunteers and admins can subscribe or unsubscribe from notifications.</p>
+<p><strong>Emails</strong>: Alerts sent to users via email or app to remind them of upcoming events or other important information. Volunteers and admins can subscribe or unsubscribe from emails.</p>
 </li>
 <li>
 <p><strong>Permissions</strong>: Access rights assigned by an admin to other users. Permissions determine what actions a user can perform, such as creating events or managing schedules.</p>
@@ -242,7 +242,7 @@
 <li>Admin can sign up for available shifts in events they create or manage.</li>
 <li>Admin receives confirmation of sign-up via email or app notification.</li>
 <li>Admin can check in and check out of events like regular volunteers.</li>
-<li>Admin receives reminders and event notifications based on their preferences.</li>
+<li>Admin receives reminders and event emails based on their preferences.</li>
 <li>Admin’s participation is recorded alongside other volunteers, but they retain their admin privileges during the event.</li>
 </ol>
 </blockquote>
@@ -264,7 +264,7 @@
 <li>Admin can view a list of event requests submitted by artists.</li>
 <li>Admin can approve or reject event requests.</li>
 <li>Approved events become visible in the event calendar for volunteers to sign up.</li>
-<li>Artists receive notifications once their event is approved or rejected.</li>
+<li>Artists receive emails once their event is approved or rejected.</li>
 </ol>
 </blockquote>
 <h3 id="volunteer-user-stories">Volunteer User Stories:</h3>
@@ -304,12 +304,12 @@
 <li>Volunteers receive confirmation of sign-up via email or app notification.</li>
 </ol>
 </blockquote>
-<h4 id="us-205-manage-notifications-preferences">US 2.05 - Manage Notifications Preferences</h4>
+<h4 id="us-205-manage-email-preferences">US 2.05 - Manage Email Preferences</h4>
 <blockquote>
-<p>As a Volunteer, I want to manage my notifications so that I can receive or opt out of reminders.</p>
+<p>As a Volunteer, I want to manage my emails so that I can receive or opt out of reminders.</p>
 <p>Acceptance Criteria:</p>
 <ol>
-<li>Volunteers can subscribe or unsubscribe to email or app notifications.</li>
+<li>Volunteers can subscribe or unsubscribe to email or app emails.</li>
 <li>Volunteers receive event reminders based on their preferences.</li>
 </ol>
 </blockquote>
@@ -380,7 +380,7 @@
 <p>Acceptance Criteria:</p>
 <ol>
 <li>Artists can sign up as the primary overseer of the event.</li>
-<li>Artists receive reminders and notifications for the event.</li>
+<li>Artists receive reminders and emails for the event.</li>
 <li>Artists can manage volunteers during the event.</li>
 </ol>
 </blockquote>
@@ -408,16 +408,16 @@
 <p>Acceptance Criteria:</p>
 <ol>
 <li>Artists can edit event details such as time, location, description, and number of required volunteers.</li>
-<li>Changes to the event trigger notifications to volunteers who have signed up for affected shifts.</li>
+<li>Changes to the event trigger emails to volunteers who have signed up for affected shifts.</li>
 </ol>
 </blockquote>
 <h3 id="general-user-stories">General User Stories:</h3>
-<h4 id="us-401-receive-event-notifications">US 4.01 - Receive Event Notifications</h4>
+<h4 id="us-401-receive-event-emails">US 4.01 - Receive Event emails</h4>
 <blockquote>
-<p>As a User, I want to receive notifications for upcoming events so that I am reminded of my commitments.</p>
+<p>As a User, I want to receive emails for upcoming events so that I am reminded of my commitments.</p>
 <p>Acceptance Criteria:</p>
 <ol>
-<li>Users can opt in to receive notifications via email or app.</li>
+<li>Users can opt in to receive emails via email or app.</li>
 <li>Reminders are sent at customizable intervals (e.g., a day before, an hour before the event).</li>
 </ol>
 </blockquote>
@@ -445,9 +445,9 @@
 </ul>
 <h3 id="should-have">Should have:</h3>
 <ul>
-<li>US 1.07 (Send Notifications or Reminders)</li>
+<li>US 1.07 (Send emails or Reminders)</li>
 <li>US 1.10 (Approve Artist Event Requests)</li>
-<li>US 2.05 (Manage Notifications Preferences)</li>
+<li>US 2.05 (Manage emails Preferences)</li>
 <li>US 2.06 (Check into Events)</li>
 <li>US 2.07 (Check out of Events)</li>
 <li>US 2.08 (Automatic Check-out When Event Ends)</li>
@@ -456,7 +456,7 @@
 <li>US 3.03 (Create Shifts for the Event)</li>
 <li>US 3.04 (Assign One-Time Volunteers)</li>
 <li>US 3.05 (Edit Events)</li>
-<li>US 4.01 (Receive Event Notifications)</li>
+<li>US 4.01 (Recieve Event Emails)</li>
 </ul>
 <h3 id="could-have">Could have:</h3>
 <ul>
