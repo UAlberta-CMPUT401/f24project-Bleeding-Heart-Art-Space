@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Grid, Typography, Button, Box, Paper } from '@mui/material';
@@ -15,6 +16,67 @@ import ShiftDetailsDialog from '@pages/ShiftDetails/ShiftDetailsDialog';
 import useEventAdmin from '@lib/hooks/useEventAdmin';
 import ShiftCard from '@components/ShiftCard';
 
+
+/**
+ * EventDetails component displays detailed information about a specific event,
+ * including its title, start and end times, venue, address, and available shifts.
+ * Users can sign up for shifts, view shift details, and if they are event admins,
+ * they can edit the event and its shifts.
+ *
+ * @component
+ * @example
+ * // Usage example:
+ * // <Route path="/event-details/:id" element={<EventDetails />} />
+ *
+ * @returns {JSX.Element} The rendered EventDetails component.
+ *
+ * @remarks
+ * This component uses several hooks and context providers:
+ * - `useParams` from `react-router-dom` to get the event ID from the URL.
+ * - `useNavigate` from `react-router-dom` to navigate between pages.
+ * - `useState` and `useEffect` from `react` for state management and side effects.
+ * - `useAuth` from `@lib/context/AuthContext` to get the authenticated user.
+ * - `useBackendUserStore` from `@stores/useBackendUserStore` to get the backend user.
+ * - `useEventStore` from `@stores/useEventStore` to fetch and manage event data.
+ * - `useEventAdmin` from `@lib/hooks/useEventAdmin` to check if the user is an event admin.
+ *
+ * @dependencies
+ * This component relies on several external components and utilities:
+ * - `EditEventDialog` from `@pages/EditEvent/EditEventDialog` for editing events.
+ * - `SnackbarAlert` from `@components/SnackbarAlert` for displaying alerts.
+ * - `ConfirmationDialogNotes` from `@components/ConfirmationDialog` for confirming shift signups.
+ * - `ShiftDetailsDialog` from `@pages/ShiftDetails/ShiftDetailsDialog` for viewing shift details.
+ * - `ShiftCard` from `@components/ShiftCard` for displaying shift information.
+ * - Various utility functions from `@utils/fetch` for fetching data from the backend.
+ *
+ * @state {Event | undefined} event - The event details.
+ * @state {Shift[]} shifts - The list of shifts for the event.
+ * @state {VolunteerRole[]} roles - The list of volunteer roles.
+ * @state {ShiftSignupUser[]} userSignups - The list of shifts the user has signed up for.
+ * @state {ShiftSignupUser[]} eventSignups - The list of all signups for the event.
+ * @state {Shift | null} selectedShift - The currently selected shift for viewing details.
+ * @state {boolean} editDialogOpen - Whether the edit event dialog is open.
+ * @state {string} notes - Notes for the shift signup.
+ * @state {boolean} signupFailSnackbarOpen - Whether the signup failure snackbar is open.
+ * @state {string} signupFailSnackbarMessage - The message for the signup failure snackbar.
+ * @state {boolean} signupSuccessSnackbarOpen - Whether the signup success snackbar is open.
+ * @state {string} signupSuccessSnackbarMessage - The message for the signup success snackbar.
+ * @state {boolean} editSuccessSnackbarOpen - Whether the edit success snackbar is open.
+ * @state {string} editSuccessSnackbarMessage - The message for the edit success snackbar.
+ * @state {boolean} confirmDialogOpen - Whether the confirmation dialog for shift signup is open.
+ * @state {Shift | null} shiftToSignUp - The shift the user wants to sign up for.
+ * @state {boolean} shiftDialogOpen - Whether the shift details dialog is open.
+ *
+ * @function handleEdit - Opens the edit event dialog.
+ * @function handleEditDialogClose - Closes the edit event dialog.
+ * @function handleEditDialogCancel - Cancels the edit event dialog and resets notes.
+ * @function handleEditSuccess - Handles successful event edit and shows success snackbar.
+ * @function handleGoToShifts - Navigates to the edit shifts page.
+ * @function handleBackClick - Navigates back to the previous page.
+ * @function handleViewDetailsClick - Opens the shift details dialog for the selected shift.
+ * @function handleSignUpClick - Opens the confirmation dialog for shift signup.
+ * @function handleConfirmSignup - Confirms the shift signup and sends data to the backend.
+ */
 const EventDetails: React.FC = () => {
     const { id: eventIdStr } = useParams<{ id: string }>();
     const navigate = useNavigate();

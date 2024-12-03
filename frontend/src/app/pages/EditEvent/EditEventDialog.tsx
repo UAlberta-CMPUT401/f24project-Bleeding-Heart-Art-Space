@@ -20,6 +20,16 @@ interface EditEventDialogProps {
     onEditSuccess?: () => void;
 }
 
+/**
+ * Props for the EditEventDialog component.
+ * 
+ * @interface EditEventDialogProps
+ * @property {boolean} open - Indicates whether the dialog is open.
+ * @property {() => void} onClose - Callback function to handle the dialog close action.
+ * @property {() => void} onCancel - Callback function to handle the cancel action.
+ * @property {number | null} eventId - The ID of the event to be edited, or null if no event is selected.
+ * @property {() => void} [onEditSuccess] - Optional callback function to handle successful edit action.
+ */
 const EditEventDialog: React.FC<EditEventDialogProps> = ({ open, onClose, onCancel, eventId, onEditSuccess }) => {
     const { events, updateEvent, deleteEvent } = useEventStore();
     const { user } = useAuth();

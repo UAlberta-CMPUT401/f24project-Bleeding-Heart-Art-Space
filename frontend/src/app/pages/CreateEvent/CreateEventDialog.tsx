@@ -18,6 +18,18 @@ interface CreateEventDialogProps {
     endTime: string;
 }
 
+/**
+ * Props for the CreateEventDialog component.
+ * 
+ * @interface CreateEventDialogProps
+ * @property {boolean} open - Indicates whether the dialog is open.
+ * @property {() => void} onClose - Function to call when the dialog is closed.
+ * @property {string} startDate - The start date of the event.
+ * @property {string} endDate - The end date of the event.
+ * @property {string} startTime - The start time of the event.
+ * @property {string} endTime - The end time of the event.
+ */
+
 const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ open, onClose, startDate, endDate, startTime, endTime }) => {
     const [title, setTitle] = useState("");
     const [venue, setVenue] = useState("");
