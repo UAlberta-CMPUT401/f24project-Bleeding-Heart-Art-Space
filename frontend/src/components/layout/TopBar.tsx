@@ -5,6 +5,8 @@ import MenuItem from '@mui/material/MenuItem';
 import React from "react";
 import { Link, Outlet } from 'react-router-dom';
 import BHASLogo from '@assets/BHAS-Logo.png';
+import BHASLogoLight from '@assets/BHAS-Logo-White.png'
+import { useTheme } from "@mui/material/styles";
 
 type Page = {
   name: string;
@@ -23,6 +25,10 @@ const pages: Page[] = [
 
 const TopBar: React.FC = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+
+  const logo = isDarkMode ? BHASLogo : BHASLogoLight;
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -40,7 +46,7 @@ const TopBar: React.FC = () => {
 
             <Box className="logo-container" sx={{ display: { xs: 'none', md: 'flex'}, alignItems: 'center' }}>
               <img
-                src={BHASLogo}
+                src={logo}
                 alt="Logo"
                 className="navbar-logo"
                 style={{ height: '50px', marginRight: '20px', cursor: 'pointer' }}
@@ -119,7 +125,7 @@ const TopBar: React.FC = () => {
             </Box>
             <Box className="logo-container" sx={{ display: { xs: 'flex', md: 'none'}, alignItems: 'center' }}>
               <img
-                src={BHASLogo}
+                src={logo}
                 alt="Logo"
                 className="navbar-logo"
                 style={{ height: '50px', marginRight: '20px', cursor: 'pointer' }}
