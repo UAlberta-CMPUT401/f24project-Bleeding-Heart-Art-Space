@@ -28,7 +28,16 @@ export class App {
 
     this.initializeFirebaseSDK();
     this.initializeMiddlewares();
+
     this.initializeRoutes(routes);
+    // serve react in production
+    if (NODE_ENV === 'production') {
+      this.app.use(express.static(path.join(__dirname, 'dist')))
+      this.app.get('*', (_req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+      });
+    }
+
     this.initializeErrorHandling(); // Add error-handling middleware
     this.initializeCronJobs();
   }
@@ -48,15 +57,6 @@ export class App {
     this.app.use(express.json());
     if (NODE_ENV === 'development' || DOMAIN === undefined) {
       this.app.use(cors());
-    } else {
-      this.app.use(cors({
-        origin: [
-          `http://${DOMAIN}`,
-          `http://${DOMAIN}:80`, // HTTP
-          `https://${DOMAIN}:443`, // HTTPS
-          `http://${DOMAIN}:3001`, // Testing
-        ]
-      }))
     }
     const swaggerDocument = YAML.load(this.apiSpecPath);
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
