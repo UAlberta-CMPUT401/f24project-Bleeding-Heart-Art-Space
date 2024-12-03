@@ -2,13 +2,13 @@
 
 ## Executive Summary
 
-The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the challenges the organization faces with its current scheduling tool, which doesn’t quite fit their needs. This custom platform will streamline the process of organizing volunteer events and shifts, enabling administrators to create and manage events, track volunteer attendance, and send timely notifications. Volunteers will benefit from a simple user-friendly way to easily sign up for shifts, view upcoming events, and receive reminders. The primary users of this system will be the administrators and volunteers of Bleeding Heart Art Space. The platform will be used to simplify volunteer coordination, improve communication, and optimize event management, contributing to the smooth operation of the community art space.
+The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the challenges the organization faces with its current scheduling tool, which doesn’t quite fit their needs. This custom platform will streamline the process of organizing volunteer events and shifts, enabling administrators to create and manage events, track volunteer attendance, and send timely emails. Volunteers will benefit from a simple user-friendly way to easily sign up for shifts, view upcoming events, and receive reminders. The primary users of this system will be the administrators and volunteers of Bleeding Heart Art Space. The platform will be used to simplify volunteer coordination, improve communication, and optimize event management, contributing to the smooth operation of the community art space.
 
 ## Project Glossary
 
 - **Admin**: A user with elevated permissions responsible for managing events, assigning roles, and organizing schedules. Admins can create, edit, and delete events, assign volunteers to shifts, and oversee overall operations. They also have the ability to sign up for volunteer shifts themselves.
 
-- **Volunteer**: A general user who participates in events and activities organized by admins. Volunteers can view available events, sign up for shifts, check in and out of events, and receive notifications and reminders. 
+- **Volunteer**: A general user who participates in events and activities organized by admins. Volunteers can view available events, sign up for shifts, check in and out of events, and receive emails and reminders. 
 
 - **Artist**: A user responsible for requesting events that have to be approved by the admins. In some cases, the artist might also participate in events or activities organized by the volunteers and admins, especially if the event centers around an art exhibit or installation.
 
@@ -18,7 +18,7 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 
 - **Calendar**: A calendar meant to organize volunteers for an event. It may include multiple shifts and volunteers may use it to sign up for different time slots.
 
-- **Notifications**: Alerts sent to users via email or app to remind them of upcoming events or other important information. Volunteers and admins can subscribe or unsubscribe from notifications.
+- **Emails**: Alerts sent to users via email or app to remind them of upcoming events or other important information. Volunteers and admins can subscribe or unsubscribe from emails.
 
 - **Permissions**: Access rights assigned by an admin to other users. Permissions determine what actions a user can perform, such as creating events or managing schedules.
 
@@ -97,7 +97,7 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 > 2. Admin can sign up for available shifts in events they create or manage.
 > 3. Admin receives confirmation of sign-up via email or app notification.
 > 4. Admin can check in and check out of events like regular volunteers.
-> 5. Admin receives reminders and event notifications based on their preferences.
+> 5. Admin receives reminders and event emails based on their preferences.
 > 6. Admin’s participation is recorded alongside other volunteers, but they retain their admin privileges during the event.
 
 #### US 1.09 - Assign one-time volunteers
@@ -117,7 +117,7 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 > 1. Admin can view a list of event requests submitted by artists.
 > 2. Admin can approve or reject event requests.
 > 3. Approved events become visible in the event calendar for volunteers to sign up.
-> 4. Artists receive notifications once their event is approved or rejected.
+> 4. Artists receive emails once their event is approved or rejected.
 
 ### Volunteer User Stories:
 #### US 2.01 - Sign up to be a Volunteer
@@ -152,12 +152,12 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 > 1. Volunteers can sign up for available shifts in events.
 > 2. Volunteers receive confirmation of sign-up via email or app notification.
 
-#### US 2.05 - Manage Notifications Preferences
-> As a Volunteer, I want to manage my notifications so that I can receive or opt out of reminders.
+#### US 2.05 - Manage Email Preferences
+> As a Volunteer, I want to manage my emails so that I can receive or opt out of reminders.
 >
 > Acceptance Criteria:
 >
-> 1. Volunteers can subscribe or unsubscribe to email or app notifications.
+> 1. Volunteers can subscribe or unsubscribe to email or app emails.
 > 2. Volunteers receive event reminders based on their preferences.
 
 #### US 2.06 - Check into Events
@@ -220,7 +220,7 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 > Acceptance Criteria:
 >
 > 1. Artists can sign up as the primary overseer of the event.
-> 2. Artists receive reminders and notifications for the event.
+> 2. Artists receive reminders and emails for the event.
 > 3. Artists can manage volunteers during the event.
 
 #### US 3.03 - Create Shifts for the Event
@@ -245,15 +245,15 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 > Acceptance Criteria:
 >
 > 1. Artists can edit event details such as time, location, description, and number of required volunteers.
-> 2. Changes to the event trigger notifications to volunteers who have signed up for affected shifts.
+> 2. Changes to the event trigger emails to volunteers who have signed up for affected shifts.
 
 ### General User Stories:
-#### US 4.01 - Receive Event Notifications
-> As a User, I want to receive notifications for upcoming events so that I am reminded of my commitments.
+#### US 4.01 - Receive Event emails
+> As a User, I want to receive emails for upcoming events so that I am reminded of my commitments.
 >
 > Acceptance Criteria:
 >
-> 1. Users can opt in to receive notifications via email or app.
+> 1. Users can opt in to receive emails via email or app.
 > 2. Reminders are sent at customizable intervals (e.g., a day before, an hour before the event).
 
 #### US 4.02 - View Calendar
@@ -277,9 +277,9 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 - US 4.02 (View Calendar)
 
 ### Should have:
-- US 1.07 (Send Notifications or Reminders)
+- US 1.07 (Send emails or Reminders)
 - US 1.10 (Approve Artist Event Requests)
-- US 2.05 (Manage Notifications Preferences)
+- US 2.05 (Manage emails Preferences)
 - US 2.06 (Check into Events)
 - US 2.07 (Check out of Events)
 - US 2.08 (Automatic Check-out When Event Ends)
@@ -288,7 +288,7 @@ The Volunteer Management Platform for Bleeding Heart Art Space aims to solve the
 - US 3.03 (Create Shifts for the Event)
 - US 3.04 (Assign One-Time Volunteers)
 - US 3.05 (Edit Events)
-- US 4.01 (Receive Event Notifications)
+- US 4.01 (Recieve Event Emails)
 
 ### Could have:
 - US 1.06 (Manage Volunteer Attendance)
