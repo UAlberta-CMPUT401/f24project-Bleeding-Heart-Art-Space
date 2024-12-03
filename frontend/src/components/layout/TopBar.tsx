@@ -38,14 +38,14 @@ const TopBar: React.FC = () => {
         <Container>
           <Toolbar disableGutters>
 
-            <div className="logo-container" style={{ display: 'flex', alignItems: 'center' }}>
+            <Box className="logo-container" sx={{ display: { xs: 'none', md: 'flex'}, alignItems: 'center' }}>
               <img
                 src={BHASLogo}
                 alt="Logo"
                 className="navbar-logo"
                 style={{ height: '50px', marginRight: '20px', cursor: 'pointer' }}
               />
-            </div>
+            </Box>
 
             {/* Medium+ Screen Size */}
             <Typography
@@ -107,14 +107,23 @@ const TopBar: React.FC = () => {
               >
                 {pages.map((page) => (
                   <MenuItem 
+                    component={Link}
                     key={page.name} 
                     onClick={handleCloseNavMenu}
-                    href={page.route}
+                    to={page.route}
                   >
                     <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
                   </MenuItem>
                 ))}
               </Menu>
+            </Box>
+            <Box className="logo-container" sx={{ display: { xs: 'flex', md: 'none'}, alignItems: 'center' }}>
+              <img
+                src={BHASLogo}
+                alt="Logo"
+                className="navbar-logo"
+                style={{ height: '50px', marginRight: '20px', cursor: 'pointer' }}
+              />
             </Box>
             <Typography
               variant="h5"
