@@ -155,7 +155,7 @@ Estimated Sprint Velocity: **14**
 | Deploy for production | Deployment  | Chase Johnson, Rishit Gajjar | Dec 2 | 
 | Give artist admin permission for requested events | US 3.05 | Chase Johnson | Nov 25 |
 | Artist add shifts to event for event requests | US 3.05 | Chase Johnson, Rishit Gajjar | Nov 25 |
-| Send emails | Anhadpreet Singh | Nov 25 | 
+| Send emails | 4.01 | Anhadpreet Singh | Nov 25 | 
 | Admin edit Shifts                                | US 2.04 | Samuel Chan | Nov 25 | 
 | Clean up shifts view in overview | US 1.05 | Samuel Chan | Nov 25 |
 | Shift notes | US 2.04 | Samuel Chan | Nov 25 | Tag for notifs and and icon badge | US 4.01 | Samuel Chan | Nov 25 | 
