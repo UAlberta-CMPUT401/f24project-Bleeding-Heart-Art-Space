@@ -56,7 +56,19 @@ const Signup: React.FC = () => {
 
     } catch (error: any) {
       console.error("Error signing up:", error);
-      setError(error.message); 
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          setError("Email is already in use.");
+          break;
+        case "auth/weak-password":
+          setError("Password should be at least 6 characters.");
+          break;
+        case "auth/invalid-email":
+            setError("Invalid Email.");
+            break;
+        default:
+          setError(error.message);
+      }
     } finally {
       setIsProcessing(false);
     }
