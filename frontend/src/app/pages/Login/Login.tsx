@@ -55,7 +55,13 @@ const Login: React.FC = () => {
       navigate("/overview"); 
     } catch (error: any) {
       console.error("Error logging in:", error);
-      setError(error.message);
+      switch (error.code) {
+        case "auth/invalid-credential":
+          setError("Invalid Email or Password. Please try again.");
+          break;
+        default:
+          setError("Something went wrong. Please try again.");
+      }
     }
   };
 
