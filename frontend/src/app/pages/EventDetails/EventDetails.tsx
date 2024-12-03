@@ -321,9 +321,10 @@ const EventDetails: React.FC = () => {
                                         {signedUp && (
                                             <Typography
                                                 variant="body2"
+                                                color='textSecondary'
                                                 className={styles.centeredFlex}
                                                 gutterBottom
-                                                style={{ fontStyle: 'italic', color: '#ffffff97' }}
+                                                style={{ fontStyle: 'italic'}}
                                                 align='center'
                                             >
                                                 Note: To cancel signup, please contact admin.

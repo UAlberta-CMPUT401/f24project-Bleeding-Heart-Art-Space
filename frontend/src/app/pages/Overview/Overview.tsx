@@ -195,9 +195,11 @@ const OverviewPage: React.FC = () => {
                                 {signup.notes && (
                                     <Typography
                                         variant="body2"
+                                        color='textSecondary'
                                         className={styles.centeredFlex}
                                         gutterBottom
-                                        style={{ fontStyle: 'italic', color: '#6c757d' }}
+                                        style={{ fontStyle: 'italic'}}
+                                        align='center'
                                     >
                                         Note: {signup.notes}
                                     </Typography>
