@@ -125,7 +125,7 @@ const TopBar: React.FC = () => {
             </Box>
             <Box className="logo-container" sx={{ display: { xs: 'flex', md: 'none'}, alignItems: 'center' }}>
               <img
-                src={BHASLogo}
+                src={logo}
                 alt="Logo"
                 className="navbar-logo"
                 style={{ height: '50px', marginRight: '20px', cursor: 'pointer' }}
