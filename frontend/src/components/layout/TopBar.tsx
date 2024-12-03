@@ -4,6 +4,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import React from "react";
 import { Link, Outlet } from 'react-router-dom';
+import BHASLogo from '@assets/BHAS-Logo.png';
 
 type Page = {
   name: string;
@@ -36,6 +37,16 @@ const TopBar: React.FC = () => {
       <AppBar position="static">
         <Container>
           <Toolbar disableGutters>
+
+            <div className="logo-container" style={{ display: 'flex', alignItems: 'center' }}>
+              <img
+                src={BHASLogo}
+                alt="Logo"
+                className="navbar-logo"
+                style={{ height: '50px', marginRight: '20px', cursor: 'pointer' }}
+              />
+            </div>
+
             {/* Medium+ Screen Size */}
             <Typography
               variant="h6"
