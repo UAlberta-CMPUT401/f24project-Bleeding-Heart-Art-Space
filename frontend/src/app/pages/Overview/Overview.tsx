@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Typography, Card, Button, Stack, Paper } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
@@ -12,6 +13,51 @@ import { format } from 'date-fns';
 import ShiftCard from '@components/ShiftCard';
 import { Link } from 'react-router-dom';
 
+/**
+ * OverviewPage component displays the user's signed-up shifts and upcoming events.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <OverviewPage />
+ * )
+ * 
+ * @returns {JSX.Element} The rendered component.
+ * 
+ * @description
+ * This component fetches and displays the user's signed-up shifts and upcoming events for the next two weeks.
+ * It allows the user to check in and check out of their shifts and view event details.
+ * 
+ * @hook
+ * useEffect - Fetches volunteer roles, upcoming events, and shifts when the component mounts or the user changes.
+ * useEffect - Fetches event shifts and signups when upcoming events or the user changes.
+ * useEffect - Updates the current time every second.
+ * 
+ * @state {Event[]} upcomingEvents - List of upcoming events.
+ * @state {ShiftSignupUser[]} userSignups - List of user's signed-up shifts.
+ * @state {VolunteerRole[]} roles - List of volunteer roles.
+ * @state {boolean} snackbarOpen - State to control the visibility of the snackbar.
+ * @state {string} snackbarMessage - Message to be displayed in the snackbar.
+ * @state {'success' | 'error' | 'info' | 'warning'} snackbarSeverity - Severity of the snackbar message.
+ * @state {Date} currentTime - Current time, updated every second.
+ * @state {{ [eventId: number]: Shift[] }} eventShiftsMap - Map of event IDs to their respective shifts.
+ * @state {{ [eventId: number]: ShiftSignupUser[] }} eventSignupsMap - Map of event IDs to their respective signups.
+ * 
+ * @function handleCheckIn - Handles the check-in process for a shift.
+ * @param {number} signupId - The ID of the shift signup.
+ * 
+ * @function handleCheckOut - Handles the check-out process for a shift.
+ * @param {number} signupId - The ID of the shift signup.
+ * 
+ * @requires @mui/material - Material-UI components.
+ * @requires @mui/icons-material - Material-UI icons.
+ * @requires @lib/context/AuthContext - Authentication context.
+ * @requires @utils/fetch - Utility functions for fetching data.
+ * @requires date-fns - Date utility functions.
+ * @requires @components/SnackbarAlert - SnackbarAlert component.
+ * @requires @components/ShiftCard - ShiftCard component.
+ * @requires react-router-dom - React Router DOM for navigation.
+ */
 const OverviewPage: React.FC = () => {
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
     const [userSignups, setUserSignups] = useState<ShiftSignupUser[]>([]);

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useAuth } from '@lib/context/AuthContext';
@@ -11,6 +12,59 @@ const cols: GridColDef[] = [
     { field: 'name', headerName: 'Volunteer Role', flex: 1 },
 ];
 
+/**
+ * VolunteerRoles component manages the creation and deletion of volunteer roles.
+ * 
+ * @component
+ * 
+ * @returns {React.FC} A React functional component.
+ * 
+ * @remarks
+ * This component uses Material-UI components and the MUI DataGrid for displaying and managing volunteer roles.
+ * It allows users to create new volunteer roles and delete selected roles.
+ * 
+ * @example
+ * ```tsx
+ * import VolunteerRoles from './VolunteerRoles';
+ * 
+ * const App = () => (
+ *   <div>
+ *     <VolunteerRoles />
+ *   </div>
+ * );
+ * 
+ * export default App;
+ * ```
+ * 
+ * @requires @mui/material
+ * @requires @mui/x-data-grid
+ * @requires @lib/context/AuthContext
+ * @requires @stores/useVolunteerRoleStore
+ * @requires @utils/fetch
+ * @requires @components/ConfirmationDialog
+ * @requires @components/SnackbarAlert
+ * 
+ * @function
+ * @name VolunteerRoles
+ * 
+ * @property {Object} user - The authenticated user object from the AuthContext.
+ * @property {boolean} createDialogOpen - State to manage the visibility of the create role dialog.
+ * @property {boolean} confirmDeleteOpen - State to manage the visibility of the delete confirmation dialog.
+ * @property {string} roleName - State to manage the name of the role being created.
+ * @property {Array<VolunteerRole>} volunteerRoles - List of volunteer roles from the store.
+ * @property {Function} addVolunteerRole - Function to add a new volunteer role.
+ * @property {Function} deleteVolunteerRoles - Function to delete selected volunteer roles.
+ * @property {Array<VolunteerRole>} selectedRoles - List of selected volunteer roles for deletion.
+ * @property {boolean} snackbarOpen - State to manage the visibility of the snackbar alert.
+ * @property {string} snackbarMessage - Message to be displayed in the snackbar alert.
+ * @property {'success' | 'error' | 'info' | 'warning'} snackbarSeverity - Severity level of the snackbar alert.
+ * 
+ * @method openDialog - Opens the create role dialog.
+ * @method closeDialog - Closes the create role dialog and resets the role name.
+ * @method createRole - Creates a new volunteer role if the role name is valid and the user is authenticated.
+ * @method handleRoleSelect - Handles the selection of roles in the DataGrid.
+ * @method deleteSelectedRoles - Deletes the selected volunteer roles if the user is authenticated.
+ */
 const VolunteerRoles: React.FC = () => {
     const { user } = useAuth();
     const [createDialogOpen, setCreateDialogOpen] = useState(false);

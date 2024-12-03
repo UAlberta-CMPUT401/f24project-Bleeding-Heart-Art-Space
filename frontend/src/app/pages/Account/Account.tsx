@@ -1,19 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Typography,
-  Paper,
-  Box,
-  IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Alert,
-  InputAdornment,
-  Snackbar,
-} from '@mui/material';
+import {Button,Typography,Paper,Box,IconButton,Dialog,DialogActions,DialogContent,DialogTitle,TextField,Alert,InputAdornment,Snackbar,} from '@mui/material';
 import { Edit as EditIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { auth } from '@utils/firebase';
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, sendEmailVerification } from 'firebase/auth';
@@ -22,6 +9,69 @@ import { useBackendUserStore } from '@stores/useBackendUserStore';
 import { updateUser, getData } from '@utils/fetch';
 import { useAuth } from '@lib/context/AuthContext';
 
+/**
+ * Account component allows users to view and edit their account information,
+ * including first name, last name, phone number, and password. It also provides
+ * functionality to sign out and resend email verification.
+ *
+ * @component
+ * @example
+ * return (
+ *   <Account />
+ * )
+ *
+ * @returns {React.FC} A React functional component that renders the account information page.
+ *
+ * @remarks
+ * This component uses various hooks and Material-UI components to manage state and UI.
+ * It interacts with Firebase for authentication and user data management.
+ *
+ * @hook
+ * - useNavigate: To navigate between routes.
+ * - useBackendUserStore: To access and update backend user data.
+ * - useAuth: To access the authenticated user.
+ * - useState: To manage local state.
+ * - useEffect: To fetch total hours worked and check email verification status on component mount.
+ *
+ * @function
+ * - togglePasswordVisibility: Toggles the visibility of password fields.
+ * - handleSignOut: Signs out the user and navigates to the home page.
+ * - handleEdit: Opens the dialog for editing account information.
+ * - handleClose: Closes the edit dialog.
+ * - handleSnackbarClose: Closes the snackbar notification.
+ * - handleResendVerification: Resends the email verification to the user.
+ * - checkEmailVerificationStatus: Checks if the user's email is verified.
+ * - handleSave: Saves the updated account information and password.
+ * - fetchTotalHoursWorked: Fetches the total hours worked by the user.
+ *
+ * @state
+ * - totalHours: The total hours worked by the user.
+ * - open: Boolean state to control the visibility of the edit dialog.
+ * - firstName: The first name of the user.
+ * - lastName: The last name of the user.
+ * - phone: The phone number of the user.
+ * - email: The email address of the user.
+ * - error: Error message to display in case of any error.
+ * - totalHoursError: Error message for total hours fetch failure.
+ * - isLoading: Boolean state to indicate loading state during save operation.
+ * - currentPassword: The current password of the user.
+ * - newPassword: The new password to be set.
+ * - confirmPassword: The confirmation of the new password.
+ * - showCurrentPassword: Boolean state to toggle visibility of current password field.
+ * - showNewPassword: Boolean state to toggle visibility of new password field.
+ * - showConfirmPassword: Boolean state to toggle visibility of confirm password field.
+ * - emailVerified: Boolean state to indicate if the user's email is verified.
+ * - isResendDisabled: Boolean state to disable the resend verification button temporarily.
+ * - snackbarOpen: Boolean state to control the visibility of the snackbar notification.
+ *
+ * @dependencies
+ * - @mui/material: Material-UI components for UI elements.
+ * - @mui/icons-material: Material-UI icons.
+ * - @utils/firebase: Firebase utilities for authentication.
+ * - @stores/useBackendUserStore: Custom hook to access backend user store.
+ * - @utils/fetch: Utility functions for API calls.
+ * - @lib/context/AuthContext: Custom hook to access authentication context.
+ */
 const Account: React.FC = () => {
   const navigate = useNavigate();
   const { backendUser, setBackendUser } = useBackendUserStore();

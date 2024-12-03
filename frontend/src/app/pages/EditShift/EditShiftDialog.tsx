@@ -1,18 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  IconButton,
-} from '@mui/material';
+import {Dialog,DialogTitle,DialogContent,DialogActions,Button,Grid,FormControl,InputLabel,Select,MenuItem,TextField,IconButton,} from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useVolunteerShiftStore } from '@stores/useVolunteerShiftStore';
 import { VolunteerRole, NewShift, Shift, isOk, updateShift, deleteShift } from '@utils/fetch';
@@ -30,6 +18,20 @@ interface EditShiftDialogProps {
   onEditSuccess?: () => void;
   onDeleteSuccess?: () => void;
 }
+
+/**
+ * EditShiftDialog component allows users to edit or delete a volunteer shift.
+ * 
+ * @param {Object} props - The properties object.
+ * @param {boolean} props.open - Determines if the dialog is open.
+ * @param {() => void} props.onClose - Function to call when the dialog is closed.
+ * @param {Shift | null} props.shift - The shift to be edited.
+ * @param {VolunteerRole[]} props.roles - List of available volunteer roles.
+ * @param {() => void} [props.onEditSuccess] - Optional callback function to call on successful edit.
+ * @param {() => void} [props.onDeleteSuccess] - Optional callback function to call on successful delete.
+ * 
+ * @returns {React.FC} The EditShiftDialog component.
+ */
 
 const EditShiftDialog: React.FC<EditShiftDialogProps> = ({
   open,

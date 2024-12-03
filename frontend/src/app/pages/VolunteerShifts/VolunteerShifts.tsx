@@ -17,6 +17,41 @@ const emptyNewShift: NewShift = {
     description: undefined,
 }
 
+
+/**
+ * `VolunteerShifts` is a React functional component that allows users to create and manage volunteer shifts for an event.
+ * 
+ * @component
+ * 
+ * @returns {JSX.Element} The rendered component.
+ * 
+ * @remarks
+ * This component fetches volunteer roles and event shifts based on the event ID and user authentication status.
+ * It provides functionality to add new shifts, save them, and edit or delete existing shifts.
+ * 
+ * @example
+ * ```tsx
+ * <VolunteerShifts />
+ * ```
+ * 
+ * @requires useParams - To extract the event ID from the URL.
+ * @requires useState - To manage local state for roles, new shifts, saved shifts, and UI state.
+ * @requires useAuth - To get the authenticated user.
+ * @requires useLocation - To get the event start and end times from the location state.
+ * @requires useNavigate - To navigate back to the previous page.
+ * @requires useEffect - To fetch data when the component mounts or dependencies change.
+ * 
+ * @function handleAddShift - Adds a new shift to the list of shifts to be created.
+ * @function handleSaveShifts - Saves the created shifts to the backend.
+ * @function handleBackClick - Navigates back to the previous page.
+ * @function handleEditClick - Opens the edit dialog for a selected shift.
+ * @function handleEditDialogClose - Closes the edit dialog.
+ * @function handleDeleteSuccess - Refreshes the list of saved shifts after a successful deletion.
+ * 
+ * @param {Object} props - The component props.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 const VolunteerShifts: React.FC = () => {
     const { id: eventId } = useParams<{ id: string }>();
     const [roles, setRoles] = useState<VolunteerRole[]>([]);
