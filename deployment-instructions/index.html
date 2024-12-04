@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Deployment Instructions - Bleeding Heart Art Space</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Bleeding Heart Art Space</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../project-requirements/" class="nav-link">Project Requirements</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../software-design/" class="nav-link">Software Design</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../project-management/" class="nav-link">Project Management</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../teamwork/" class="nav-link">Teamwork</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../requirements-traceability-matrix/" class="nav-link">Tests Matrix</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../UI-UX-and-Accessibility-Principles/" class="nav-link">UI/UX</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#deployment-instructions" class="nav-link">Deployment Instructions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#system-requirements" class="nav-link">System Requirements</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#prerequisites" class="nav-link">Prerequisites</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#1-firewall-configuration" class="nav-link">1. Firewall Configuration</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#2-firebase-authentication-setup" class="nav-link">2. Firebase Authentication Setup</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#3-sendgrid-setup" class="nav-link">3. SendGrid Setup</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#initial-server-setup" class="nav-link">Initial Server Setup</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#1-update-the-system-packages" class="nav-link">1. Update the system packages:</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#2-install-docker" class="nav-link">2. Install Docker</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#application-deployment" class="nav-link">Application Deployment</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#1-transfer-application-files-to-server" class="nav-link">1. Transfer application files to server:</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#2-on-the-server-extract-the-files" class="nav-link">2. On the server, extract the files:</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#3-configure-environment-variables" class="nav-link">3. Configure environment variables:</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#4-deploy-with-docker-compose" class="nav-link">4. Deploy with Docker Compose</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#5-enable-ssl-recommended" class="nav-link">5. Enable SSL (Recommended)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="deployment-instructions">Deployment Instructions</h1>
+<h1 id="system-requirements">System Requirements</h1>
+<ul>
+<li>Ubuntu Server 20.04 LTS or newer  </li>
+<li>Minimum 4GB RAM  </li>
+<li>20GB available disk space</li>
+</ul>
+<p>The deployment instructions provided in this document have been tested and verified on Ubuntu Server 20.04 LTS. However, please note:</p>
+<ul>
+<li>Other Ubuntu versions (18.04+) should work with minimal or no modifications  </li>
+<li>Other Linux distributions (Debian, CentOS, etc.) should also work but may require:  <ul>
+<li>Different package manager commands (apt → yum/dnf)  </li>
+<li>Slightly different Docker installation steps  </li>
+<li>Modified firewall configurations  </li>
+<li>Different service management commands</li>
+</ul>
+</li>
+</ul>
+<p>These instructions are written for deployment via direct terminal access to a Linux server. The steps assume you have root/sudo access to the server and will be managing the Docker containers directly.</p>
+<p>While these instructions focus on direct server deployment, the Docker configuration provided should also be compatible with most cloud platforms that support Docker container management. The actual deployment steps would differ based on your chosen cloud platform's interfaces and tools, but the core Docker and application configuration would remain largely the same.</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<h2 id="1-firewall-configuration">1. Firewall Configuration</h2>
+<p>Ensure the following ports are open in your server firewall:</p>
+<ul>
+<li>Port 80 (HTTP): Required for web traffic  </li>
+<li>Port 443 (HTTPS): Required if using SSL  </li>
+<li>Port 22 (SSH): Required for server access</li>
+</ul>
+<h2 id="2-firebase-authentication-setup">2. Firebase Authentication Setup</h2>
+<h3 id="step-1-create-firebase-project">Step 1: Create Firebase Project</h3>
+<ul>
+<li>Visit Firebase Console (<a href="https://console.firebase.google.com">https://console.firebase.google.com</a>)  </li>
+<li>Click "Create a project" or select existing project  </li>
+<li>Follow the setup wizard to create your project</li>
+</ul>
+<h3 id="step-2-enable-authentication">Step 2: Enable Authentication</h3>
+<ul>
+<li>In Firebase Console, click "Authentication"</li>
+</ul>
+<p><img alt="" src="../images/deployment-instructions-images/image1.png" /></p>
+<ul>
+<li>Click "Get Started"  </li>
+<li>Enable Email/Password authentication:  <ul>
+<li>Click "Sign-in method"  </li>
+<li>Click "Email/Password"  </li>
+<li>Toggle "Enable"  </li>
+<li>Save</li>
+</ul>
+</li>
+</ul>
+<p><img alt="" src="../images/deployment-instructions-images/image2.png" />
+<img alt="" src="../images/deployment-instructions-images/image3.png" /></p>
+<ul>
+<li>Enable Google authentication:  <ul>
+<li>Click "Sign-in method"  </li>
+<li>Click “Add new provider”  </li>
+<li>Click "Google"  </li>
+<li>Select support email  </li>
+<li>Save  </li>
+<li>Click “Settings” &gt; “Authorized Domains” &gt; “Add domain” and add your domain</li>
+</ul>
+</li>
+</ul>
+<p><img alt="" src="../images/deployment-instructions-images/image4.png" />
+<img alt="" src="../images/deployment-instructions-images/image5.png" /></p>
+<h3 id="step-3-create-web-app">Step 3: Create Web App</h3>
+<ul>
+<li>Click gear icon ⚙️ (Project Settings)  </li>
+<li>Under "Your apps", click web icon (&lt;/&gt;)  </li>
+<li>Register app with a nickname  </li>
+<li>Copy the provided firebaseConfig variables for the frontend environment file (described in section <a href="#3-configure-environment-variables">Configure environment variables</a>)</li>
+</ul>
+<p><img alt="" src="../images/deployment-instructions-images/image6.png" />
+<img alt="" src="../images/deployment-instructions-images/image7.png" /></p>
+<h3 id="step-4-get-admin-sdk-credentials">Step 4: Get Admin SDK Credentials</h3>
+<ul>
+<li>In Project Settings, go to "Service accounts"  </li>
+<li>Click "Generate new private key"  </li>
+<li>Save the JSON file securely  </li>
+<li>This file will be used for Firebase credentials JSON file used on your server <code>yourapplication/backend/firebase-credentials.json</code> (described in section <a href="#3-configure-environment-variables">Configure environment variables</a>)</li>
+</ul>
+<p><img alt="" src="../images/deployment-instructions-images/image8.png" /></p>
+<h2 id="3-sendgrid-setup">3. SendGrid Setup</h2>
+<h3 id="step-1-create-a-sendgrid-account">Step 1: Create a SendGrid Account</h3>
+<ol>
+<li>Go to the <a href="https://sendgrid.com/">SendGrid website</a> and sign up for an account.  </li>
+<li>Verify your email address and complete the required account setup.</li>
+</ol>
+<h3 id="step-2-generate-an-api-key">Step 2: Generate an API Key</h3>
+<ol>
+<li>Log in to your SendGrid dashboard.  </li>
+<li>Navigate to the <strong>API Keys</strong> section:  <ul>
+<li>Go to <strong>Settings</strong> &gt; <strong>API Keys</strong>.  </li>
+</ul>
+</li>
+<li>Click on <strong>Create API Key</strong>.  </li>
+<li>Enter a name for the API key (e.g., <code>MyApp-SendGrid-API</code>).  </li>
+<li>Assign <strong>Full Access</strong> or <strong>Restricted Access</strong> permissions based on your requirements.  </li>
+<li>Click <strong>Create &amp; View</strong> to generate the key.  </li>
+<li>Copy the API key and save it securely. You won't be able to view it again.</li>
+</ol>
+<p><img alt="" src="../images/deployment-instructions-images/image9.jpg" /></p>
+<p><img alt="" src="../images/deployment-instructions-images/image10.jpg" /></p>
+<h3 id="step-3-add-sendgrid-to-your-project">Step 3: Add SendGrid to Your Project</h3>
+<ol>
+<li>Install the SendGrid library for your application:  <ul>
+<li>For Node.js: Run the command:  </li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-bash">npm install @sendgrid/mail
+</code></pre>
+<ol>
+<li>
+<p>Set up the SendGrid API key in your environment variables (described in section <a href="#3-configure-environment-variables">Configure environment variables</a>):</p>
+</li>
+<li>
+<p>Add the following to your <code>.env</code> file in backend:<br />
+        1. <code>SENDGRID_API_KEY</code>=<code>&lt;your-sendgrid-api-key&gt;</code><br />
+        2. <code>SENDGRID_FROM_EMAIL</code>=<code>&lt;your-verified-sender-email&gt;</code></p>
+<ul>
+<li>Replace <code>&lt;your-sendgrid-api-key&gt;</code> with your API key.  </li>
+<li>Replace <code>&lt;your-verified-sender-email&gt;</code> with the email address you’ll use as the sender (this email must be verified in SendGrid).</li>
+</ul>
+</li>
+</ol>
+<h3 id="step-4-verify-your-sender-identity">Step 4: Verify Your Sender Identity</h3>
+<ol>
+<li>In the SendGrid dashboard, navigate to <strong>Settings</strong> &gt; <strong>Sender Authentication</strong>.  </li>
+<li>Set up either:  <ul>
+<li><strong>Single Sender Verification</strong>:  <ul>
+<li>Add your email address (e.g., <code>example@domain.com</code>) and verify it.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><img alt="" src="../images/deployment-instructions-images/image11.jpg" /></p>
+<h1 id="initial-server-setup">Initial Server Setup</h1>
+<h2 id="1-update-the-system-packages">1. Update the system packages:</h2>
+<pre><code class="language-bash">sudo apt update 
+sudo apt upgrade -y
+</code></pre>
+<h2 id="2-install-docker">2. Install Docker</h2>
+<h4 id="1-set-up-dockers-apt-repository">1. Set up Docker's <code>apt</code> repository.</h4>
+<pre><code class="language-bash"># Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release &amp;&amp; echo &quot;$VERSION_CODENAME&quot;) stable&quot; | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+sudo apt-get update
+</code></pre>
+<h4 id="2-install-the-docker-packages">2. Install the Docker packages.</h4>
+<pre><code class="language-bash">sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+<h4 id="3-verify-that-the-installation-is-successful-by-running-the-hello-world-image">3. Verify that the installation is successful by running the <code>hello-world</code> image:</h4>
+<pre><code class="language-bash">sudo docker run hello-world
+</code></pre>
+<p>This command downloads a test image and runs it in a container. When the container runs, it prints a confirmation message and exits.</p>
+<p>For more info: <a href="https://docs.docker.com/engine/install/ubuntu/">https://docs.docker.com/engine/install/ubuntu/</a> </p>
+<h1 id="application-deployment">Application Deployment</h1>
+<h2 id="1-transfer-application-files-to-server">1. Transfer application files to server:</h2>
+<p>This step is done on your local machine:</p>
+<h3 id="from-linuxmacos">From Linux/macOS</h3>
+<pre><code class="language-bash"># From your local terminal
+scp your-application.tar.gz user@your-server-ip:/home/user/
+</code></pre>
+<h3 id="from-windows">From Windows</h3>
+<pre><code class="language-bash"># Using PowerShell/Command Prompt with OpenSSH
+scp your-application.tar.gz user@your-server-ip:/home/user/
+
+# OR if using PuTTY's pscp
+pscp your-application.tar.gz user@your-server-ip:/home/user/
+
+# Note: If using Windows Terminal or PowerShell, you might need to specify the full path:
+# C:\Users\YourUsername\path\to\your-application.tar.gz
+</code></pre>
+<h2 id="2-on-the-server-extract-the-files">2. On the server, extract the files:</h2>
+<pre><code class="language-bash"># For .tar.gz
+cd /home/user
+tar -xzf your-application.tar.gz
+cd your-application
+</code></pre>
+<h2 id="3-configure-environment-variables">3. Configure environment variables:</h2>
+<p>For both the frontend and backend applications, you'll need to set up environment variables using the provided example files as templates.</p>
+<h3 id="frontend-configuration">Frontend Configuration:</h3>
+<pre><code class="language-bash"># Create production environment file from example
+cp frontend/.env.example frontend/.env.production.local
+
+# Edit the environment file with your production values
+nano frontend/.env.production.local
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-bash"># Backend site
+VITE_API_URL=http://example.com/api
+
+# Firebase Config
+VITE_FB_API_KEY=aBcDeFg
+VITE_FB_AUTH_DOMAIN=bleeding-heart-art-space.firebaseapp.com
+VITE_FB_PROJECTID=bleeding-heart-art-space
+VITE_FB_STORAGEBUCKET=bleeding-heart-art-space.appspot.com
+VITE_FB_MESSAGINGSENDERID=123456789
+VITE_FB_APPID=1:123456789:web:1a2b3c4d5e
+</code></pre>
+<ul>
+<li><code>VITE_API_URL</code>: must be <code>http://&lt;domain or ip&gt;/api</code>  </li>
+<li>Copy each Firebase config variable from section <a href="#step-3-create-web-app">Create Web App</a></li>
+</ul>
+<h3 id="backend-configuration">Backend Configuration:</h3>
+<pre><code class="language-bash"># Create production environment file from example
+cp backend/.env.example backend/.env.production.local
+
+# Edit the environment file with your production values
+nano backend/.env.production.local
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-bash"># port to run application on
+PORT=80
+# the lowest priority of logs that is displayed (usually `debug` for development and `warn` in production)
+# log levels - error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
+LOG_LEVEL=warn
+# database host name (usually `localhost` for development and `db` in production)
+DB_NAME=bhas
+# postgres port (default 5432 for postgres)
+DB_HOST=db
+# postgres database name
+DB_USER=admin
+# postgres username
+DB_PORT=5432
+# postgres password for username
+DB_PASSWORD=password
+# path to firebase credentials json file
+GOOGLE_APPLICATION_CREDENTIALS=./firebase-credentials.json
+# sendgrid email api
+SENDGRID_API_KEY=SG.aBcDeFgHiJkLmNoPqRsTuVwXyZ
+SENDGRID_FROM_EMAIL=info@email.com
+</code></pre>
+<p>The variables that should be configured are:</p>
+<ul>
+<li><code>DB_USER</code>: any username (or keep as <code>admin</code>).  </li>
+<li><code>DB_PASSWORD</code>: must be a secure password.  </li>
+<li><code>GOOGLE_APPLICATION_CREDENTIALS</code>: create a new Firebase credentials JSON file described in section <a href="#step-4-get-admin-sdk-credentials">Get Admin SDK Credentials</a> and copy it to the server to the location <code>backend/firebase-credentials.json</code> of the application.  </li>
+<li><code>SENDGRID_API_KEY</code>: the api key obtained from section <a href="#3-sendgrid-setup">SendGrid Setup</a>.  </li>
+<li><code>SENDGRID_FROM_EMAIL</code>: the email being used with SendGrid.</li>
+</ul>
+<p>All other variables do not need modification.</p>
+<h2 id="4-deploy-with-docker-compose">4. Deploy with Docker Compose</h2>
+<p>From the application root directory, start docker:</p>
+<pre><code class="language-bash">sudo docker compose --env-file ./backend/.env.production.local up --build -d
+</code></pre>
+<h2 id="5-enable-ssl-recommended">5. Enable SSL (Recommended)</h2>
+<h4 id="1-install-nginx-and-certbot">1. Install NGINX and Certbot:</h4>
+<pre><code class="language-bash">sudo apt update
+sudo apt install nginx certbot python3-certbot-nginx
+</code></pre>
+<h4 id="2-createedit-nginx-configuration-file">2. Create/edit NGINX configuration file:</h4>
+<pre><code class="language-bash">sudo nano /etc/nginx/sites-available/your-domain.conf
+</code></pre>
+<h4 id="3-add-basic-nginx-configuration">3. Add basic NGINX configuration:</h4>
+<pre><code class="language-bash">server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:your_app_port;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+</code></pre>
+<h4 id="4-create-symbolic-link">4. Create symbolic link:</h4>
+<pre><code class="language-bash">sudo ln -s /etc/nginx/sites-available/your-domain.conf /etc/nginx/sites-enabled/
+</code></pre>
+<h4 id="5-test-nginx-configuration">5. Test NGINX configuration:</h4>
+<pre><code class="language-bash">sudo nginx -t
+</code></pre>
+<h4 id="6-if-test-is-successful-restart-nginx">6. If test is successful, restart NGINX:</h4>
+<pre><code class="language-bash">sudo systemctl restart nginx
+</code></pre>
+<h4 id="7-obtain-ssl-certificate">7. Obtain SSL certificate:</h4>
+<pre><code class="language-bash">sudo certbot --nginx -d your-domain.com
+</code></pre>
+<h4 id="8-certbot-will-automatically-modify-your-nginx-configuration-to-include-ssl-settings-the-final-configuration-should-look-something-like">8. Certbot will automatically modify your NGINX configuration to include SSL settings. The final configuration should look something like:</h4>
+<pre><code class="language-bash">server {
+    listen 80;
+    server_name your-domain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name your-domain.com;
+
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:your_app_port;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+</code></pre>
+<p>Additional important steps:</p>
+<h4 id="9-set-up-auto-renewal-for-ssl-certificate">9. Set up auto-renewal for SSL certificate:</h4>
+<pre><code class="language-bash">sudo certbot renew --dry-run
+</code></pre>
+<p>For detailed NGINX configuration or alternative SSL solutions, refer to:</p>
+<ul>
+<li>NGINX documentation: <a href="https://nginx.org/en/docs/">https://nginx.org/en/docs/</a>  </li>
+<li>Let's Encrypt documentation: <a href="https://letsencrypt.org/docs/">https://letsencrypt.org/docs/</a> </li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
