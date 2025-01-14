@@ -11,7 +11,8 @@ View the sprint pages and documentation: [Bleeding Heart Art Space Documentation
 - [Compatibility](#compatibility)  
 - [Tech Stack](#tech-stack)  
 - [Features](#features)  
-- [Development and Testing](#development-and-testing)  
+- [Development and Testing](#development-and-testing)
+- [Screencast Video](#screencast-video)
 
 ## Team Members:  
 
@@ -64,3 +65,7 @@ This application is accessible on any modern web browser.
 3. Run the following commands:  
    - Install dependencies: `npm install`  
    - Execute tests: `npx mocha acceptance`
+
+## Screencast Video:
+
+https://github.com/user-attachments/assets/5950841d-c684-4247-a6d8-e5257b80e96f
