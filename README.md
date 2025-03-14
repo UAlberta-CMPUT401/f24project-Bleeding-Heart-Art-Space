@@ -17,7 +17,6 @@ https://github.com/user-attachments/assets/5950841d-c684-4247-a6d8-e5257b80e96f
 - [Tech Stack](#tech-stack)  
 - [Features](#features)  
 - [Development and Testing](#development-and-testing)
-- [Screencast Video](#screencast-video)
 
 ## Team Members:  
 
