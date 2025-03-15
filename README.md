@@ -5,6 +5,11 @@ This is a volunteer management web application, designed to simplify managing an
 
 View the sprint pages and documentation: [Bleeding Heart Art Space Documentation](https://ualberta-cmput401.github.io/f24project-Bleeding-Heart-Art-Space/)
 
+## Screencast Video:
+
+https://github.com/user-attachments/assets/5950841d-c684-4247-a6d8-e5257b80e96f
+
+
 ## Table of Contents:  
 - [Team Members](#team-members)  
 - [About The Project](#about-the-project)  
@@ -12,7 +17,6 @@ View the sprint pages and documentation: [Bleeding Heart Art Space Documentation
 - [Tech Stack](#tech-stack)  
 - [Features](#features)  
 - [Development and Testing](#development-and-testing)
-- [Screencast Video](#screencast-video)
 
 ## Team Members:  
 
@@ -65,7 +69,3 @@ This application is accessible on any modern web browser.
 3. Run the following commands:  
    - Install dependencies: `npm install`  
    - Execute tests: `npx mocha acceptance`
-
-## Screencast Video:
-
-https://github.com/user-attachments/assets/5950841d-c684-4247-a6d8-e5257b80e96f
