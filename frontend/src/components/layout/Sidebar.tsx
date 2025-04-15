@@ -158,6 +158,9 @@ const Dashboard: React.FC = () => {
             noWrap 
             component='div'
             fontWeight='bold'
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+            }}
           >
             Bleeding Heart Art Space
           </Typography>
