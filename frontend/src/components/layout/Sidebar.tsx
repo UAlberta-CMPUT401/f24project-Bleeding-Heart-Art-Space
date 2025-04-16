@@ -158,6 +158,9 @@ const Dashboard: React.FC = () => {
             noWrap 
             component='div'
             fontWeight='bold'
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+            }}
           >
             Bleeding Heart Art Space
           </Typography>
@@ -218,7 +221,7 @@ const Dashboard: React.FC = () => {
       </Box>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, overflowX: 'hidden' }}
       >
         <Toolbar />
         <Outlet />
