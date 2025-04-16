@@ -51,7 +51,7 @@ const BasicCalendar: React.FC = () => {
     };
 
     return (
-        <div style={{ width: '100%', height: '80vh', margin: "0 auto" }}>
+        <div style={{ width: '100%', height: '80vh', margin: "0 auto", }}>
             <EventCalendar 
                 onEventClick={handleEventClick} 
                 onSlotSelect={handleSlotSelect} 
