@@ -1,16 +1,25 @@
 import { singleton } from 'tsyringe';
-import sgMail from '@sendgrid/mail';
+import mailgun from 'mailgun-js';
 import { db } from '@database/database';
 
 @singleton()
 export class SendEmailsService {
+  private mg: mailgun.Mailgun;
+  private senderEmail: string;
+
+
   constructor() {
     // Initialize SendGrid with API Key
-    const apiKey = process.env.SENDGRID_API_KEY;
-    if (!apiKey || !apiKey.startsWith('SG.')) {
-      throw new Error('Invalid SendGrid API Key. Ensure it starts with "SG."');
+    const apiKey = process.env.MAILGUN_API_KEY;
+    const domain = process.env.MAILGUN_DOMAIN;
+    this.senderEmail = process.env.MAILGUN_FROM_EMAIL || '';
+    if (!apiKey || !domain) {
+      throw new Error('Mailgun API key or domain is not properly configured in .env');
     }
-    sgMail.setApiKey(apiKey);
+    if (!this.senderEmail) {
+      throw new Error('Sender email is not properly configured in .env');
+    }
+    this.mg = mailgun({ apiKey, domain});
     
   }
 
@@ -81,8 +90,8 @@ export class SendEmailsService {
 
     // Construct email message
     const msg = {
-      to: volunteerEmails, // List of volunteer emails
-      from: senderEmail, // Replace with your verified sender email
+      to: volunteerEmails.join(','), // List of volunteer emails
+      from: this.senderEmail, // Replace with your verified sender email
       subject: 'Today’s Newly added Volunteer Shifts',
       text: `Hello Volunteers,\n\nHere are the details of today's shifts:\n\n${emailContent}\nPlease log in to the platform for more information.\n\nThank you!`,
     };
@@ -90,11 +99,11 @@ export class SendEmailsService {
 
     // Send the email
     try {
-      await sgMail.send(msg);
+      await this.mg.messages().send(msg);
       console.log('Emails sent successfully!');
-    } catch (error) {
-      console.error('Error sending emails:', error);
-      throw new Error('Failed to send emails. Please check the SendGrid configuration.');
+    } catch (error: any) {
+      console.error('Error sending emails:', error?.message || error);
+      throw new Error('Failed to send emails. Please check the Mailgun configuration.');
     }
   }
   public async sendCustomEmailForEvent(eventId: number, subject: string, message: string): Promise<void> {
@@ -127,18 +136,18 @@ export class SendEmailsService {
 
     // Construct the email
     const msg = {
-      to: volunteerEmails, // List of volunteer emails
-      from: senderEmail, // Replace with your verified sender email
+      to: volunteerEmails.join(','), // List of volunteer emails
+      from: this.senderEmail, // Replace with your verified sender email
       subject: subject,
       text: message,
     };
 
     try {
-      await sgMail.send(msg);
+      await this.mg.messages().send(msg);
       console.log(`Custom email sent successfully for event ID ${eventId}!`);
-    } catch (error) {
-      console.error('Error sending custom email:', error);
-      throw new Error('Failed to send custom email. Please check the SendGrid configuration.');
+    } catch (error: any) {
+      console.error('Error sending custom email:', error?.message || error);
+      throw new Error('Failed to send custom email. Please check the Mailgun configuration.');
     }
   }
 }
