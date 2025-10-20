@@ -29,7 +29,7 @@ export class SendEmailsService {
   public async sendTodayShiftEmails(): Promise<void> {
     // Get today's date
     const today = new Date();
-    const senderEmail = process.env.SENDGRID_FROM_EMAIL;
+    const senderEmail = this.senderEmail;
     if (!senderEmail) {
         throw new Error('Sender email is not properly configured in .env');
       }
@@ -108,7 +108,7 @@ export class SendEmailsService {
   }
   public async sendCustomEmailForEvent(eventId: number, subject: string, message: string): Promise<void> {
     // Fetch the emails of volunteers who signed up for shifts for the given event
-    const senderEmail = process.env.SENDGRID_FROM_EMAIL;
+    const senderEmail = this.senderEmail;
     if (!senderEmail) {
         throw new Error('Sender email is not properly configured in .env');
       }
