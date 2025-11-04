@@ -327,7 +327,7 @@ const EventDetails: React.FC = () => {
                                                 style={{ fontStyle: 'italic'}}
                                                 align='center'
                                             >
-                                                Note: To cancel signup, please contact admin.
+                                                Note: To cancel signup, please email volunteers@bleedingheartart.space.
                                             </Typography>
                                     )}
                                     </ShiftCard>

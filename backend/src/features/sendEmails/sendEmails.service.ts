@@ -120,7 +120,7 @@ export class SendEmailsService {
     .innerJoin('users', 'shift_signup.user_id', 'users.id')
     .select(['users.email'])
     .where('volunteer_shifts.event_id', '=', eventId)
-    .where('users.role', '=', 2) // Filter users with role = 2 (volunteers)
+    // .where('users.role', '=', 2) // Filter users with role = 2 (volunteers)
     .execute();
 
 
