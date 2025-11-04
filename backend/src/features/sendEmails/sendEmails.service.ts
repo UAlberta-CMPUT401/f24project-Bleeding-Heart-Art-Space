@@ -6,6 +6,7 @@ import { db } from '@database/database';
 export class SendEmailsService {
   private mg: mailgun.Mailgun;
   private senderEmail: string;
+  private timezone: string;
 
 
   constructor() {
@@ -13,6 +14,7 @@ export class SendEmailsService {
     const apiKey = process.env.MAILGUN_API_KEY;
     const domain = process.env.MAILGUN_DOMAIN;
     this.senderEmail = process.env.MAILGUN_FROM_EMAIL || '';
+    this.timezone = process.env.TIMEZONE || 'UTC';
     if (!apiKey || !domain) {
       throw new Error('Mailgun API key or domain is not properly configured in .env');
     }
@@ -81,9 +83,9 @@ export class SendEmailsService {
     const emailContent = shifts
   .map(
     (shift) =>
-      `Event: ${shift.event_title}\nRole: ${shift.role_name}\nStart: ${new Date(shift.start).toLocaleString()}\nEnd: ${new Date(
+      `Event: ${shift.event_title}\nRole: ${shift.role_name}\nStart: ${new Date(shift.start).toLocaleString('en-US', { timeZone: this.timezone })}\nEnd: ${new Date(
         shift.end,
-      ).toLocaleString()}\n\n`
+      ).toLocaleString('en-US', { timeZone: this.timezone})}\n\n`
   )
   .join('');
 
